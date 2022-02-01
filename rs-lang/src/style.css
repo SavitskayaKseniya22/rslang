@@ -1,0 +1,55 @@
+body {
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+}
+.navbar {
+  width: 20%;
+  min-height: 100vh;
+  color: white;
+  background-color: #345383;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+a {
+  text-decoration: none;
+  height: 50px;
+  font-size: 2em;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.app {
+  min-height: 100vh;
+  width: 100%;
+}
+.diff-select {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.level-select-btns {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+  width: 900px;
+}
+.level-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+}
