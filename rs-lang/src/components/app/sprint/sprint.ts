@@ -1,16 +1,18 @@
 import './sprint.css'
 import ApiService from '../api-service/api-service'
-import { Round } from './round'
+import { Round, Word } from './round'
 
 export class Sprint {
   service: ApiService
   lvl: number
   round: Round
+  results: Word[][]
 
   constructor(lvl: number, service: ApiService) {
     this.lvl = lvl
     this.service = service
-    this.round = new Round(this.service)
+    this.results = [[], []]
+    this.round = new Round(this.service, this.results)
   }
 
   addTimer() {}
