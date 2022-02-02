@@ -1,8 +1,12 @@
+* {
+  box-sizing: border-box;
+}
 body {
   min-height: 100vh;
   min-width: 100vw;
   display: flex;
 }
+
 .navbar {
   width: 20%;
   min-height: 100vh;
@@ -29,7 +33,14 @@ a {
 }
 .app {
   min-height: 100vh;
-  width: 100%;
+  width: 80vw;
+}
+.main{
+  margin:0 auto;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 .diff-select {
   width: 100%;
@@ -52,4 +63,25 @@ a {
   justify-content: center;
   align-items: center;
   font-size: 2em;
+}
+.footer {
+  height: 10vh;
+  display: flex;
+  justify-content: space-between;
+  background-color: #345383;
+}
+.footer-git-links {
+  display: flex;
+  justify-content: space-around;
+}
+.footer-git-link {
+  color: white;
+  text-decoration: none;
+}
+.header {
+  height: 10vh;
+  display: flex;
+  justify-content: space-between;
+  background-color: #345383;
+  color: white;
 }

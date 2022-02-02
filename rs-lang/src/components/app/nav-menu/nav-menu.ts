@@ -1,10 +1,13 @@
 import ApiService from '../api-service/api-service'
 import DifficultySelect from '../core/difficulty-select/difficulty-select'
+import MainPage from '../core/main-page/main-page'
 
 class NavMenu {
   service: ApiService
-  constructor(service: ApiService) {
+  mainPage: MainPage
+  constructor(service: ApiService, mainPage: MainPage) {
     this.service = service
+    this.mainPage = mainPage
   }
   render(): void {
     document.querySelector('.navbar').innerHTML = `
@@ -29,6 +32,9 @@ class NavMenu {
     document.querySelector(`[href='#${e.newURL.split('#')[1]}']`)?.classList.toggle('active-link')
     let page
     switch (e.newURL.split('#')[1]) {
+      case 'main':
+        page = this.mainPage
+        page.render()
       case 'sprint-choose':
         page = new DifficultySelect('sprint', this.service)
         page.render()
