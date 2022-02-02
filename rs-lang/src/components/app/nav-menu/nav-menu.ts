@@ -1,13 +1,16 @@
 import ApiService from '../api-service/api-service'
 import DifficultySelect from '../core/difficulty-select/difficulty-select'
 import MainPage from '../core/main-page/main-page'
+import TextBookPage from '../core/text-book-page/text-book-page'
 
 class NavMenu {
   service: ApiService
   mainPage: MainPage
-  constructor(service: ApiService, mainPage: MainPage) {
+  textBook: TextBookPage
+  constructor(service: ApiService, mainPage: MainPage,textBook: TextBookPage ) {
     this.service = service
     this.mainPage = mainPage
+    this.textBook = textBook
   }
   render(): void {
     document.querySelector('.navbar').innerHTML = `
@@ -35,6 +38,11 @@ class NavMenu {
       case 'main':
         page = this.mainPage
         page.render()
+        break
+      case 'text-book':
+        page = this.textBook  
+        page.render()
+        break
       case 'sprint-choose':
         page = new DifficultySelect('sprint', this.service)
         page.render()

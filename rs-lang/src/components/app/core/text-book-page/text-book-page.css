@@ -1,0 +1,86 @@
+.textbook-container{
+    max-width: 1024px;
+    display:grid ;
+    grid-template-areas:
+    "mini-games mini-games"
+    "pagination pagination"
+    "words groups";
+    
+}
+button{
+    outline: none;
+    background: transparent;
+}
+.tb-mini-game-select{
+    grid-area: mini-games;
+    width:100%;
+    display: flex;
+    justify-content: space-between;
+    padding:10px 20px;
+    align-items: center;
+}
+.tb-minigame{
+    height:50px;
+    width:100px;
+    background-color:lightgray;
+    color:black;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tb-pagination{
+    width:100%;
+    grid-area: pagination;
+    display:flex;
+    justify-content: space-around;
+    align-items: center;
+    height:50px;
+}
+.pagination-button{
+    background-color: lightgray;
+    color:black
+}
+.tb-words{
+grid-area: words;
+
+}
+.tb-word{
+    width:100%;
+    height:330px;
+    padding:25px;
+    display:flex;
+    justify-content: space-between;
+   
+}
+.tb-word-info{
+    display:flex;
+    flex-direction:column;
+    justify-content: space-between;
+    flex:1 1 auto;
+}
+.tb-group-select{
+    grid-area: groups;
+    width:20%;
+}
+.group-select{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tb-group-selected{
+    background-color: #345383;
+    color: white;
+}
+.tb-word-title-translation-pronounciation{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.pronounce{
+    height:20px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}

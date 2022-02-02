@@ -1,15 +1,19 @@
 import ApiService from './api-service/api-service'
 import MainPage from './core/main-page/main-page'
+import TextBookPage from './core/text-book-page/text-book-page'
 import NavMenu from './nav-menu/nav-menu'
 
 class App {
   navMenu: NavMenu
   service: ApiService
   mainPage: MainPage
+  textBook: TextBookPage
   constructor() {
     this.service = new ApiService()
-    this.navMenu = new NavMenu(this.service, this.mainPage)
     this.mainPage = new MainPage()
+    this.textBook = new TextBookPage(this.service)
+    this.navMenu = new NavMenu(this.service, this.mainPage, this.textBook)
+   
   }
   run(): void {
     document.querySelector('.body').innerHTML = `

@@ -39,8 +39,8 @@ a {
   margin:0 auto;
   display:flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding-left:240px;
+  padding-right:240px;
 }
 .diff-select {
   width: 100%;
