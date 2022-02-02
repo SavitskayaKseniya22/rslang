@@ -24,7 +24,8 @@ button {
   padding: 1rem;
 }
 
-.sprint__container {
+.sprint__container,
+.result {
   width: 50%;
   background-color: royalblue;
   margin: auto;
@@ -62,4 +63,10 @@ button {
   position: absolute;
   top: 1rem;
   right: 1rem;
+}
+
+.result {
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
 }

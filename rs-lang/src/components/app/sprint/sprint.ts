@@ -1,11 +1,12 @@
 import './sprint.css'
 import ApiService from '../api-service/api-service'
-import { Round, Word } from './round'
+import { SprintRound, Word } from './sprintRound'
+import { SprintResult } from './sprintResult'
 
 export class Sprint {
   service: ApiService
   lvl: number
-  round: Round
+  round: SprintRound
   results: Word[][]
   timerValue: number
 
@@ -13,25 +14,26 @@ export class Sprint {
     this.lvl = lvl
     this.service = service
     this.results = [[], []]
-    this.round = new Round(this.service, this.results)
-    this.addTimer()
+    this.timerValue = 5
+    this.round = new SprintRound(this.service, this.results)
+    this.initListener()
   }
 
   addTimer() {
-    this.timerValue = 10
     const timerId = setInterval(() => {
       document.querySelector('.sprint__timer').innerHTML = String((this.timerValue -= 1))
     }, 1000)
 
     setTimeout(() => {
-      console.log(this.results)
       clearInterval(timerId)
+      new SprintResult(this.results).renderResult()
     }, this.timerValue * 1000 + 1000)
   }
 
   async render() {
     const game = await this.makeGame()
     document.querySelector('.main').innerHTML = game
+    this.addTimer()
   }
 
   async makeGame() {
@@ -63,5 +65,17 @@ export class Sprint {
       </ul>
     </div>
   </div>`
+  }
+
+  initListener() {
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement
+      if (target.closest('.new-round')) {
+        this.results = [[], []]
+        this.timerValue = 5
+        this.round.updateRound(this.results)
+        this.render()
+      }
+    })
   }
 }

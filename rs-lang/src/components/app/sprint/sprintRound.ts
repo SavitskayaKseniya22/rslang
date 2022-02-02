@@ -2,7 +2,7 @@ import ApiService from '../api-service/api-service'
 import { getRandomNumber } from './utils'
 import { Sound } from './sound'
 
-export class Round {
+export class SprintRound {
   sugestedWord: Word
   sugestedAnswer: Word
   service: ApiService
@@ -13,6 +13,10 @@ export class Round {
     this.service = service
     this.results = results
     this.initListener()
+  }
+
+  updateRound(results: Word[][]) {
+    this.results = results
   }
 
   async getWords() {
@@ -28,7 +32,7 @@ export class Round {
     this.sugestedAnswer = randomNum ? this.sugestedWord : words[getRandomNumber(maxValue)]
     this.sound = new Sound(this.sugestedWord.audio)
     return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span> ${this.sound.render()}</li>
-    <li><span class="sprint__words_answered">${this.sugestedAnswer.word}</span></li>`
+    <li><span class="sprint__words_translation">${this.sugestedAnswer.wordTranslate}</span></li>`
   }
 
   async renderRound() {
