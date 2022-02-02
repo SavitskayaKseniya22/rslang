@@ -13,9 +13,15 @@ export class Sprint {
     this.service = service
     this.results = [[], []]
     this.round = new Round(this.service, this.results)
+    this.addTimer()
   }
 
-  addTimer() {}
+  addTimer() {
+    let value = 30
+    setInterval(() => {
+      document.querySelector('.sprint__timer').innerHTML = String((value -= 1))
+    }, 1000)
+  }
 
   async render() {
     const game = await this.makeGame()
@@ -26,7 +32,7 @@ export class Sprint {
     const round = await this.round.makeRound()
     return `<div class="sprint">
     <h2>Sprint</h2>
-    <div class="sprint__timer"></div>
+    <div class="sprint__timer">30</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
     <div class="sprint__container">
       <button class="sprint__toggle-sound"><i class="fas fa-music"></i></button>

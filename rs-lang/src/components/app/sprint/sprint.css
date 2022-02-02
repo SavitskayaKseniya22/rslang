@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 ul {
   margin: 0;
   padding: 0;
@@ -13,6 +17,11 @@ button {
 
 .sprint {
   font-size: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 1rem;
 }
 
 .sprint__container {
@@ -39,4 +48,18 @@ button {
 
 .sprint button {
   padding: 0.5rem;
+}
+
+.sprint__timer {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  width: 3rem;
+  height: 3rem;
+  font-size: 2rem;
+}
+.sprint__closer {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
