@@ -1,11 +1,13 @@
 import ApiService from '../api-service/api-service'
 import { getRandomNumber } from './utils'
+import { Sound } from './sound'
 
 export class Round {
   sugestedWord: Word
   sugestedAnswer: Word
   service: ApiService
   results: Word[][]
+  sound: Sound
 
   constructor(service: ApiService, results: Word[][]) {
     this.service = service
@@ -24,7 +26,8 @@ export class Round {
     const maxValue = words.length - 1
     this.sugestedWord = words[getRandomNumber(maxValue)]
     this.sugestedAnswer = randomNum ? this.sugestedWord : words[getRandomNumber(maxValue)]
-    return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span></li>
+    this.sound = new Sound(this.sugestedWord.audio)
+    return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span> ${this.sound.render()}</li>
     <li><span class="sprint__words_answered">${this.sugestedAnswer.word}</span></li>`
   }
 

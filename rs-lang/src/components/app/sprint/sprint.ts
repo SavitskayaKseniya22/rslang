@@ -7,6 +7,7 @@ export class Sprint {
   lvl: number
   round: Round
   results: Word[][]
+  timerValue: number
 
   constructor(lvl: number, service: ApiService) {
     this.lvl = lvl
@@ -17,10 +18,15 @@ export class Sprint {
   }
 
   addTimer() {
-    let value = 30
-    setInterval(() => {
-      document.querySelector('.sprint__timer').innerHTML = String((value -= 1))
+    this.timerValue = 10
+    const timerId = setInterval(() => {
+      document.querySelector('.sprint__timer').innerHTML = String((this.timerValue -= 1))
     }, 1000)
+
+    setTimeout(() => {
+      console.log(this.results)
+      clearInterval(timerId)
+    }, this.timerValue * 1000 + 1000)
   }
 
   async render() {
@@ -32,10 +38,10 @@ export class Sprint {
     const round = await this.round.makeRound()
     return `<div class="sprint">
     <h2>Sprint</h2>
-    <div class="sprint__timer">30</div>
+    <div class="sprint__timer">${this.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
     <div class="sprint__container">
-      <button class="sprint__toggle-sound"><i class="fas fa-music"></i></button>
+      
       <span class="sprint__counter">0</span>
       <ul class="sprint__counter-preview">
         <li><i class="far fa-circle"></i></li>
