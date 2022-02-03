@@ -2,6 +2,7 @@ import './sprint.css'
 import ApiService from '../api-service/api-service'
 import { SprintRound, Word } from './sprintRound'
 import { SprintResult } from './sprintResult'
+import { getWords } from './utils'
 
 export class Sprint {
   service: ApiService
@@ -9,19 +10,31 @@ export class Sprint {
   round: SprintRound
   results: Word[][]
   timerValue: number
+  words: Word[]
 
   constructor(lvl: number, service: ApiService) {
     this.lvl = lvl
     this.service = service
+    this.timerValue = 15
     this.results = [[], []]
-    this.timerValue = 5
-    this.round = new SprintRound(this.service, this.results)
     this.initListener()
   }
 
+  async updateSprint() {
+    this.words = await getWords(this.lvl, this.service)
+    this.results = [[], []]
+    this.round.updateRound(this.results, this.words)
+    this.render()
+  }
+
   addTimer() {
+    let timerCurrentValue = this.timerValue
     const timerId = setInterval(() => {
-      document.querySelector('.sprint__timer').innerHTML = String((this.timerValue -= 1))
+      if (document.querySelector('.sprint__timer')) {
+        document.querySelector('.sprint__timer').innerHTML = String((timerCurrentValue -= 1))
+      } else {
+        clearInterval(timerId)
+      }
     }, 1000)
 
     setTimeout(() => {
@@ -31,19 +44,18 @@ export class Sprint {
   }
 
   async render() {
-    const game = await this.makeGame()
-    document.querySelector('.main').innerHTML = game
+    this.words = this.words ? this.words : await getWords(this.lvl, this.service)
+    this.round = this.round ? this.round : new SprintRound(this.results, this.words, this.lvl, this.service)
+    document.querySelector('.main').innerHTML = this.makeGame()
     this.addTimer()
   }
 
-  async makeGame() {
-    const round = await this.round.makeRound()
+  makeGame() {
     return `<div class="sprint">
     <h2>Sprint</h2>
     <div class="sprint__timer">${this.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
     <div class="sprint__container">
-      
       <span class="sprint__counter">0</span>
       <ul class="sprint__counter-preview">
         <li><i class="far fa-circle"></i></li>
@@ -52,7 +64,7 @@ export class Sprint {
       </ul>
 
       <ul class="sprint__words">
-        ${round}
+       ${this.round.makeRound()}
       </ul>
 
       <ul class="sprint__verdict">
@@ -68,13 +80,10 @@ export class Sprint {
   }
 
   initListener() {
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', async (e) => {
       const target = e.target as HTMLElement
       if (target.closest('.new-round')) {
-        this.results = [[], []]
-        this.timerValue = 5
-        this.round.updateRound(this.results)
-        this.render()
+        await this.updateSprint()
       }
     })
   }

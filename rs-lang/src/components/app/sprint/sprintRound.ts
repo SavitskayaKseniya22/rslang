@@ -1,65 +1,63 @@
-import ApiService from '../api-service/api-service'
-import { getRandomNumber } from './utils'
+import { getRandomNumber, isEven } from './utils'
 import { Sound } from './sound'
+import { getWords } from './utils'
+import ApiService from '../api-service/api-service'
 
 export class SprintRound {
   sugestedWord: Word
   sugestedAnswer: Word
-  service: ApiService
   results: Word[][]
   sound: Sound
+  words: Word[]
+  lvl: number
+  service: ApiService
 
-  constructor(service: ApiService, results: Word[][]) {
-    this.service = service
+  constructor(results: Word[][], words: Word[], lvl: number, service: ApiService) {
     this.results = results
+    this.words = words
+    this.lvl = lvl
+    this.service = service
     this.initListener()
   }
 
-  updateRound(results: Word[][]) {
+  updateRound(results: Word[][], words: Word[]) {
     this.results = results
+    this.words = words
   }
 
-  async getWords() {
-    const words = await this.service.getWords(1, 1)
-    return words
-  }
-
-  async makeRound() {
+  makeRound() {
     const randomNum = Math.random() > 0.7 ? 1 : 0
-    const words = await this.getWords()
-    const maxValue = words.length - 1
-    this.sugestedWord = words[getRandomNumber(maxValue)]
-    this.sugestedAnswer = randomNum ? this.sugestedWord : words[getRandomNumber(maxValue)]
+    const maxValue = this.words.length - 1
+    const randomIndex = getRandomNumber(maxValue)
+    this.sugestedWord = this.words[randomIndex]
+    this.sugestedAnswer = randomNum ? this.sugestedWord : this.words[getRandomNumber(maxValue)]
+    this.words.splice(randomIndex, 1)
     this.sound = new Sound(this.sugestedWord.audio)
     return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span> ${this.sound.render()}</li>
     <li><span class="sprint__words_translation">${this.sugestedAnswer.wordTranslate}</span></li>`
   }
 
   async renderRound() {
-    const round = await this.makeRound()
-    document.querySelector('.sprint__words').innerHTML = round
-  }
-
-  isEven() {
-    return this.sugestedWord.word === this.sugestedAnswer.word ? true : false
+    if (this.words.length > 1) {
+      document.querySelector('.sprint__words').innerHTML = this.makeRound()
+    } else {
+      this.words = await getWords(this.lvl, this.service)
+      document.querySelector('.sprint__words').innerHTML = this.makeRound()
+    }
   }
 
   saveMiddleResult(isTrue: boolean) {
-    if (isTrue) {
-      this.results[1].push(this.sugestedWord)
-    } else {
-      this.results[0].push(this.sugestedWord)
-    }
+    isTrue ? this.results[1].push(this.sugestedWord) : this.results[0].push(this.sugestedWord)
   }
 
   initListener() {
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement
       if (target.closest('.sprint__verdict_wrong')) {
-        this.saveMiddleResult(!this.isEven())
+        this.saveMiddleResult(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
         this.renderRound()
       } else if (target.closest('.sprint__verdict_true')) {
-        this.saveMiddleResult(this.isEven())
+        this.saveMiddleResult(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
         this.renderRound()
       }
     })
