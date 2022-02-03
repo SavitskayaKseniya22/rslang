@@ -17,6 +17,7 @@ class TextBookPage {
   }
   async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
+        <audio src='' class="tb-tts"></audio>
         <div class="tb-mini-game-select">
             <div class="tb-minigame"><i class="fas fa-running"></i> sprint</div>
             <div class="tb-minigame"><i class="fas fa-volume-up"></i> audio-challenge</div>
@@ -60,7 +61,7 @@ class TextBookPage {
     <div class="tb-word-title-translation-pronounciation">
         <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
         <h3 class="tb-word-translation">${word.wordTranslate}</h3>
-        <button class="pronounce" data-tb-audio-btn-id=${word.id}><i data-tb-audio-btn-id=${word.id} class="fas fa-volume-up"></i></button>
+        <button class="pronounce" data-tb-audio-btn-id=${word.id} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${word.id} class="fas fa-volume-up"></i></button>
     </div>
     <div class="tb-word-definition">
         <p class="tb-definition-english">${word.textMeaning}</p>
@@ -71,9 +72,7 @@ class TextBookPage {
         <p class="tb-sentence-translation">${word.textExampleTranslate}</p>
     </div>
     </div>
-<audio src=${this.service.apiUrl}/${word.audio} data-tb-p-audio-id=${word.id} data-tb-audio-id=${word.id}></audio>
-<audio src=${this.service.apiUrl}/${word.audioMeaning} data-tb-m-audio-id=${word.id} data-tb-audio-num=${word.id}></audio>
-<audio src=${this.service.apiUrl}/${word.audioExample} data-tb-ex-audio-id=${word.id} data-tb-audio-num=${word.id}></audio>
+<audio src=${this.service.apiUrl}/${word.audio}  data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${word.id} data-tb-audio-id=${word.id}></audio>
 </div>
     `
   }
@@ -98,11 +97,11 @@ class TextBookPage {
     document.querySelectorAll('.pronounce').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const target = e.target as HTMLElement
-        this.playAudio(target.dataset.tbAudioBtnId)
+        this.playAudio(target.dataset.audioPaths)
       })
     })
   }
-  switchPage(direction: string) {
+  async switchPage(direction: string) {
     console.log(direction)
     if (direction === 'right' && this.curPage < 29) {
       this.curPage++
@@ -115,10 +114,27 @@ class TextBookPage {
       document.querySelector('.page-num').textContent = `${this.curPage + 1}`
     }
 
-    this.getWords()
+    await this.getWords()
+    this.addListeners()
   }
-  playAudio(id: string) {
-    const pronounciation = document.querySelector(`[data-tb-p-audio-id="${id}"]`) as HTMLAudioElement
+  playAudio(paths: string) {
+    const playlist = paths.split(',')
+    const audio = document.querySelector('.tb-tts') as HTMLAudioElement
+    audio.pause()
+    audio.src = ``
+    audio.src = playlist[0]
+    let count = 0
+    audio.addEventListener('ended', function playSound(e) {
+      count += 1
+      audio.src = playlist[count]
+      audio.play()
+      if (count === 2) {
+        e.target.removeEventListener('ended', playSound)
+      }
+    })
+    audio.play()
+    console.log(playlist)
+    /*const pronounciation = document.querySelector(`[data-tb-p-audio-id="${id}"]`) as HTMLAudioElement
     const meaning = document.querySelector(`[data-tb-m-audio-id="${id}"]`) as HTMLAudioElement
     const example = document.querySelector(`[data-tb-ex-audio-id="${id}"]`) as HTMLAudioElement
     const playlist = [pronounciation, meaning, example]
@@ -136,7 +152,7 @@ class TextBookPage {
         )
       }
     })
-    pronounciation.play()
+    pronounciation.play()*/
   }
 }
 
