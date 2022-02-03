@@ -13,7 +13,6 @@ class App {
     this.mainPage = new MainPage()
     this.textBook = new TextBookPage(this.service)
     this.navMenu = new NavMenu(this.service, this.mainPage, this.textBook)
-   
   }
   run(): void {
     document.querySelector('.body').innerHTML = `

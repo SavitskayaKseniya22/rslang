@@ -18,9 +18,9 @@ class TextBookPage {
             <div class="tb-minigame"><i class="fas fa-volume-up"></i> audio-challenge</div>
         </div>
         <div class="tb-pagination">
-            <button class="pagination-button pagination-left"><i class="fas fa-caret-left"></i></button>
+            <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
             <div class="page-num">1</div>
-            <button class="pagination-button pagination-right"><i class="fas fa-caret-right"></i></button>
+            <button data-direction="right" class="pagination-button"><i data-direction="right" class="fas fa-caret-right"></i></button>
         </div>
         <div class="tb-group-select">
         <p>groups</p>
@@ -38,8 +38,11 @@ class TextBookPage {
         
     </div>`
     this.getWords()
+    this.addListeners()
   }
+
   async getWords() {
+    document.querySelector(`.tb-words`).innerHTML = ``
     const words = await this.service.requestWords(this.curGrp, this.curPage)
     words.forEach((word) => {
       this.drawWord(word)
@@ -69,6 +72,40 @@ class TextBookPage {
 <audtio src=${this.service.apiUrl}/${word.audioExample} data-tb-audio-id=${word.id} data-tb-audio-num="2"></audtio>
 </div>
     `
+  }
+
+  addListeners() {
+    document.querySelectorAll('.pagination-button').forEach((elem) => {
+      elem.addEventListener('click', (e) => {
+        console.log('I got clicked')
+        const target = e.target as HTMLButtonElement
+        this.switchPage(target.dataset.direction)
+      })
+    })
+    document.querySelectorAll('.group-select').forEach((div)=>{
+        div.addEventListener('click', (e)=>{
+            const target = e.target as HTMLElement
+            document.querySelector('.tb-group-selected').classList.remove('tb-group-selected')
+            target.classList.add('tb-group-selected')
+            this.curGrp = Number(target.dataset.grp)
+            this.getWords()
+        })
+    })
+  }
+  switchPage(direction: string) {
+    console.log(direction)
+    if (direction === 'right' && this.curPage < 29) {
+      this.curPage++
+      document.querySelector('.page-num').textContent = `${this.curPage + 1}`
+    }
+
+    if (direction === 'left' && this.curPage > 0) {
+      console.log('i work')
+      this.curPage--
+      document.querySelector('.page-num').textContent = `${this.curPage + 1}`
+    }
+
+    this.getWords()
   }
 }
 

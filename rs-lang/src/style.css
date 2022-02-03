@@ -35,12 +35,12 @@ a {
   min-height: 100vh;
   width: 80vw;
 }
-.main{
-  margin:0 auto;
-  display:flex;
+.main {
+  margin: 0 auto;
+  display: flex;
   flex-direction: column;
-  padding-left:240px;
-  padding-right:240px;
+  padding-left: 240px;
+  padding-right: 240px;
 }
 .diff-select {
   width: 100%;

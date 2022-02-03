@@ -5,9 +5,9 @@ class ApiService {
   }
   async requestWords(grp: number, page: number) {
     const res = await fetch(`${this.apiUrl}/words?page=${page}&group=${grp}`)
-    if (res.ok){
-        const words = await res.json()
-        return words
+    if (res.ok) {
+      const words = await res.json()
+      return words
     }
   }
 }

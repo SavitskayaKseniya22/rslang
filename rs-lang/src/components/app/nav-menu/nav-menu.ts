@@ -7,7 +7,7 @@ class NavMenu {
   service: ApiService
   mainPage: MainPage
   textBook: TextBookPage
-  constructor(service: ApiService, mainPage: MainPage,textBook: TextBookPage ) {
+  constructor(service: ApiService, mainPage: MainPage, textBook: TextBookPage) {
     this.service = service
     this.mainPage = mainPage
     this.textBook = textBook
@@ -40,7 +40,7 @@ class NavMenu {
         page.render()
         break
       case 'text-book':
-        page = this.textBook  
+        page = this.textBook
         page.render()
         break
       case 'sprint-choose':
