@@ -6,12 +6,16 @@ class TextBookPage {
   service: ApiService
   curPage: number
   curGrp: number
+  difficultWords: Word[] | undefined[]
+  learnedWords: Word[] | undefined[]
   constructor(service: ApiService) {
     this.service = service
     this.curPage = 0
     this.curGrp = 0
+    this.difficultWords = []
+    this.learnedWords = []
   }
-  render() {
+  async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
         <div class="tb-mini-game-select">
             <div class="tb-minigame"><i class="fas fa-running"></i> sprint</div>
@@ -37,7 +41,7 @@ class TextBookPage {
         
         
     </div>`
-    this.getWords()
+    await this.getWords()
     this.addListeners()
   }
 
@@ -56,7 +60,7 @@ class TextBookPage {
     <div class="tb-word-title-translation-pronounciation">
         <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
         <h3 class="tb-word-translation">${word.wordTranslate}</h3>
-        <button class="pronounce" data-tb-audio-btn-id=${word.id}><i class="fas fa-volume-up"></i></button>
+        <button class="pronounce" data-tb-audio-btn-id=${word.id}><i data-tb-audio-btn-id=${word.id} class="fas fa-volume-up"></i></button>
     </div>
     <div class="tb-word-definition">
         <p class="tb-definition-english">${word.textMeaning}</p>
@@ -67,9 +71,9 @@ class TextBookPage {
         <p class="tb-sentence-translation">${word.textExampleTranslate}</p>
     </div>
     </div>
-<audtio src=${this.service.apiUrl}/${word.audio} data-tb-audio-id=${word.id} data-tb-audio-num="0"></audtio>
-<audtio src=${this.service.apiUrl}/${word.audioMeaning} data-tb-audio-id=${word.id} data-tb-audio-num="1"></audtio>
-<audtio src=${this.service.apiUrl}/${word.audioExample} data-tb-audio-id=${word.id} data-tb-audio-num="2"></audtio>
+<audio src=${this.service.apiUrl}/${word.audio} data-tb-p-audio-id=${word.id} data-tb-audio-id=${word.id}></audio>
+<audio src=${this.service.apiUrl}/${word.audioMeaning} data-tb-m-audio-id=${word.id} data-tb-audio-num=${word.id}></audio>
+<audio src=${this.service.apiUrl}/${word.audioExample} data-tb-ex-audio-id=${word.id} data-tb-audio-num=${word.id}></audio>
 </div>
     `
   }
@@ -82,14 +86,20 @@ class TextBookPage {
         this.switchPage(target.dataset.direction)
       })
     })
-    document.querySelectorAll('.group-select').forEach((div)=>{
-        div.addEventListener('click', (e)=>{
-            const target = e.target as HTMLElement
-            document.querySelector('.tb-group-selected').classList.remove('tb-group-selected')
-            target.classList.add('tb-group-selected')
-            this.curGrp = Number(target.dataset.grp)
-            this.getWords()
-        })
+    document.querySelectorAll('.group-select').forEach((div) => {
+      div.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement
+        document.querySelector('.tb-group-selected').classList.remove('tb-group-selected')
+        target.classList.add('tb-group-selected')
+        this.curGrp = Number(target.dataset.grp)
+        this.getWords()
+      })
+    })
+    document.querySelectorAll('.pronounce').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement
+        this.playAudio(target.dataset.tbAudioBtnId)
+      })
     })
   }
   switchPage(direction: string) {
@@ -106,6 +116,27 @@ class TextBookPage {
     }
 
     this.getWords()
+  }
+  playAudio(id: string) {
+    const pronounciation = document.querySelector(`[data-tb-p-audio-id="${id}"]`) as HTMLAudioElement
+    const meaning = document.querySelector(`[data-tb-m-audio-id="${id}"]`) as HTMLAudioElement
+    const example = document.querySelector(`[data-tb-ex-audio-id="${id}"]`) as HTMLAudioElement
+    const playlist = [pronounciation, meaning, example]
+    console.log(playlist)
+    playlist.forEach((track, idx, arr) => {
+      console.log(idx)
+      if (idx < arr.length - 1) {
+        console.log(playlist[idx + 1])
+        track.addEventListener(
+          'ended',
+          () => {
+            playlist[idx + 1].play()
+          },
+          { once: true }
+        )
+      }
+    })
+    pronounciation.play()
   }
 }
 

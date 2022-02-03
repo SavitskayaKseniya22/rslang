@@ -64,7 +64,7 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor:pointer
+  cursor: pointer;
 }
 
 .tb-group-selected {
@@ -81,4 +81,9 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.tb-img {
+  width: 50%;
+  height: auto;
+  margin-right: 5%;
 }
