@@ -2,6 +2,7 @@ import { getRandomNumber, isEven } from './utils'
 import { Sound } from './sound'
 import { getWords } from './utils'
 import ApiService from '../api-service/api-service'
+import { SprintResult } from './sprintResult'
 
 export class SprintRound {
   sugestedWord: Word
@@ -11,18 +12,25 @@ export class SprintRound {
   words: Word[]
   lvl: number
   service: ApiService
+  pageNumber: number
+  pageNumStorage: number[]
+  freeGame: boolean
 
-  constructor(results: Word[][], words: Word[], lvl: number, service: ApiService) {
+  constructor(results: Word[][], words: Word[], lvl: number, service: ApiService, pageNum: number, freeGame: boolean) {
     this.results = results
     this.words = words
     this.lvl = lvl
     this.service = service
+    this.pageNumber = pageNum
+    this.pageNumStorage = [this.pageNumber]
+    this.freeGame = freeGame
     this.initListener()
   }
 
   updateRound(results: Word[][], words: Word[]) {
     this.results = results
     this.words = words
+    this.pageNumStorage = [this.pageNumber]
   }
 
   makeRound() {
@@ -41,8 +49,23 @@ export class SprintRound {
     if (this.words.length > 1) {
       document.querySelector('.sprint__words').innerHTML = this.makeRound()
     } else {
-      this.words = await getWords(this.lvl, this.service)
-      document.querySelector('.sprint__words').innerHTML = this.makeRound()
+      if (this.freeGame) {
+        let randomNum = getRandomNumber(29)
+        while (this.pageNumStorage.includes(randomNum)) {
+          randomNum = getRandomNumber(29)
+        }
+        this.pageNumber = randomNum
+      } else {
+        this.pageNumber--
+      }
+
+      if (this.pageNumber >= 0) {
+        this.pageNumStorage.push(this.pageNumber)
+        this.words = await getWords(this.lvl, this.service, this.pageNumber)
+        document.querySelector('.sprint__words').innerHTML = this.makeRound()
+      } else {
+        new SprintResult(this.results).renderResult()
+      }
     }
   }
 

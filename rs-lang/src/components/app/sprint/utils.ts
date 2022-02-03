@@ -9,8 +9,7 @@ export function isEven(firstWord: string, secondWord: string) {
   return firstWord === secondWord ? true : false
 }
 
-export async function getWords(lvl: number, service: ApiService) {
-  const pageNum = getRandomNumber(29)
+export async function getWords(lvl: number, service: ApiService, pageNum: number) {
   const words = await service.getWords(lvl, pageNum)
   return words
 }
