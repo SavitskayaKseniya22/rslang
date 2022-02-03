@@ -1,6 +1,6 @@
 import { getRandomNumber, isEven } from './utils'
 import { Sound } from './sound'
-import { getWords } from './utils'
+
 import ApiService from '../api-service/api-service'
 import { SprintResult } from './sprintResult'
 
@@ -15,8 +15,17 @@ export class SprintRound {
   pageNumber: number
   pageNumStorage: number[]
   freeGame: boolean
+  points: { value: number }
 
-  constructor(results: Word[][], words: Word[], lvl: number, service: ApiService, pageNum: number, freeGame: boolean) {
+  constructor(
+    results: Word[][],
+    words: Word[],
+    lvl: number,
+    service: ApiService,
+    pageNum: number,
+    freeGame: boolean,
+    points: { value: number }
+  ) {
     this.results = results
     this.words = words
     this.lvl = lvl
@@ -24,12 +33,14 @@ export class SprintRound {
     this.pageNumber = pageNum
     this.pageNumStorage = [this.pageNumber]
     this.freeGame = freeGame
+    this.points = points
     this.initListener()
   }
 
-  updateRound(results: Word[][], words: Word[]) {
-    this.results = results
+  updateRound(words: Word[], results: Word[][], points: { value: number }) {
     this.words = words
+    this.points = points
+    this.results = results
     this.pageNumStorage = [this.pageNumber]
   }
 
@@ -61,16 +72,22 @@ export class SprintRound {
 
       if (this.pageNumber >= 0) {
         this.pageNumStorage.push(this.pageNumber)
-        this.words = await getWords(this.lvl, this.service, this.pageNumber)
+        this.words = await this.service.getWords(this.lvl, this.pageNumber)
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
-        new SprintResult(this.results).renderResult()
+        new SprintResult(this.results, this.points).renderResult()
       }
     }
   }
 
   saveMiddleResult(isTrue: boolean) {
-    isTrue ? this.results[1].push(this.sugestedWord) : this.results[0].push(this.sugestedWord)
+    if (isTrue) {
+      this.results[1].push(this.sugestedWord)
+      this.points.value += 20
+      document.querySelector('.sprint__counter').innerHTML = String(this.points.value)
+    } else {
+      this.results[0].push(this.sugestedWord)
+    }
   }
 
   initListener() {

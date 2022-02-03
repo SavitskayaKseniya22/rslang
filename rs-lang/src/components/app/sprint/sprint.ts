@@ -2,7 +2,6 @@ import './sprint.css'
 import ApiService from '../api-service/api-service'
 import { SprintRound, Word } from './sprintRound'
 import { SprintResult } from './sprintResult'
-import { getWords } from './utils'
 import { getRandomNumber } from './utils'
 
 export class Sprint {
@@ -14,21 +13,24 @@ export class Sprint {
   words: Word[]
   pageNumber: number
   freeGame: boolean
+  points: { value: number }
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
     this.lvl = lvl
     this.service = service
-    this.timerValue = 40
+    this.timerValue = 5
     this.results = [[], []]
     this.pageNumber = pageNumber ?? getRandomNumber(29)
     this.freeGame = pageNumber ? false : true
+    this.points = { value: 0 }
     this.initListener()
   }
 
   async updateSprint() {
-    this.words = await getWords(this.lvl, this.service, this.pageNumber)
+    this.words = await this.service.getWords(this.lvl, this.pageNumber)
     this.results = [[], []]
-    this.round.updateRound(this.results, this.words)
+    this.points = { value: 0 }
+    this.round.updateRound(this.words, this.results, this.points)
     this.render()
   }
 
@@ -44,14 +46,16 @@ export class Sprint {
 
     setTimeout(() => {
       clearInterval(timerId)
-      new SprintResult(this.results).renderResult()
+
+      new SprintResult(this.results, this.points).renderResult()
     }, this.timerValue * 1000 + 1000)
   }
 
   async render() {
-    this.words = this.words ?? (await getWords(this.lvl, this.service, this.pageNumber))
+    this.words = this.words ?? (await this.service.getWords(this.lvl, this.pageNumber))
     this.round =
-      this.round ?? new SprintRound(this.results, this.words, this.lvl, this.service, this.pageNumber, this.freeGame)
+      this.round ??
+      new SprintRound(this.results, this.words, this.lvl, this.service, this.pageNumber, this.freeGame, this.points)
     document.querySelector('.main').innerHTML = this.makeGame()
     this.addTimer()
   }

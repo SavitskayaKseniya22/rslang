@@ -3,9 +3,11 @@ import { Sound } from './sound'
 
 export class SprintResult {
   results: Word[][]
+  points: { value: number }
 
-  constructor(results: Word[][]) {
+  constructor(results: Word[][], points: { value: number }) {
     this.results = results
+    this.points = points
   }
 
   renderResult() {
@@ -19,6 +21,7 @@ export class SprintResult {
 
     return (document.querySelector('.main').innerHTML = `<div class="result">
     <button class="new-round">new game</button>
+    <span>You earned ${this.points.value} points</span>
     <ul class="result_wrong">
     <h3>Wrong (${this.results[0].length})</h3>
       ${rightResults.join('')}
