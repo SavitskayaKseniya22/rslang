@@ -16,19 +16,20 @@ export class Sprint {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 20,
+      timerValue: 10,
       pageNumber: pageNumber ?? getRandomNumber(29),
       freeGame: pageNumber ? false : true,
       pageStorage: [],
+      basicPoints: 10,
     }
     this.settings.pageStorage.push(this.settings.pageNumber)
-    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0 }
+    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
     this.initListener()
   }
 
   async updateSprint() {
     this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
-    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0 }
+    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
     this.round.updateRound(this.words, this.results)
     this.render()
   }
@@ -63,11 +64,12 @@ export class Sprint {
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
     <div class="sprint__container">
-      <span class="sprint__counter">0</span>
+      <span class="sprint__score">0</span>
+      <span class="sprint__points">0</span>
       <ul class="sprint__counter-preview">
-        <li><i class="far fa-circle"></i></li>
-        <li><i class="far fa-circle"></i></li>
-        <li><i class="far fa-circle"></i></li>
+        <li><i class="far fa-circle streak1"></i></li>
+        <li><i class="far fa-circle streak2"></i></li>
+        <li><i class="far fa-circle streak3"></i></li>
       </ul>
 
       <ul class="sprint__words">

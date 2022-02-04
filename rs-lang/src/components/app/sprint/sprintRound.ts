@@ -41,7 +41,6 @@ export class SprintRound {
     } else {
       if (this.settings.freeGame) {
         let randomNum = getRandomNumber(29)
-        console.log(this.settings.pageStorage)
         while (this.settings.pageStorage.includes(randomNum)) {
           randomNum = getRandomNumber(29)
         }
@@ -62,12 +61,35 @@ export class SprintRound {
 
   saveMiddleResult(isTrue: boolean) {
     if (isTrue) {
+      if (this.results.streak < 3) {
+        this.results.streak++
+        document.querySelector(`.streak${this.results.streak}`).classList.add('counter-full')
+      } else {
+        document.querySelectorAll(`.counter-full`).forEach((element) => {
+          element.classList.remove('counter-full')
+        })
+        this.results.streak = 0
+        this.results.multiplier++
+      }
       this.results.answers[1].push(this.sugestedWord)
-      this.results.points += 20 * this.results.multiplier
-      document.querySelector('.sprint__counter').innerHTML = String(this.results.points)
+      this.results.points += this.getPoints()
+      document.querySelector('.sprint__score').innerHTML = String(this.results.points)
+      this.results.streaks.push(1)
     } else {
       this.results.answers[0].push(this.sugestedWord)
+      document.querySelectorAll(`.counter-full`).forEach((element) => {
+        element.classList.remove('counter-full')
+      })
+      this.results.streak = 0
+      this.results.multiplier = 1
+      this.results.streaks.push(0)
     }
+
+    document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
+  }
+
+  getPoints() {
+    return this.settings.basicPoints * this.results.multiplier
   }
 
   initListener() {

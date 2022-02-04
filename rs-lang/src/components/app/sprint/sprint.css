@@ -70,3 +70,8 @@ button {
   align-items: flex-start;
   justify-content: center;
 }
+
+.counter-full {
+  border-radius: 50%;
+  background-color: blueviolet;
+}

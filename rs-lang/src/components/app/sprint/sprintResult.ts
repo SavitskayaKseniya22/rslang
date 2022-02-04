@@ -3,9 +3,17 @@ import { Word, SprintResultType } from './types'
 
 export class SprintResult {
   results: SprintResultType
+  longestStreak: number
 
   constructor(results: SprintResultType) {
     this.results = results
+
+    this.longestStreak = this.results.streaks
+      .join('')
+      .split('0')
+      .sort((a, b) => {
+        return b.length - a.length
+      })[0].length
   }
 
   renderResult() {
@@ -20,6 +28,7 @@ export class SprintResult {
     return (document.querySelector('.main').innerHTML = `<div class="result">
     <button class="new-round">new game</button>
     <span>You earned ${this.results.points} points</span>
+    <span>Your longest streak - ${this.longestStreak} correct answers</span>
     <ul class="result_wrong">
     <h3>Wrong (${this.results.answers[0].length})</h3>
       ${rightResults.join('')}

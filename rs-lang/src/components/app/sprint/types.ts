@@ -22,6 +22,8 @@ export interface SprintResultType {
   points: number
   multiplier: number
   streak: number
+
+  streaks: number[]
 }
 
 export interface SprintSettings {
@@ -31,4 +33,5 @@ export interface SprintSettings {
   pageNumber: number
   freeGame: boolean
   pageStorage: number[]
+  basicPoints: number
 }
