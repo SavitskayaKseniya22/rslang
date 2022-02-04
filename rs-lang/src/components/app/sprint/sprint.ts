@@ -77,12 +77,12 @@ export class Sprint {
       </ul>
 
       <ul class="sprint__verdict">
-        <li class="sprint__verdict_wrong"> <button><i class="fas fa-times-circle"></i></button></li>
+        <li class="sprint__verdict_wrong"><button><i class="fas fa-times-circle"></i></button></li>
         <li class="sprint__verdict_true"><button><i class="fas fa-check-circle"></i></button></li>
       </ul>
-      <ul class="sprint__pagination">
-        <li class="sprint__pagination_previous"><button><i class="fas fa-arrow-circle-left"></i></button></li>
-        <li class="sprint__pagination_next"><button><i class="fas fa-arrow-circle-right"></i> </button></li>
+      <ul class="sprint__verdict">
+        <li class="sprint__verdict_wrong"><button><i class="fas fa-arrow-circle-left"></i></button></li>
+        <li class="sprint__verdict_true"><button><i class="fas fa-arrow-circle-right"></i> </button></li>
       </ul>
     </div>
   </div>`

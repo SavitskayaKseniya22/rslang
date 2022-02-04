@@ -4,6 +4,8 @@ import { Word, SprintResultType } from './types'
 export class SprintResult {
   results: SprintResultType
   longestStreak: number
+  correct: Word[]
+  wrong: Word[]
 
   constructor(results: SprintResultType) {
     this.results = results
@@ -14,14 +16,17 @@ export class SprintResult {
       .sort((a, b) => {
         return b.length - a.length
       })[0].length
+
+    this.correct = this.results.answers[1]
+    this.wrong = this.results.answers[0]
   }
 
   renderResult() {
-    const rightResults = this.results.answers[0].map((word) => {
+    const rightResults = this.wrong.map((word) => {
       return this.makeResultItem(word)
     })
 
-    const wrongResults = this.results.answers[1].map((word) => {
+    const wrongResults = this.correct.map((word) => {
       return this.makeResultItem(word)
     })
 
@@ -30,11 +35,11 @@ export class SprintResult {
     <span>You earned ${this.results.points} points</span>
     <span>Your longest streak - ${this.longestStreak} correct answers</span>
     <ul class="result_wrong">
-    <h3>Wrong (${this.results.answers[0].length})</h3>
+    <h3>Wrong (${this.wrong.length})</h3>
       ${rightResults.join('')}
     </ul>
     <ul class="result_right">
-    <h3>Correct (${this.results.answers[1].length})</h3>
+    <h3>Correct (${this.correct.length})</h3>
     ${wrongResults.join('')}</ul>
   </div>`)
   }
