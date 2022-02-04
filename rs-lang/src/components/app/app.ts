@@ -2,6 +2,7 @@ import ApiService from './api-service/api-service'
 import Authorization from './core/authorization/authorization'
 import MainPage from './core/main-page/main-page'
 import TextBookPage from './core/text-book-page/text-book-page'
+import { UserTemplate } from './interfaces/interfaces'
 import NavMenu from './nav-menu/nav-menu'
 
 class App {
@@ -10,8 +11,13 @@ class App {
   mainPage: MainPage
   textBook: TextBookPage
   authorization: Authorization
+  user: UserTemplate | null
   constructor() {
-    this.service = new ApiService()
+    this.user = null
+    if (localStorage.getItem('user')) {
+      this.user = JSON.parse(localStorage.getItem('user'))
+    }
+    this.service = new ApiService(this.user)
     this.authorization = new Authorization(this.service)
     this.mainPage = new MainPage()
     this.textBook = new TextBookPage(this.service)
@@ -44,7 +50,11 @@ class App {
     this.navMenu.render()
     this.mainPage.render()
     window.location.hash = 'main'
-    this.authorization.addListener()
+    if (this.user) {
+      this.authorization.renderLoggedIn(this.user.name)
+    } else {
+      this.authorization.addListener()
+    }
   }
 }
 export default App

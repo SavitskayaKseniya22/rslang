@@ -15,8 +15,15 @@ export interface Word {
   textExampleTranslate: string
 }
 
-export interface FormInfo{
+export interface FormInfo {
   email: string
   password: string
-  name?:string
-  }
+  name?: string
+}
+export interface UserTemplate {
+  message: string
+  token: string
+  refreshToken: string
+  userId: string
+  name: string
+}

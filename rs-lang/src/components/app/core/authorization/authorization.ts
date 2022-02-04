@@ -6,28 +6,30 @@ import './authorization.css'
 //auth-register-form
 //auth-overlay
 
-
 class Authorization {
   service: ApiService
-  
-  formData:FormInfo
+
+  formData: FormInfo
   constructor(service: ApiService) {
     this.service = service
     this.formData = {
-        email:'',
-        password:'',
+      email: '',
+      password: '',
     }
   }
-  renderLoggedIn(){
+  renderLoggedIn(name: string) {
     document.querySelector('.header-log-in-status')?.remove()
     const logged = document.createElement('div')
     logged.classList.add('header-logged-in-status')
     logged.innerHTML = `
-    <div>Name</div>
-    <div>Log out?</div>
+    <div>${name}</div>
+    <div class="log-out">Log out?</div>
     `
     document.querySelector('.header').append(logged)
-
+    document.querySelector(`.log-out`).addEventListener('click', () => {
+      localStorage.removeItem('user')
+      window.location.reload()
+    })
   }
   renderLogIn() {
     document.querySelector('.auth-overlay').classList.remove('hidden')
@@ -46,7 +48,7 @@ class Authorization {
  <button class="open-registration-button switch-form-btn">Register</button>
 </div>
  `
- this.addLogInListeners()
+    this.addLogInListeners()
   }
   renderAuthorization() {
     document.querySelector('.auth-overlay').classList.remove('hidden')
@@ -67,97 +69,94 @@ class Authorization {
  <button class="open-sign-in-button ">DELETE USER</button>
 </div>
  `
- this.addRegisterListeners()
+    this.addRegisterListeners()
   }
   addListener() {
-    document.querySelector('.header-log-in-status').addEventListener('click', ()=>{
-        this.renderLogIn()
+    document.querySelector('.header-log-in-status').addEventListener('click', () => {
+      this.renderLogIn()
     })
   }
   addLogInListeners() {
-    const eMail =  document.querySelector('.email-input') as HTMLInputElement
-    const pWord =  document.querySelector('.password-input') as HTMLInputElement
+    const eMail = document.querySelector('.email-input') as HTMLInputElement
+    const pWord = document.querySelector('.password-input') as HTMLInputElement
     const form = document.querySelector(`.auth-log-in-form`)
     document.querySelector('.close-form').addEventListener('click', () => {
-     console.log('closing form')
       form.innerHTML = ``
       form.classList.add('hidden')
       document.querySelector('.auth-overlay').classList.add('hidden')
     })
-    document.querySelector('.open-registration-button').addEventListener('click', ()=>{
-        form.innerHTML=''
-        form.classList.add('hidden')
-        this.renderAuthorization()
+    document.querySelector('.open-registration-button').addEventListener('click', () => {
+      form.innerHTML = ''
+      form.classList.add('hidden')
+      this.renderAuthorization()
+      this.formData = {
+        email: '',
+        password: '',
+      }
     })
-    document.querySelector('.email-input').addEventListener('input', (e)=>{
-        this.formData.email = (e.target as HTMLInputElement).value
-        console.log(this.formData.email)
+    document.querySelector('.email-input').addEventListener('input', (e) => {
+      this.formData.email = (e.target as HTMLInputElement).value
     })
-    document.querySelector('.password-input').addEventListener('input', (e)=>{
-        this.formData.password = (e.target as HTMLInputElement).value
-        console.log(this.formData.password)
+    document.querySelector('.password-input').addEventListener('input', (e) => {
+      this.formData.password = (e.target as HTMLInputElement).value
     })
-    document.querySelector('.submit-btn').addEventListener('click',async ()=>{
-        if(eMail.validity.valid && pWord.validity.valid){
-            console.log('everything is guchi logging in user')
-             const resp = await this.service.requestLogIn(this.formData)
-             console.log('user has sucessfully logged in', resp)
-             form.innerHTML = ``
-             form.classList.add('hidden')
-             document.querySelector('.auth-overlay').classList.add('hidden')
-             this.formData = {
-                email:'',
-                password:'',
-            }
-            this.renderLoggedIn()
-             
-        } else{
-            console.log('oops')
-         }
-         })
+    document.querySelector('.submit-btn').addEventListener('click', async () => {
+      if (eMail.validity.valid && pWord.validity.valid) {
+        try {
+          const resp = await this.service.requestLogIn(this.formData)
+          form.innerHTML = ``
+          form.classList.add('hidden')
+          document.querySelector('.auth-overlay').classList.add('hidden')
+          this.formData = {
+            email: '',
+            password: '',
+          }
+          localStorage.setItem('user', JSON.stringify(resp))
+          this.renderLoggedIn(resp.name)
+        } catch (err) {
+          alert(err)
+        }
+      }
+    })
   }
-  addRegisterListeners(){
-      const eMail =  document.querySelector('.email-input') as HTMLInputElement
-      const pWord =  document.querySelector('.password-input') as HTMLInputElement
-      const nom =  document.querySelector('.name-input') as HTMLInputElement
+  addRegisterListeners() {
+    const eMail = document.querySelector('.email-input') as HTMLInputElement
+    const pWord = document.querySelector('.password-input') as HTMLInputElement
+    const nom = document.querySelector('.name-input') as HTMLInputElement
     const form = document.querySelector(`.auth-register-form`)
     document.querySelector('.close-form').addEventListener('click', () => {
       form.innerHTML = ``
       form.classList.add('hidden')
       document.querySelector('.auth-overlay').classList.add('hidden')
     })
-    document.querySelector('.open-sign-in-button').addEventListener('click', ()=>{
-        form.innerHTML=''
-        form.classList.add('hidden')
-        this.renderLogIn()
+    document.querySelector('.open-sign-in-button').addEventListener('click', () => {
+      form.innerHTML = ''
+      form.classList.add('hidden')
+      this.renderLogIn()
     })
-    document.querySelector('.email-input').addEventListener('input', (e)=>{
-        this.formData.email = (e.target as HTMLInputElement).value
-        console.log(this.formData.email)
+    document.querySelector('.email-input').addEventListener('input', (e) => {
+      this.formData.email = (e.target as HTMLInputElement).value
     })
-    document.querySelector('.password-input').addEventListener('input', (e)=>{
-        this.formData.password = (e.target as HTMLInputElement).value
-        console.log(this.formData.password)
+    document.querySelector('.password-input').addEventListener('input', (e) => {
+      this.formData.password = (e.target as HTMLInputElement).value
     })
-    document.querySelector('.name-input').addEventListener('input', (e)=>{
-        this.formData.name = (e.target as HTMLInputElement).value
-        console.log(this.formData.password)
+    document.querySelector('.name-input').addEventListener('input', (e) => {
+      this.formData.name = (e.target as HTMLInputElement).value
     })
-    document.querySelector('.register-button').addEventListener('click',async ()=>{
-   if(eMail.validity.valid && pWord.validity.valid && nom.validity.valid){
-       console.log('everything is guchi creating user....')
+    document.querySelector('.register-button').addEventListener('click', async () => {
+      if (eMail.validity.valid && pWord.validity.valid && nom.validity.valid) {
+        console.log('everything is guchi creating user....')
         const resp = await this.service.requestRegistration(this.formData)
         console.log('user was sucessfully created', resp)
         this.formData = {
-            email:'',
-            password:'',
+          email: '',
+          password: '',
         }
-
-   } else{
-       console.log('oops')
-    }
+        form.innerHTML = ``
+        form.classList.add('hidden')
+        document.querySelector('.auth-overlay').classList.add('hidden')
+      } 
     })
   }
- 
 }
 export default Authorization

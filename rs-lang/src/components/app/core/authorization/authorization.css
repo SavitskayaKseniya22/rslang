@@ -1,5 +1,5 @@
 .header-log-in-status {
-    height:20%;
+  height: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,17 +7,24 @@
   background-color: white;
   color: #345383;
   font-size: medium;
+  cursor: pointer;
 }
 
-.header-logged-in-status{
-    height:20%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2%;
-    background-color: white;
-    color: #345383;
-    font-size: medium;
+.header-logged-in-status {
+  height: 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2%;
+  width: 20%;
+  color: #345383;
+  font-size: medium;
+}
+.header-logged-in-status div {
+  background-color: white;
+  width: 40%;
+  height: 50%;
+  cursor: pointer;
 }
 .lock-icon {
   font-size: medium;
