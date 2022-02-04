@@ -16,6 +16,11 @@ body {
   flex-direction: column;
   align-items: center;
 }
+
+.hidden {
+  display: none !important;
+}
+
 nav {
   display: flex;
   flex-direction: column;
@@ -33,7 +38,7 @@ a {
 }
 .app {
   min-height: 100vh;
-  width: 80vw;
+  width: 80%;
 }
 .main {
   margin: 0 auto;
@@ -82,6 +87,8 @@ a {
   height: 10vh;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   background-color: #345383;
   color: white;
+  padding: 0 1%;
 }

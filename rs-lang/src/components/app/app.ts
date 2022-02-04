@@ -1,4 +1,5 @@
 import ApiService from './api-service/api-service'
+import Authorization from './core/authorization/authorization'
 import MainPage from './core/main-page/main-page'
 import TextBookPage from './core/text-book-page/text-book-page'
 import NavMenu from './nav-menu/nav-menu'
@@ -8,19 +9,25 @@ class App {
   service: ApiService
   mainPage: MainPage
   textBook: TextBookPage
+  authorization: Authorization
   constructor() {
     this.service = new ApiService()
+    this.authorization = new Authorization(this.service)
     this.mainPage = new MainPage()
     this.textBook = new TextBookPage(this.service)
     this.navMenu = new NavMenu(this.service, this.mainPage, this.textBook)
   }
   run(): void {
     document.querySelector('.body').innerHTML = `
+      <div class="auth-overlay hidden">
+      <div class="auth-form auth-log-in-form hidden"></div>
+      <div class="auth-form auth-register-form hidden"></div>
+      </div>
       <aside class="navbar"></aside>
       <div class="app">
       <header class="header">
       <h1 class ="header-page-title"> Main Page</h1>
-      <div class="header-log-in-status">Log in</div>
+      <div class="header-log-in-status"><i class="fas fa-unlock-alt lock-icon"></i>Log in</div>
       </header>
       <main class="main"></main>
       <footer class="footer">
@@ -37,6 +44,7 @@ class App {
     this.navMenu.render()
     this.mainPage.render()
     window.location.hash = 'main'
+    this.authorization.addListener()
   }
 }
 export default App
