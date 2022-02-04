@@ -8,6 +8,17 @@
   color: #345383;
   font-size: medium;
 }
+
+.header-logged-in-status{
+    height:20%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2%;
+    background-color: white;
+    color: #345383;
+    font-size: medium;
+}
 .lock-icon {
   font-size: medium;
 }
@@ -58,11 +69,11 @@
   text-indent: 43px;
 }
 
-.sign-in-button {
+.submit-btn {
   background-color: green;
   color: white;
 }
-.open-registration {
+.switch-form-btn {
   background-color: blue;
   color: white;
 }

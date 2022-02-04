@@ -14,3 +14,9 @@ export interface Word {
   textMeaningTranslate: string
   textExampleTranslate: string
 }
+
+export interface FormInfo{
+  email: string
+  password: string
+  name?:string
+  }
