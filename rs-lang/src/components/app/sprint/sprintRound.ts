@@ -1,47 +1,26 @@
 import { getRandomNumber, isEven } from './utils'
 import { Sound } from './sound'
-
-import ApiService from '../api-service/api-service'
 import { SprintResult } from './sprintResult'
+import { Word, SprintResultType, SprintSettings } from './types'
 
 export class SprintRound {
   sugestedWord: Word
   sugestedAnswer: Word
-  results: Word[][]
   sound: Sound
   words: Word[]
-  lvl: number
-  service: ApiService
-  pageNumber: number
-  pageNumStorage: number[]
-  freeGame: boolean
-  points: { value: number }
+  results: SprintResultType
+  settings: SprintSettings
 
-  constructor(
-    results: Word[][],
-    words: Word[],
-    lvl: number,
-    service: ApiService,
-    pageNum: number,
-    freeGame: boolean,
-    points: { value: number }
-  ) {
+  constructor(results: SprintResultType, words: Word[], settings: SprintSettings) {
     this.results = results
     this.words = words
-    this.lvl = lvl
-    this.service = service
-    this.pageNumber = pageNum
-    this.pageNumStorage = [this.pageNumber]
-    this.freeGame = freeGame
-    this.points = points
+    this.settings = settings
     this.initListener()
   }
 
-  updateRound(words: Word[], results: Word[][], points: { value: number }) {
+  updateRound(words: Word[], results: SprintResultType) {
     this.words = words
-    this.points = points
     this.results = results
-    this.pageNumStorage = [this.pageNumber]
   }
 
   makeRound() {
@@ -60,33 +39,34 @@ export class SprintRound {
     if (this.words.length > 1) {
       document.querySelector('.sprint__words').innerHTML = this.makeRound()
     } else {
-      if (this.freeGame) {
+      if (this.settings.freeGame) {
         let randomNum = getRandomNumber(29)
-        while (this.pageNumStorage.includes(randomNum)) {
+        console.log(this.settings.pageStorage)
+        while (this.settings.pageStorage.includes(randomNum)) {
           randomNum = getRandomNumber(29)
         }
-        this.pageNumber = randomNum
+        this.settings.pageNumber = randomNum
       } else {
-        this.pageNumber--
+        this.settings.pageNumber--
       }
 
-      if (this.pageNumber >= 0) {
-        this.pageNumStorage.push(this.pageNumber)
-        this.words = await this.service.getWords(this.lvl, this.pageNumber)
+      if (this.settings.pageNumber >= 0) {
+        this.settings.pageStorage.push(this.settings.pageNumber)
+        this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
-        new SprintResult(this.results, this.points).renderResult()
+        new SprintResult(this.results).renderResult()
       }
     }
   }
 
   saveMiddleResult(isTrue: boolean) {
     if (isTrue) {
-      this.results[1].push(this.sugestedWord)
-      this.points.value += 20
-      document.querySelector('.sprint__counter').innerHTML = String(this.points.value)
+      this.results.answers[1].push(this.sugestedWord)
+      this.results.points += 20 * this.results.multiplier
+      document.querySelector('.sprint__counter').innerHTML = String(this.results.points)
     } else {
-      this.results[0].push(this.sugestedWord)
+      this.results.answers[0].push(this.sugestedWord)
     }
   }
 
@@ -102,21 +82,4 @@ export class SprintRound {
       }
     })
   }
-}
-
-export interface Word {
-  id: string
-  group: 0
-  page: 0
-  word: 'string'
-  image: 'string'
-  audio: 'string'
-  audioMeaning: 'string'
-  audioExample: 'string'
-  textMeaning: 'string'
-  textExample: 'string'
-  transcription: 'string'
-  wordTranslate: 'string'
-  textMeaningTranslate: 'string'
-  textExampleTranslate: 'string'
 }

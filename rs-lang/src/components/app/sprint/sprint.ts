@@ -1,41 +1,40 @@
 import './sprint.css'
 import ApiService from '../api-service/api-service'
-import { SprintRound, Word } from './sprintRound'
+import { SprintRound } from './sprintRound'
 import { SprintResult } from './sprintResult'
 import { getRandomNumber } from './utils'
+import { Word, SprintResultType, SprintSettings } from './types'
 
 export class Sprint {
-  service: ApiService
-  lvl: number
   round: SprintRound
-  results: Word[][]
-  timerValue: number
+  results: SprintResultType
   words: Word[]
+  settings: SprintSettings
   pageNumber: number
-  freeGame: boolean
-  points: { value: number }
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
-    this.lvl = lvl
-    this.service = service
-    this.timerValue = 5
-    this.results = [[], []]
-    this.pageNumber = pageNumber ?? getRandomNumber(29)
-    this.freeGame = pageNumber ? false : true
-    this.points = { value: 0 }
+    this.settings = {
+      service: service,
+      lvl: lvl,
+      timerValue: 20,
+      pageNumber: pageNumber ?? getRandomNumber(29),
+      freeGame: pageNumber ? false : true,
+      pageStorage: [],
+    }
+    this.settings.pageStorage.push(this.settings.pageNumber)
+    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0 }
     this.initListener()
   }
 
   async updateSprint() {
-    this.words = await this.service.getWords(this.lvl, this.pageNumber)
-    this.results = [[], []]
-    this.points = { value: 0 }
-    this.round.updateRound(this.words, this.results, this.points)
+    this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0 }
+    this.round.updateRound(this.words, this.results)
     this.render()
   }
 
   addTimer() {
-    let timerCurrentValue = this.timerValue
+    let timerCurrentValue = this.settings.timerValue
     const timerId = setInterval(() => {
       if (document.querySelector('.sprint__timer')) {
         document.querySelector('.sprint__timer').innerHTML = String((timerCurrentValue -= 1))
@@ -47,15 +46,13 @@ export class Sprint {
     setTimeout(() => {
       clearInterval(timerId)
 
-      new SprintResult(this.results, this.points).renderResult()
-    }, this.timerValue * 1000 + 1000)
+      new SprintResult(this.results).renderResult()
+    }, this.settings.timerValue * 1000 + 1000)
   }
 
   async render() {
-    this.words = this.words ?? (await this.service.getWords(this.lvl, this.pageNumber))
-    this.round =
-      this.round ??
-      new SprintRound(this.results, this.words, this.lvl, this.service, this.pageNumber, this.freeGame, this.points)
+    this.words = this.words ?? (await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber))
+    this.round = this.round ?? new SprintRound(this.results, this.words, this.settings)
     document.querySelector('.main').innerHTML = this.makeGame()
     this.addTimer()
   }
@@ -63,7 +60,7 @@ export class Sprint {
   makeGame() {
     return `<div class="sprint">
     <h2>Sprint</h2>
-    <div class="sprint__timer">${this.timerValue}</div>
+    <div class="sprint__timer">${this.settings.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
     <div class="sprint__container">
       <span class="sprint__counter">0</span>
