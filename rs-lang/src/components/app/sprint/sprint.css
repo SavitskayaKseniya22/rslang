@@ -22,6 +22,7 @@ button {
   align-items: center;
   position: relative;
   padding: 1rem;
+  background-color: antiquewhite;
 }
 
 .sprint__container,

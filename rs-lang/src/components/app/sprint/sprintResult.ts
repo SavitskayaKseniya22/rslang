@@ -30,7 +30,7 @@ export class SprintResult {
       return this.makeResultItem(word)
     })
 
-    return (document.querySelector('.main').innerHTML = `<div class="result">
+    return (document.querySelector('.sprint__container').innerHTML = `<div class="result">
     <button class="new-round">new game</button>
     <span>You earned ${this.results.points} points</span>
     <span>Your longest streak - ${this.longestStreak} correct answers</span>

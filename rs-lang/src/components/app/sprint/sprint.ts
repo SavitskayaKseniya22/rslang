@@ -16,7 +16,7 @@ export class Sprint {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 10,
+      timerValue: 60,
       pageNumber: pageNumber ?? getRandomNumber(29),
       freeGame: pageNumber ? false : true,
       pageStorage: [],
@@ -63,6 +63,7 @@ export class Sprint {
     <h2>Sprint</h2>
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
+    <button class="sprint__fullscreen"><i class="fas fa-expand"></i></button>
     <div class="sprint__container">
       <span class="sprint__score">0</span>
       <span class="sprint__points">0</span>
@@ -93,6 +94,17 @@ export class Sprint {
       const target = e.target as HTMLElement
       if (target.closest('.new-round')) {
         await this.updateSprint()
+      } else if (target.closest('.sprint__fullscreen')) {
+        const toFullScreen = target.closest('.sprint__fullscreen')
+        if (toFullScreen.classList.contains('active-fullscreen')) {
+          toFullScreen.innerHTML = `<i class="fas fa-expand"></i>`
+          toFullScreen.classList.remove('active-fullscreen')
+          document.exitFullscreen()
+        } else {
+          toFullScreen.innerHTML = `<i class="fas fa-compress"></i>`
+          toFullScreen.classList.add('active-fullscreen')
+          document.documentElement.requestFullscreen()
+        }
       }
     })
   }
