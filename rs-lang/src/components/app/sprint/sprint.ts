@@ -16,7 +16,7 @@ export class Sprint {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 60,
+      timerValue: 5,
       pageNumber: pageNumber ?? getRandomNumber(29),
       freeGame: pageNumber ? false : true,
       pageStorage: [],
@@ -60,10 +60,12 @@ export class Sprint {
 
   makeGame() {
     return `<div class="sprint">
+    <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
     <h2>Sprint</h2>
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
     <button class="sprint__fullscreen"><i class="fas fa-expand"></i></button>
+    <button class="sprint__background_toggle"><i class="fas fa-music"></i></button>
     <div class="sprint__container">
       <span class="sprint__score">0</span>
       <span class="sprint__points">0</span>
@@ -105,6 +107,9 @@ export class Sprint {
           toFullScreen.classList.add('active-fullscreen')
           document.documentElement.requestFullscreen()
         }
+      } else if (target.closest('.sprint__background_toggle')) {
+        const music = document.querySelector('.sprint__background') as HTMLAudioElement
+        music.paused ? music.play() : music.pause()
       }
     })
   }
