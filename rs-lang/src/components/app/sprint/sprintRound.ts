@@ -10,6 +10,7 @@ export class SprintRound {
   words: Word[]
   results: SprintResultType
   settings: SprintSettings
+  music: HTMLAudioElement
 
   constructor(results: SprintResultType, words: Word[], settings: SprintSettings) {
     this.results = results
@@ -62,6 +63,8 @@ export class SprintRound {
 
   saveMiddleResult(isTrue: boolean) {
     if (isTrue) {
+      this.music = document.querySelector('.sprint__answer_correct')
+
       if (this.results.streak < 3) {
         this.results.streak++
         document.querySelector(`.streak${this.results.streak}`).classList.add('counter-full')
@@ -74,11 +77,14 @@ export class SprintRound {
       this.results.points += this.getPoints()
       document.querySelector('.sprint__score').innerHTML = String(this.results.points)
       this.fillStreak(1)
+      this.music.play()
     } else {
+      this.music = document.querySelector('.sprint__answer_wrong')
       this.results.answers[0].push(this.sugestedWord)
       this.clearStreak()
       this.results.multiplier = 1
       this.fillStreak(0)
+      this.music.play()
     }
 
     document.querySelector('.sprint__points').innerHTML = String(this.getPoints())

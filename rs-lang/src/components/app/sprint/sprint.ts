@@ -11,6 +11,7 @@ export class Sprint {
   words: Word[]
   settings: SprintSettings
   pageNumber: number
+  music: HTMLAudioElement
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
     this.settings = {
@@ -61,6 +62,9 @@ export class Sprint {
   makeGame() {
     return `<div class="sprint">
     <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
+    <audio class="sprint__answer_correct" src="./sounds/correctAnswer.mp3"></audio>
+    <audio class="sprint__answer_wrong" src="./sounds/wrongAnswer.mp3"></audio>
+    
     <h2>Sprint</h2>
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
@@ -95,7 +99,13 @@ export class Sprint {
     document.addEventListener('click', async (e) => {
       const target = e.target as HTMLElement
       if (target.closest('.new-round')) {
+        this.music = document.querySelector('.sprint__background')
+        const isPlayed = !this.music.paused
         await this.updateSprint()
+        if (isPlayed) {
+          this.music = document.querySelector('.sprint__background')
+          this.music.play()
+        }
       } else if (target.closest('.sprint__fullscreen')) {
         const toFullScreen = target.closest('.sprint__fullscreen')
         if (toFullScreen.classList.contains('active-fullscreen')) {
