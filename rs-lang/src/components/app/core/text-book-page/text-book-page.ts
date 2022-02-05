@@ -1,5 +1,5 @@
 import ApiService from '../../api-service/api-service'
-import { Word } from '../../interfaces/interfaces'
+import { UserWordInfo, Word } from '../../interfaces/interfaces'
 import './text-book-page.css'
 
 class TextBookPage {
@@ -14,6 +14,7 @@ class TextBookPage {
     this.curGrp = 0
     this.difficultWords = []
     this.learnedWords = []
+   
   }
   async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
@@ -48,20 +49,27 @@ class TextBookPage {
 
   async getWords() {
     document.querySelector(`.tb-words`).innerHTML = ``
-    const words = await this.service.requestWords(this.curGrp, this.curPage)
+    if(this.service.user !== null){
+      this.difficultWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"difficult"}]}`)
+      this.learnedWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"learned"}]}`)
+      console.log(this.difficultWords)
+      console.log(this.learnedWords)
+    }
+    const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
     words.forEach((word) => {
       this.drawWord(word)
     })
   }
   drawWord(word: Word) {
+    const id = word.id ? word.id : word._id
     document.querySelector(`.tb-words`).innerHTML += `
-    <div class="tb-word" data-tb-wrd-id=${word.id}>
+    <div class="tb-word" data-tb-wrd-id=${id}>
     <img class="tb-img" src=${this.service.apiUrl}/${word.image}>
-    <div class="tb-word-info">
+    <div data-tb-wrd-info=${id} class="tb-word-info">
     <div class="tb-word-title-translation-pronounciation">
         <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
         <h3 class="tb-word-translation">${word.wordTranslate}</h3>
-        <button class="pronounce" data-tb-audio-btn-id=${word.id} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${word.id} class="fas fa-volume-up"></i></button>
+        <button class="pronounce" data-tb-audio-btn-id=${id} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${id} class="fas fa-volume-up"></i></button>
     </div>
     <div class="tb-word-definition">
         <p class="tb-definition-english">${word.textMeaning}</p>
@@ -72,9 +80,25 @@ class TextBookPage {
         <p class="tb-sentence-translation">${word.textExampleTranslate}</p>
     </div>
     </div>
-<audio src=${this.service.apiUrl}/${word.audio}  data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${word.id} data-tb-audio-id=${word.id}></audio>
+<audio src=${this.service.apiUrl}/${word.audio}  data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
 </div>
     `
+    if (this.service.user !== null) {
+      document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
+      <div data-tb-useid="${id}" class="tb-user-functionality">
+      <button data-tb-diffid="${id}" class="tb-add-difficult-btn">Mark as difficult</button>
+       <div class="tb-learning-progress">0/3</div>
+      <button data-tb-learnid="${id}" class="tb-add-learned-btn">Mark as Learned</button>
+  </div>
+      `
+      if(this.difficultWords.find((el)=>el._id === id)){
+        document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
+      }
+      if(this.learnedWords.find((el)=>el._id === id)){
+        document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
+      }
+
+    }
   }
 
   addListeners() {
@@ -100,6 +124,32 @@ class TextBookPage {
         this.playAudio(target.dataset.audioPaths)
       })
     })
+    if(this.service.user!==null){
+    document.querySelectorAll('.tb-user-functionality').forEach((div)=>{
+    div.addEventListener('click', (e)=>{
+     const target = e.target as HTMLElement
+     if(target.classList.contains('tb-add-difficult-btn')){
+       const id = target.dataset.tbDiffid
+       if(this.difficultWords.find((el)=>el._id === id|| this.learnedWords.find((el)=>el._id === id))){
+         this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {difficulty:'difficult', optional:{timesGuessed:0}})
+       } else{
+      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'difficult', optional:{timesGuessed:0}})}
+      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.remove('tb-learned-word')
+      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
+     }
+     if(target.classList.contains('tb-add-learned-btn')){
+      const id = target.dataset.tbLearnid
+      if(this.difficultWords.find((el)=>el._id === id) || this.learnedWords.find((el)=>el._id === id)){
+        this.service.requestUpdateUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0}})
+      }else{
+      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0}})
+      }
+      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
+      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.remove('tb-difficult-word')
+     }
+    })
+    })
+  }
   }
   async switchPage(direction: string) {
     console.log(direction)
@@ -134,25 +184,6 @@ class TextBookPage {
     })
     audio.play()
     console.log(playlist)
-    /*const pronounciation = document.querySelector(`[data-tb-p-audio-id="${id}"]`) as HTMLAudioElement
-    const meaning = document.querySelector(`[data-tb-m-audio-id="${id}"]`) as HTMLAudioElement
-    const example = document.querySelector(`[data-tb-ex-audio-id="${id}"]`) as HTMLAudioElement
-    const playlist = [pronounciation, meaning, example]
-    console.log(playlist)
-    playlist.forEach((track, idx, arr) => {
-      console.log(idx)
-      if (idx < arr.length - 1) {
-        console.log(playlist[idx + 1])
-        track.addEventListener(
-          'ended',
-          () => {
-            playlist[idx + 1].play()
-          },
-          { once: true }
-        )
-      }
-    })
-    pronounciation.play()*/
   }
 }
 

@@ -112,6 +112,7 @@ class Authorization {
             password: '',
           }
           localStorage.setItem('user', JSON.stringify(resp))
+          this.service.user = resp
           this.renderLoggedIn(resp.name)
         } catch (err) {
           alert(err)
@@ -155,7 +156,7 @@ class Authorization {
         form.innerHTML = ``
         form.classList.add('hidden')
         document.querySelector('.auth-overlay').classList.add('hidden')
-      } 
+      }
     })
   }
 }
