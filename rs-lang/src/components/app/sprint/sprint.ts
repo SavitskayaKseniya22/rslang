@@ -22,7 +22,9 @@ export class Sprint {
       freeGame: pageNumber ? false : true,
       pageStorage: [],
       basicPoints: 10,
+      isMusicPlaying: false,
     }
+
     this.settings.pageStorage.push(this.settings.pageNumber)
     this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
     this.initListener()
@@ -68,7 +70,7 @@ export class Sprint {
     <h2>Sprint</h2>
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
-    <button class="sprint__fullscreen"><i class="fas fa-expand"></i></button>
+    <button class="sprint__fullscreen_toggle"><i class="fas fa-expand"></i></button>
     <button class="sprint__background_toggle"><i class="fas fa-music"></i></button>
     <div class="sprint__container">
       <span class="sprint__score">0</span>
@@ -95,31 +97,52 @@ export class Sprint {
   </div>`
   }
 
+  toggleFullScreen(target: HTMLElement) {
+    const toFullScreen = target.closest('.sprint__fullscreen_toggle')
+    if (toFullScreen.classList.contains('active-fullscreen')) {
+      toFullScreen.innerHTML = `<i class="fas fa-expand"></i>`
+      toFullScreen.classList.remove('active-fullscreen')
+      document.exitFullscreen()
+    } else {
+      toFullScreen.innerHTML = `<i class="fas fa-compress"></i>`
+      toFullScreen.classList.add('active-fullscreen')
+      document.documentElement.requestFullscreen()
+    }
+  }
+
+  toggleMusic() {
+    const music = document.querySelector('.sprint__background') as HTMLAudioElement
+
+    if (music.paused) {
+      music.play()
+      this.settings.isMusicPlaying = true
+    } else {
+      music.pause()
+      this.settings.isMusicPlaying = false
+    }
+  }
+
+  restoreMusic() {
+    if (this.settings.isMusicPlaying) {
+      this.music = document.querySelector('.sprint__background')
+      this.music.play()
+    }
+  }
+
+  async startNewSprint() {
+    await this.updateSprint()
+    this.restoreMusic()
+  }
+
   initListener() {
     document.addEventListener('click', async (e) => {
       const target = e.target as HTMLElement
       if (target.closest('.new-round')) {
-        this.music = document.querySelector('.sprint__background')
-        const isPlayed = !this.music.paused
-        await this.updateSprint()
-        if (isPlayed) {
-          this.music = document.querySelector('.sprint__background')
-          this.music.play()
-        }
-      } else if (target.closest('.sprint__fullscreen')) {
-        const toFullScreen = target.closest('.sprint__fullscreen')
-        if (toFullScreen.classList.contains('active-fullscreen')) {
-          toFullScreen.innerHTML = `<i class="fas fa-expand"></i>`
-          toFullScreen.classList.remove('active-fullscreen')
-          document.exitFullscreen()
-        } else {
-          toFullScreen.innerHTML = `<i class="fas fa-compress"></i>`
-          toFullScreen.classList.add('active-fullscreen')
-          document.documentElement.requestFullscreen()
-        }
+        this.startNewSprint()
+      } else if (target.closest('.sprint__fullscreen_toggle')) {
+        this.toggleFullScreen(target)
       } else if (target.closest('.sprint__background_toggle')) {
-        const music = document.querySelector('.sprint__background') as HTMLAudioElement
-        music.paused ? music.play() : music.pause()
+        this.toggleMusic()
       }
     })
   }

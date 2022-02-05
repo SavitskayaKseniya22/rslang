@@ -63,8 +63,6 @@ export class SprintRound {
 
   saveMiddleResult(isTrue: boolean) {
     if (isTrue) {
-      this.music = document.querySelector('.sprint__answer_correct')
-
       if (this.results.streak < 3) {
         this.results.streak++
         document.querySelector(`.streak${this.results.streak}`).classList.add('counter-full')
@@ -77,17 +75,24 @@ export class SprintRound {
       this.results.points += this.getPoints()
       document.querySelector('.sprint__score').innerHTML = String(this.results.points)
       this.fillStreak(1)
-      this.music.play()
     } else {
-      this.music = document.querySelector('.sprint__answer_wrong')
       this.results.answers[0].push(this.sugestedWord)
       this.clearStreak()
       this.results.multiplier = 1
       this.fillStreak(0)
-      this.music.play()
     }
 
+    this.toggleSoundEffects(isTrue)
     document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
+  }
+
+  toggleSoundEffects(isTrue: boolean) {
+    if (this.settings.isMusicPlaying) {
+      this.music = isTrue
+        ? document.querySelector('.sprint__answer_correct')
+        : document.querySelector('.sprint__answer_wrong')
+      this.music.play()
+    }
   }
 
   getPoints() {
@@ -106,25 +111,26 @@ export class SprintRound {
     this.results.streak = 0
   }
 
+  startNewRound(isTrue: boolean) {
+    this.saveMiddleResult(isTrue)
+    this.renderRound()
+  }
+
   initListener() {
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement
       if (target.closest('.sprint__verdict_wrong')) {
-        this.saveMiddleResult(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        this.renderRound()
+        this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
       } else if (target.closest('.sprint__verdict_true')) {
-        this.saveMiddleResult(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        this.renderRound()
+        this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
       }
     })
 
     document.addEventListener('keydown', (event) => {
       if (event.code == 'ArrowLeft') {
-        this.saveMiddleResult(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        this.renderRound()
+        this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
       } else if (event.code == 'ArrowRight') {
-        this.saveMiddleResult(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        this.renderRound()
+        this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
       }
     })
   }

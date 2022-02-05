@@ -34,4 +34,5 @@ export interface SprintSettings {
   freeGame: boolean
   pageStorage: number[]
   basicPoints: number
+  isMusicPlaying: boolean
 }
