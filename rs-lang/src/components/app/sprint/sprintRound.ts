@@ -16,7 +16,6 @@ export class SprintRound {
     this.results = results
     this.words = words
     this.settings = settings
-
     this.initListener()
   }
 
@@ -57,6 +56,7 @@ export class SprintRound {
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
         new SprintResult(this.results).renderResult()
+        this.settings.isRoundOver = true
       }
     }
   }
@@ -119,18 +119,22 @@ export class SprintRound {
   initListener() {
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement
-      if (target.closest('.sprint__verdict_wrong')) {
-        this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-      } else if (target.closest('.sprint__verdict_true')) {
-        this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
+      if (!this.settings.isRoundOver) {
+        if (target.closest('.sprint__verdict_wrong')) {
+          this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
+        } else if (target.closest('.sprint__verdict_true')) {
+          this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
+        }
       }
     })
 
     document.addEventListener('keydown', (event) => {
-      if (event.code == 'ArrowLeft') {
-        this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-      } else if (event.code == 'ArrowRight') {
-        this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
+      if (!this.settings.isRoundOver) {
+        if (event.code == 'ArrowLeft') {
+          this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
+        } else if (event.code == 'ArrowRight') {
+          this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
+        }
       }
     })
   }

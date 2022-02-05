@@ -35,4 +35,5 @@ export interface SprintSettings {
   pageStorage: number[]
   basicPoints: number
   isMusicPlaying: boolean
+  isRoundOver: boolean
 }

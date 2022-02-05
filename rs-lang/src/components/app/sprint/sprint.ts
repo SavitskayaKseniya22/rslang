@@ -12,29 +12,26 @@ export class Sprint {
   settings: SprintSettings
   pageNumber: number
   music: HTMLAudioElement
+  isBookPage: boolean
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
+    this.isBookPage = pageNumber ? true : false
+
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 5,
+      timerValue: 100,
       pageNumber: pageNumber ?? getRandomNumber(29),
-      freeGame: pageNumber ? false : true,
+      freeGame: this.isBookPage ? false : true,
       pageStorage: [],
       basicPoints: 10,
       isMusicPlaying: false,
+      isRoundOver: false,
     }
 
     this.settings.pageStorage.push(this.settings.pageNumber)
-    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
-    this.initListener()
-  }
 
-  async updateSprint() {
-    this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
-    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
-    this.round.updateRound(this.words, this.results)
-    this.render()
+    this.initListener()
   }
 
   addTimer() {
@@ -51,12 +48,17 @@ export class Sprint {
       clearInterval(timerId)
 
       new SprintResult(this.results).renderResult()
+      this.settings.isRoundOver = true
     }, this.settings.timerValue * 1000 + 1000)
   }
 
   async render() {
-    this.words = this.words ?? (await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber))
-    this.round = this.round ?? new SprintRound(this.results, this.words, this.settings)
+    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
+    this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+    this.round
+      ? this.round.updateRound(this.words, this.results)
+      : (this.round = new SprintRound(this.results, this.words, this.settings))
+
     document.querySelector('.main').innerHTML = this.makeGame()
     this.addTimer()
   }
@@ -112,7 +114,6 @@ export class Sprint {
 
   toggleMusic() {
     const music = document.querySelector('.sprint__background') as HTMLAudioElement
-
     if (music.paused) {
       music.play()
       this.settings.isMusicPlaying = true
@@ -130,7 +131,12 @@ export class Sprint {
   }
 
   async startNewSprint() {
-    await this.updateSprint()
+    this.settings.isRoundOver = false
+
+    if (!this.isBookPage) {
+      this.settings.pageNumber = getRandomNumber(29)
+    }
+    await this.render()
     this.restoreMusic()
   }
 
