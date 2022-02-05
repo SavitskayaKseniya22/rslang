@@ -162,7 +162,6 @@ class ApiService {
     })
     if (res.ok) {
       const content = await res.json()
-      console.log(content[0].paginatedResults)
       return content[0].paginatedResults
     } else {
       throw new Error('something went wrong')

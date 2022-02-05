@@ -6,14 +6,14 @@ class TextBookPage {
   service: ApiService
   curPage: number
   curGrp: number
-  difficultWords: Word[] | undefined[]
-  learnedWords: Word[] | undefined[]
+  /*difficultWords: Word[] | undefined[]
+  learnedWords: Word[] | undefined[]*/
   constructor(service: ApiService) {
     this.service = service
     this.curPage = 0
     this.curGrp = 0
-    this.difficultWords = []
-    this.learnedWords = []
+    /*this.difficultWords = []
+    this.learnedWords = []*/
    
   }
   async render() {
@@ -45,20 +45,25 @@ class TextBookPage {
     </div>`
     await this.getWords()
     this.addListeners()
+    this.addControls()
   }
 
   async getWords() {
     document.querySelector(`.tb-words`).innerHTML = ``
     if(this.service.user !== null){
-      this.difficultWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"difficult"}]}`)
-      this.learnedWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"learned"}]}`)
-      console.log(this.difficultWords)
-      console.log(this.learnedWords)
-    }
+      /*this.difficultWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"difficult"}]}`)
+      this.learnedWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"learned"}]}`)*/
+      const words:Word[] = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId, String(this.curGrp),String(this.curPage),'20')
+      console.log(words)
+      words.forEach((word) => {
+        this.drawWord(word)
+      })
+    } else {
     const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
     words.forEach((word) => {
       this.drawWord(word)
     })
+    }
   }
   drawWord(word: Word) {
     const id = word.id ? word.id : word._id
@@ -80,24 +85,27 @@ class TextBookPage {
         <p class="tb-sentence-translation">${word.textExampleTranslate}</p>
     </div>
     </div>
-<audio src=${this.service.apiUrl}/${word.audio}  data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
+<audio src=${this.service.apiUrl}/${word.audio} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
 </div>
     `
     if (this.service.user !== null) {
+      let progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
+      let max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
       document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
       <div data-tb-useid="${id}" class="tb-user-functionality">
       <button data-tb-diffid="${id}" class="tb-add-difficult-btn">Mark as difficult</button>
-       <div class="tb-learning-progress">0/3</div>
+       <div class="tb-learning-progress">${progress}/${max}</div>
       <button data-tb-learnid="${id}" class="tb-add-learned-btn">Mark as Learned</button>
   </div>
       `
-      if(this.difficultWords.find((el)=>el._id === id)){
+      if(word.userWord){
+      if(word.userWord.difficulty === "difficult"){
         document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
       }
-      if(this.learnedWords.find((el)=>el._id === id)){
+      if(word.userWord.difficulty === "learned"){
         document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
       }
-
+    }
     }
   }
 
@@ -110,14 +118,17 @@ class TextBookPage {
       })
     })
     document.querySelectorAll('.group-select').forEach((div) => {
-      div.addEventListener('click', (e) => {
+      div.addEventListener('click', async(e) => {
         const target = e.target as HTMLElement
         document.querySelector('.tb-group-selected').classList.remove('tb-group-selected')
         target.classList.add('tb-group-selected')
         this.curGrp = Number(target.dataset.grp)
-        this.getWords()
+        await this.getWords()
+        this.addControls()
       })
     })
+  }
+  addControls(){
     document.querySelectorAll('.pronounce').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const target = e.target as HTMLElement
@@ -128,24 +139,27 @@ class TextBookPage {
     document.querySelectorAll('.tb-user-functionality').forEach((div)=>{
     div.addEventListener('click', (e)=>{
      const target = e.target as HTMLElement
+    
      if(target.classList.contains('tb-add-difficult-btn')){
        const id = target.dataset.tbDiffid
-       if(this.difficultWords.find((el)=>el._id === id|| this.learnedWords.find((el)=>el._id === id))){
-         this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {difficulty:'difficult', optional:{timesGuessed:0}})
+       const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+       if(wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word') ){
+         this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {difficulty:'difficult', optional:{timesGuessed:0, timesMax:5}})
        } else{
-      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'difficult', optional:{timesGuessed:0}})}
-      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.remove('tb-learned-word')
-      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
+      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'difficult', optional:{timesGuessed:0, timesMax:5}})}
+      wordDiv.classList.remove('tb-learned-word')
+      wordDiv.classList.add('tb-difficult-word')
      }
      if(target.classList.contains('tb-add-learned-btn')){
       const id = target.dataset.tbLearnid
-      if(this.difficultWords.find((el)=>el._id === id) || this.learnedWords.find((el)=>el._id === id)){
-        this.service.requestUpdateUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0}})
+      const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+      if(wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word') ){
+        this.service.requestUpdateUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0, timesMax:3}})
       }else{
-      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0}})
+      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0, timesMax:3}})
       }
-      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
-      document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.remove('tb-difficult-word')
+     wordDiv.classList.add('tb-learned-word')
+     wordDiv.classList.remove('tb-difficult-word')
      }
     })
     })
@@ -159,13 +173,12 @@ class TextBookPage {
     }
 
     if (direction === 'left' && this.curPage > 0) {
-      console.log('i work')
       this.curPage--
       document.querySelector('.page-num').textContent = `${this.curPage + 1}`
     }
 
     await this.getWords()
-    this.addListeners()
+    this.addControls()
   }
   playAudio(paths: string) {
     const playlist = paths.split(',')
