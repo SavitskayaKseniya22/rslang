@@ -36,28 +36,31 @@ class TextBookPage {
             <div class="group-select" data-grp="3">4</div>
             <div class="group-select" data-grp="4">5</div>
             <div class="group-select" data-grp="5">6</div>
+            <div class="group-select difficult-select">D</div>
         </div>
         <div class="tb-words">
             
         </div>
-        
-        
     </div>`
     await this.getWords()
     this.addListeners()
     this.addControls()
   }
-
   async getWords() {
     document.querySelector(`.tb-words`).innerHTML = ``
     if(this.service.user !== null){
-      /*this.difficultWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"difficult"}]}`)
-      this.learnedWords = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId,String(this.curGrp),String(this.curPage),'20', `{"$and":[{"userWord.difficulty":"learned"}]}`)*/
+      if(this.curGrp === 99){
+        const words:Word[] = await this.service.requestGetAggregatedFIlter(this.service.user.userId,`{"$and":[{"userWord.difficulty":"difficult"}]}`)
+        console.log(words)
+        words.forEach((word) => {
+          this.drawWord(word)
+        })
+      } else {
       const words:Word[] = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId, String(this.curGrp),String(this.curPage),'20')
       console.log(words)
       words.forEach((word) => {
         this.drawWord(word)
-      })
+      })}
     } else {
     const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
     words.forEach((word) => {
@@ -91,9 +94,10 @@ class TextBookPage {
     if (this.service.user !== null) {
       let progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
       let max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
+      let markStr = this.curGrp=== 99 ? "Mark as normal" : "Mark as difficult"
       document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
       <div data-tb-useid="${id}" class="tb-user-functionality">
-      <button data-tb-diffid="${id}" class="tb-add-difficult-btn">Mark as difficult</button>
+      <button data-tb-diffid="${id}" class="tb-add-difficult-btn">${markStr}</button>
        <div class="tb-learning-progress">${progress}/${max}</div>
       <button data-tb-learnid="${id}" class="tb-add-learned-btn">Mark as Learned</button>
   </div>
@@ -122,9 +126,24 @@ class TextBookPage {
         const target = e.target as HTMLElement
         document.querySelector('.tb-group-selected').classList.remove('tb-group-selected')
         target.classList.add('tb-group-selected')
+        if(!target.classList.contains(`difficult-select`)){
+          document.querySelectorAll('.pagination-button').forEach((btn)=>{
+            let elem = btn as HTMLButtonElement
+            elem.disabled = false
+          })
         this.curGrp = Number(target.dataset.grp)
         await this.getWords()
         this.addControls()
+
+        } else{
+         this.curGrp = 99
+         document.querySelectorAll('.pagination-button').forEach((btn)=>{
+           let elem = btn as HTMLButtonElement
+           elem.disabled = true
+         })
+         await this.getWords()
+         this.addControls()
+        }
       })
     })
   }
@@ -139,7 +158,6 @@ class TextBookPage {
     document.querySelectorAll('.tb-user-functionality').forEach((div)=>{
     div.addEventListener('click', (e)=>{
      const target = e.target as HTMLElement
-    
      if(target.classList.contains('tb-add-difficult-btn')){
        const id = target.dataset.tbDiffid
        const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
@@ -149,6 +167,10 @@ class TextBookPage {
       this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'difficult', optional:{timesGuessed:0, timesMax:5}})}
       wordDiv.classList.remove('tb-learned-word')
       wordDiv.classList.add('tb-difficult-word')
+      if(this.curGrp=== 99){
+        this.service.requestUpdateUserWord(this.service.user.userId, id, {difficulty:'normal', optional:{timesGuessed:0, timesMax:3}})
+        wordDiv.remove()
+      }
      }
      if(target.classList.contains('tb-add-learned-btn')){
       const id = target.dataset.tbLearnid
@@ -160,6 +182,9 @@ class TextBookPage {
       }
      wordDiv.classList.add('tb-learned-word')
      wordDiv.classList.remove('tb-difficult-word')
+     if(this.curGrp === 99){
+      wordDiv.remove()
+     }
      }
     })
     })
