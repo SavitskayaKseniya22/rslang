@@ -62,14 +62,14 @@ class ApiService {
     const res = await fetch(`${this.apiUrl}/users/${userId}/words/${wordId}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.user.token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(word),
     })
     if (res.ok) {
-     console.log('ok')
+      console.log('ok')
     } else {
       throw new Error(`${res.status}`)
     }
@@ -79,8 +79,8 @@ class ApiService {
     const res = await fetch(`${this.apiUrl}/users/${userId}/words/${wordId}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${this.user.token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(word),
@@ -96,8 +96,8 @@ class ApiService {
     const res = await fetch(`${this.apiUrl}/users/${userId}/words/`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${this.user.token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     })
@@ -112,8 +112,8 @@ class ApiService {
     const res = await fetch(`${this.apiUrl}/users/${userId}/words/${wordId}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${this.user.token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(word),
@@ -129,8 +129,8 @@ class ApiService {
     const res = await fetch(`${this.apiUrl}/users/${userId}/words/${wordId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${this.user.token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     })
@@ -155,25 +155,25 @@ class ApiService {
     const res = await fetch(query, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${this.user.token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     })
     if (res.ok) {
       const content = await res.json()
+      console.log(content)
       return content[0].paginatedResults
     } else {
       throw new Error('something went wrong')
     }
   }
-  async requestGetAggregatedFIlter(userId: string, filter: string){
-   
-    const res = await fetch( `${this.apiUrl}/users/${userId}/aggregatedWords?filter=${filter}`, {
+  async requestGetAggregatedFIlter(userId: string, filter: string) {
+    const res = await fetch(`${this.apiUrl}/users/${userId}/aggregatedWords?filter=${filter}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${this.user.token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     })

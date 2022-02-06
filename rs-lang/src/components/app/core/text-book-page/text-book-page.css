@@ -93,11 +93,11 @@ button {
 }
 .tb-add-difficult-btn {
   background-color: orange;
-  border:5px solid #345383;
+  border: 5px solid #345383;
 }
 .tb-add-learned-btn {
   background-color: rgb(74, 193, 74);
-  border:5px solid #345383;
+  border: 5px solid #345383;
 }
 
 .tb-learning-progress {
@@ -108,9 +108,9 @@ button {
   margin-right: 1%;
 }
 
-.tb-learned-word{
-  background-color: rgb(74, 193, 74)
+.tb-learned-word {
+  background-color: rgb(74, 193, 74);
 }
-.tb-difficult-word{
+.tb-difficult-word {
   background-color: orange;
 }

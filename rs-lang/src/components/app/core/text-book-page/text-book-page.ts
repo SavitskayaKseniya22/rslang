@@ -1,5 +1,5 @@
 import ApiService from '../../api-service/api-service'
-import { UserWordInfo, Word } from '../../interfaces/interfaces'
+import { Word } from '../../interfaces/interfaces'
 import './text-book-page.css'
 
 class TextBookPage {
@@ -14,7 +14,6 @@ class TextBookPage {
     this.curGrp = 0
     /*this.difficultWords = []
     this.learnedWords = []*/
-   
   }
   async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
@@ -48,24 +47,33 @@ class TextBookPage {
   }
   async getWords() {
     document.querySelector(`.tb-words`).innerHTML = ``
-    if(this.service.user !== null){
-      if(this.curGrp === 99){
-        const words:Word[] = await this.service.requestGetAggregatedFIlter(this.service.user.userId,`{"$and":[{"userWord.difficulty":"difficult"}]}`)
+    if (this.service.user !== null) {
+      if (this.curGrp === 99) {
+        const words: Word[] = await this.service.requestGetAggregatedFIlter(
+          this.service.user.userId,
+          `{"$and":[{"userWord.difficulty":"difficult"}]}`
+        )
         console.log(words)
         words.forEach((word) => {
           this.drawWord(word)
         })
       } else {
-      const words:Word[] = await this.service.requestGetUserAgregatedPageGrp(this.service.user.userId, String(this.curGrp),String(this.curPage),'20')
-      console.log(words)
+        const words: Word[] = await this.service.requestGetUserAgregatedPageGrp(
+          this.service.user.userId,
+          String(this.curGrp),
+          String(this.curPage),
+          '20'
+        )
+        console.log(words)
+        words.forEach((word) => {
+          this.drawWord(word)
+        })
+      }
+    } else {
+      const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
       words.forEach((word) => {
         this.drawWord(word)
-      })}
-    } else {
-    const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
-    words.forEach((word) => {
-      this.drawWord(word)
-    })
+      })
     }
   }
   drawWord(word: Word) {
@@ -92,9 +100,9 @@ class TextBookPage {
 </div>
     `
     if (this.service.user !== null) {
-      let progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
-      let max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
-      let markStr = this.curGrp=== 99 ? "Mark as normal" : "Mark as difficult"
+      const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
+      const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
+      const markStr = this.curGrp === 99 ? 'Mark as normal' : 'Mark as difficult'
       document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
       <div data-tb-useid="${id}" class="tb-user-functionality">
       <button data-tb-diffid="${id}" class="tb-add-difficult-btn">${markStr}</button>
@@ -102,14 +110,14 @@ class TextBookPage {
       <button data-tb-learnid="${id}" class="tb-add-learned-btn">Mark as Learned</button>
   </div>
       `
-      if(word.userWord){
-      if(word.userWord.difficulty === "difficult"){
-        document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
+      if (word.userWord) {
+        if (word.userWord.difficulty === 'difficult') {
+          document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
+        }
+        if (word.userWord.difficulty === 'learned') {
+          document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
+        }
       }
-      if(word.userWord.difficulty === "learned"){
-        document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
-      }
-    }
     }
   }
 
@@ -122,73 +130,88 @@ class TextBookPage {
       })
     })
     document.querySelectorAll('.group-select').forEach((div) => {
-      div.addEventListener('click', async(e) => {
+      div.addEventListener('click', async (e) => {
         const target = e.target as HTMLElement
         document.querySelector('.tb-group-selected').classList.remove('tb-group-selected')
         target.classList.add('tb-group-selected')
-        if(!target.classList.contains(`difficult-select`)){
-          document.querySelectorAll('.pagination-button').forEach((btn)=>{
-            let elem = btn as HTMLButtonElement
+        if (!target.classList.contains(`difficult-select`)) {
+          document.querySelectorAll('.pagination-button').forEach((btn) => {
+            const elem = btn as HTMLButtonElement
             elem.disabled = false
           })
-        this.curGrp = Number(target.dataset.grp)
-        await this.getWords()
-        this.addControls()
-
-        } else{
-         this.curGrp = 99
-         document.querySelectorAll('.pagination-button').forEach((btn)=>{
-           let elem = btn as HTMLButtonElement
-           elem.disabled = true
-         })
-         await this.getWords()
-         this.addControls()
+          this.curGrp = Number(target.dataset.grp)
+          await this.getWords()
+          this.addControls()
+        } else {
+          this.curGrp = 99
+          document.querySelectorAll('.pagination-button').forEach((btn) => {
+            const elem = btn as HTMLButtonElement
+            elem.disabled = true
+          })
+          await this.getWords()
+          this.addControls()
         }
       })
     })
   }
-  addControls(){
+  addControls() {
     document.querySelectorAll('.pronounce').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const target = e.target as HTMLElement
         this.playAudio(target.dataset.audioPaths)
       })
     })
-    if(this.service.user!==null){
-    document.querySelectorAll('.tb-user-functionality').forEach((div)=>{
-    div.addEventListener('click', (e)=>{
-     const target = e.target as HTMLElement
-     if(target.classList.contains('tb-add-difficult-btn')){
-       const id = target.dataset.tbDiffid
-       const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
-       if(wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word') ){
-         this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {difficulty:'difficult', optional:{timesGuessed:0, timesMax:5}})
-       } else{
-      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'difficult', optional:{timesGuessed:0, timesMax:5}})}
-      wordDiv.classList.remove('tb-learned-word')
-      wordDiv.classList.add('tb-difficult-word')
-      if(this.curGrp=== 99){
-        this.service.requestUpdateUserWord(this.service.user.userId, id, {difficulty:'normal', optional:{timesGuessed:0, timesMax:3}})
-        wordDiv.remove()
-      }
-     }
-     if(target.classList.contains('tb-add-learned-btn')){
-      const id = target.dataset.tbLearnid
-      const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
-      if(wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word') ){
-        this.service.requestUpdateUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0, timesMax:3}})
-      }else{
-      this.service.requestAddUserWord(this.service.user.userId, id, {difficulty:'learned', optional:{timesGuessed:0, timesMax:3}})
-      }
-     wordDiv.classList.add('tb-learned-word')
-     wordDiv.classList.remove('tb-difficult-word')
-     if(this.curGrp === 99){
-      wordDiv.remove()
-     }
-     }
-    })
-    })
-  }
+    if (this.service.user !== null) {
+      document.querySelectorAll('.tb-user-functionality').forEach((div) => {
+        div.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement
+          if (target.classList.contains('tb-add-difficult-btn')) {
+            const id = target.dataset.tbDiffid
+            const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+            if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word')) {
+              this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {
+                difficulty: 'difficult',
+                optional: { timesGuessed: 0, timesMax: 5 },
+              })
+            } else {
+              this.service.requestAddUserWord(this.service.user.userId, id, {
+                difficulty: 'difficult',
+                optional: { timesGuessed: 0, timesMax: 5 },
+              })
+            }
+            wordDiv.classList.remove('tb-learned-word')
+            wordDiv.classList.add('tb-difficult-word')
+            if (this.curGrp === 99) {
+              this.service.requestUpdateUserWord(this.service.user.userId, id, {
+                difficulty: 'normal',
+                optional: { timesGuessed: 0, timesMax: 3 },
+              })
+              wordDiv.remove()
+            }
+          }
+          if (target.classList.contains('tb-add-learned-btn')) {
+            const id = target.dataset.tbLearnid
+            const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+            if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word')) {
+              this.service.requestUpdateUserWord(this.service.user.userId, id, {
+                difficulty: 'learned',
+                optional: { timesGuessed: 0, timesMax: 3 },
+              })
+            } else {
+              this.service.requestAddUserWord(this.service.user.userId, id, {
+                difficulty: 'learned',
+                optional: { timesGuessed: 0, timesMax: 3 },
+              })
+            }
+            wordDiv.classList.add('tb-learned-word')
+            wordDiv.classList.remove('tb-difficult-word')
+            if (this.curGrp === 99) {
+              wordDiv.remove()
+            }
+          }
+        })
+      })
+    }
   }
   async switchPage(direction: string) {
     console.log(direction)

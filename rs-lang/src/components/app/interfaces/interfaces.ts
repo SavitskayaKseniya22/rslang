@@ -6,7 +6,7 @@ export interface Word {
   word: string
   image: string
   audio: string
-  userWord?:UserWordInfo
+  userWord?: UserWordInfo
   audioMeaning: string
   audioExample: string
   textMeaning: string
@@ -35,6 +35,6 @@ export interface UserWordInfo {
   difficulty: string // either learned or normal or difficult
   optional: {
     timesGuessed: number // 3 times for a normal word to become learned, 5 times for a difficult one
-    timesMax:number // 3 for normal ones 5 for difficult ones
+    timesMax: number // 3 for normal ones 5 for difficult ones
   }
 }
