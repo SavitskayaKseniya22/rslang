@@ -13,6 +13,7 @@ export class Sprint {
   pageNumber: number
   music: HTMLAudioElement
   isBookPage: boolean
+  isPaused: boolean
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
     this.isBookPage = pageNumber ? true : false
@@ -20,13 +21,14 @@ export class Sprint {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 100,
+      timerValue: 5,
       pageNumber: pageNumber ?? getRandomNumber(29),
       freeGame: this.isBookPage ? false : true,
       pageStorage: [],
       basicPoints: 10,
       isMusicPlaying: false,
       isRoundOver: false,
+      isPaused: false,
     }
 
     this.settings.pageStorage.push(this.settings.pageNumber)
@@ -36,20 +38,22 @@ export class Sprint {
 
   addTimer() {
     let timerCurrentValue = this.settings.timerValue
+
     const timerId = setInterval(() => {
-      if (document.querySelector('.sprint__timer')) {
-        document.querySelector('.sprint__timer').innerHTML = String((timerCurrentValue -= 1))
+      if (timerCurrentValue > 0) {
+        if (!this.settings.isPaused) {
+          if (document.querySelector('.sprint__timer')) {
+            document.querySelector('.sprint__timer').innerHTML = String((timerCurrentValue -= 1))
+          } else {
+            clearInterval(timerId)
+          }
+        }
       } else {
         clearInterval(timerId)
+        new SprintResult(this.results).renderResult()
+        this.settings.isRoundOver = true
       }
     }, 1000)
-
-    setTimeout(() => {
-      clearInterval(timerId)
-
-      new SprintResult(this.results).renderResult()
-      this.settings.isRoundOver = true
-    }, this.settings.timerValue * 1000 + 1000)
   }
 
   async render() {
@@ -71,7 +75,7 @@ export class Sprint {
     
     <h2>Sprint</h2>
     <div class="sprint__timer">${this.settings.timerValue}</div>
-    <button class="sprint__closer"><i class="far fa-times-circle"></i></button>
+    
     <button class="sprint__fullscreen_toggle"><i class="fas fa-expand"></i></button>
     <button class="sprint__background_toggle"><i class="fas fa-music"></i></button>
     <div class="sprint__container">
@@ -149,6 +153,13 @@ export class Sprint {
         this.toggleFullScreen(target)
       } else if (target.closest('.sprint__background_toggle')) {
         this.toggleMusic()
+      }
+    })
+
+    document.addEventListener('keydown', (event) => {
+      if (event.code == 'Space' && !this.settings.isRoundOver) {
+        event.preventDefault()
+        this.settings.isPaused = this.settings.isPaused ? false : true
       }
     })
   }

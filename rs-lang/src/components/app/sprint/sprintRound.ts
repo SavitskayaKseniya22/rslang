@@ -63,6 +63,7 @@ export class SprintRound {
 
   saveMiddleResult(isTrue: boolean) {
     if (isTrue) {
+      console.log(this.results.streak)
       if (this.results.streak < 3) {
         this.results.streak++
         document.querySelector(`.streak${this.results.streak}`).classList.add('counter-full')
@@ -119,7 +120,7 @@ export class SprintRound {
   initListener() {
     document.addEventListener('click', (e) => {
       const target = e.target as HTMLElement
-      if (!this.settings.isRoundOver) {
+      if (!this.settings.isRoundOver && !this.settings.isPaused) {
         if (target.closest('.sprint__verdict_wrong')) {
           this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
         } else if (target.closest('.sprint__verdict_true')) {
@@ -129,10 +130,12 @@ export class SprintRound {
     })
 
     document.addEventListener('keydown', (event) => {
-      if (!this.settings.isRoundOver) {
+      if (!this.settings.isRoundOver && !this.settings.isPaused) {
         if (event.code == 'ArrowLeft') {
+          event.preventDefault()
           this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
         } else if (event.code == 'ArrowRight') {
+          event.preventDefault()
           this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
         }
       }

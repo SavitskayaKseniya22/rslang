@@ -49,4 +49,8 @@ export class SprintResult {
       word.word
     }</span> - <span class="result_translation">${word.wordTranslate}</span></li>`
   }
+
+  get result() {
+    return this.result
+  }
 }

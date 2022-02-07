@@ -36,4 +36,5 @@ export interface SprintSettings {
   basicPoints: number
   isMusicPlaying: boolean
   isRoundOver: boolean
+  isPaused: boolean
 }
