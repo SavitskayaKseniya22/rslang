@@ -4,10 +4,10 @@ import Button from "./button";
 
 class BasicQuestion {
   mainWrapper = document.createElement("div");
-  wrapperForIconVoice = document.createElement("div");
+  wrapperForIconVoice = document.createElement("button");
   wrapperForAnswers = document.createElement("div");
   wrapperForButton = document.createElement("div");
-  wrapperForAnswersSmall = document.createElement("div");
+  wrapperForAnswersSmall = document.createElement("button");
   wrapperForAnswer = document.createElement("div");
   wrapperForAnswerContent = document.createElement("div");
   wordAnswer = document.createElement("h3");
@@ -39,9 +39,9 @@ class BasicQuestion {
     const sortArrQuestions = this.shuffle([1, 2, 3, 4, 5].map((item, i) => arrayAnswers[i]));
     this.wrapperForAnswers.innerHTML = "";
     this.wrapperForAnswers.classList.add("wrapper-answers");
-    sortArrQuestions.forEach((item, i) => {
+    sortArrQuestions.forEach((item) => {
       const button = new Button({
-        className: `answer-${i}`,
+        className: `answer`,
         text: item.wordTranslate,
       });
       this.wrapperForAnswers.append(button.element);
@@ -51,11 +51,11 @@ class BasicQuestion {
   addButtonAction() {
     const buttonActive = new Button({
       className: "button-active",
-      text: "Не знаю",
+      text: "I don't know",
     });
     const buttonNext = new Button({
       className: "button-next",
-      text: "Cледующее слово",
+      text: "Next word",
     });
     this.wrapperForButton.append(buttonActive.element, buttonNext.element);
     return this.wrapperForButton;

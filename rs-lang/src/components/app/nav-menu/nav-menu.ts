@@ -35,8 +35,8 @@ class NavMenu {
         break
       case 'audio-challenge-choose':
         page = new DifficultySelect('audio-challenge', this.service)
-        page.render();
-        new ApiService().getWords();
+        // page.render();
+        new ApiService().getWords(0);
         break
     }
   }

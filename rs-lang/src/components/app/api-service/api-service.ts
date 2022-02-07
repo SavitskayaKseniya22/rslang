@@ -3,12 +3,15 @@ import { Word } from "../audioCallGame/type";
 
 
 class ApiService {
-  async getWords(group = 0) {
+  async getWords(group: number, page = -1) {
     function randomInteger(min, max) {
       const rand = min + Math.random() * (max + 1 - min);
       return Math.floor(rand);
     }
-    let page = randomInteger(0, 29);
+    page = page !== -1 ? page : randomInteger(0, 29);
+    const groupAgain = group;
+    const pageAgain = page;
+    // let page = randomInteger(0, 29);
     await fetch(`http://localhost:3000/words?page=${page}&group=${group}`)
       .then((resp) => resp.json())
       .then((dataTrue: Word[]) => {
@@ -38,7 +41,7 @@ class ApiService {
             fetch(`http://localhost:3000/words?page=${page}&group=${group}`)
               .then((resp) => resp.json())
               .then((dataFalseTwo: Word[]) => {
-                new ConrolGame(dataTrue, dataFalse, dataFalseTwo);
+                new ConrolGame(dataTrue, dataFalse, dataFalseTwo, groupAgain, pageAgain);
               });
           });
       });

@@ -25,7 +25,7 @@ class DifficultySelect {
   addListeners() {
     document.querySelectorAll('.level-select').forEach((el) => {
       el.addEventListener('click', (e) => {
-        const lvl = Number((e.target as HTMLElement).dataset.lvl)
+        const lvl = Number((e.target as HTMLElement).dataset.lvl);
         let page: Object
         /*switch (this.gameName){                                            // Uncomment and change when you start working
                   case 'sprint ':

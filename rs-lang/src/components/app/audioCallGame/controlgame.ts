@@ -5,11 +5,11 @@ class ConrolGame {
   arrayTrueWords: Word[];
   arrayFalseWords: Word[];
   arrayQuestions: Question[];
-  constructor(dataTrue: Word[], dataFalse: Word[], dataFalseTwo: Word[]) {
+  constructor(dataTrue: Word[], dataFalse: Word[], dataFalseTwo: Word[], group: number, page: number) {
     this.getArrayTrueWords(dataTrue);
     this.arrayFalseWords = dataFalse.concat(dataFalseTwo);
     this.getQuestions(this.arrayTrueWords, this.arrayFalseWords);
-    new AudioGame(this.arrayQuestions, this.arrayTrueWords);
+    new AudioGame(this.arrayQuestions, this.arrayTrueWords, group, page);
   }
   randomInteger(min, max) {
     const rand = min + Math.random() * (max + 1 - min);
