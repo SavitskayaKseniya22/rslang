@@ -191,7 +191,14 @@ class ApiService {
     }
   }
   async requestUpdateToken(id: string) {
-    const res = await fetch(`${this.apiUrl}/users/${id}/tokens`)
+    const res = await fetch(`${this.apiUrl}/users/${id}/tokens`,  {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.user.refreshToken}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
     if (res.ok) {
       const content = await res.json()
       return content

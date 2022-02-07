@@ -305,6 +305,8 @@ class TextBookPage {
     audio.play()
     console.log(playlist)
   }
+  MarkAsLearned(id: string){}
+  MarkAs
 }
 
 export default TextBookPage
