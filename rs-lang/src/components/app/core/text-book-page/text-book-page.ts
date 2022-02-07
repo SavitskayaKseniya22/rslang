@@ -74,11 +74,7 @@ class TextBookPage {
       }
     } catch (err) {
       let error = err as Error
-      if (error.message.includes('401')) {
-        await this.service.updateToken()
-      } else {
-        alert(err)
-      }
+      this.handleUserError(error)
     }
   }
   drawWord(word: Word) {
@@ -123,15 +119,14 @@ class TextBookPage {
           if (word.userWord.difficulty === 'learned') {
             document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
           }
+          if (word.userWord.difficulty === 'normal') {
+            document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-normal-word')
+          }
         }
       }
     } catch (err) {
       const error = err as Error
-      if (error.message.includes('401')) {
-        this.service.updateToken()
-      } else {
-        alert(err)
-      }
+      this.handleUserError(error)
     }
   }
 
@@ -177,96 +172,17 @@ class TextBookPage {
     })
     if (this.service.user !== null) {
       document.querySelectorAll('.tb-user-functionality').forEach((div) => {
-        div.addEventListener('click', (e) => {
+        div.addEventListener('click', async (e) => {
           const target = e.target as HTMLElement
           if (target.classList.contains('tb-add-difficult-btn')) {
             const id = target.dataset.tbDiffid
-            const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
-            if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word')) {
-              try {
-                this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {
-                  difficulty: 'difficult',
-                  optional: { timesGuessed: 0, timesMax: 5 },
-                })
-              } catch (err) {
-                const error = err as Error
-                if (error.message.includes('401')) {
-                  this.service.updateToken()
-                } else {
-                  alert(err)
-                }
-              }
-            } else {
-              try {
-                this.service.requestAddUserWord(this.service.user.userId, id, {
-                  difficulty: 'difficult',
-                  optional: { timesGuessed: 0, timesMax: 5 },
-                })
-              } catch (err) {
-                const error = err as Error
-                if (error.message.includes('401')) {
-                  this.service.updateToken()
-                } else {
-                  alert(err)
-                }
-              }
-            }
-            wordDiv.classList.remove('tb-learned-word')
-            wordDiv.classList.add('tb-difficult-word')
-            if (this.curGrp === 99) {
-              try {
-                this.service.requestUpdateUserWord(this.service.user.userId, id, {
-                  difficulty: 'normal',
-                  optional: { timesGuessed: 0, timesMax: 3 },
-                })
-                wordDiv.remove()
-              } catch (err) {
-                const error = err as Error
-                if (error.message.includes('401')) {
-                  this.service.updateToken()
-                } else {
-                  alert(err)
-                }
-              }
-            }
+            console.log(id)
+            await this.MarkAsDIfficult(id)
           }
           if (target.classList.contains('tb-add-learned-btn')) {
-            const id = target.dataset.tbLearnid
-            const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
-            if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word')) {
-              try {
-                this.service.requestUpdateUserWord(this.service.user.userId, id, {
-                  difficulty: 'learned',
-                  optional: { timesGuessed: 0, timesMax: 3 },
-                })
-              } catch (err) {
-                const error = err as Error
-                if (error.message.includes('401')) {
-                  this.service.updateToken()
-                } else {
-                  alert(err)
-                }
-              }
-            } else {
-              try {
-                this.service.requestAddUserWord(this.service.user.userId, id, {
-                  difficulty: 'learned',
-                  optional: { timesGuessed: 0, timesMax: 3 },
-                })
-              } catch (err) {
-                const error = err as Error
-                if (error.message.includes('401')) {
-                  this.service.updateToken()
-                } else {
-                  alert(err)
-                }
-              }
-            }
-            wordDiv.classList.add('tb-learned-word')
-            wordDiv.classList.remove('tb-difficult-word')
-            if (this.curGrp === 99) {
-              wordDiv.remove()
-            }
+           const id = target.dataset.tbLearnid
+           console.log(id)
+            await this.MarkAsLearned(id)
           }
         })
       })
@@ -305,8 +221,82 @@ class TextBookPage {
     audio.play()
     console.log(playlist)
   }
-  MarkAsLearned(id: string){}
-  MarkAs
+   async MarkAsLearned(id: string) {
+    const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+    if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word') || wordDiv.classList.contains('tb-normal-word')) {
+      try {
+        this.service.requestUpdateUserWord(this.service.user.userId, id, {
+          difficulty: 'learned',
+          optional: { timesGuessed: 0, timesMax: 3 },
+        })
+      } catch (err) {
+        const error = err as Error
+        this.handleUserError(error)
+      }
+    } else {
+      try {
+        this.service.requestAddUserWord(this.service.user.userId, id, {
+          difficulty: 'learned',
+          optional: { timesGuessed: 0, timesMax: 3 },
+        })
+      } catch (err) {
+        const error = err as Error
+        this.handleUserError(error)
+      }
+    }
+    wordDiv.classList.add('tb-learned-word')
+    wordDiv.classList.remove('tb-normal-word')
+    wordDiv.classList.remove('tb-difficult-word')
+    if (this.curGrp === 99) {
+      wordDiv.remove()
+    }
+  }
+   async MarkAsDIfficult(id: string){
+    const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+    if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word') || wordDiv.classList.contains('tb-normal-word')) {
+      try {
+       await this.service.requestUpdateUserWord(this.service.user.userId, id, {
+          difficulty: 'difficult',
+          optional: { timesGuessed: 0, timesMax: 5 },
+        })
+      } catch (err) {
+        const error = err as Error
+        this.handleUserError(error)
+      }
+    } else {
+      try {
+        await this.service.requestAddUserWord(this.service.user.userId, id, {
+          difficulty: 'difficult',
+          optional: { timesGuessed: 0, timesMax: 5 },
+        })
+      } catch (err) {
+        const error = err as Error
+        this.handleUserError(error)
+      }
+    }
+    wordDiv.classList.remove('tb-learned-word')
+    wordDiv.classList.remove('tb-normal-word')
+    wordDiv.classList.add('tb-difficult-word')
+    if (this.curGrp === 99) {
+      try {
+       await this.service.requestUpdateUserWord(this.service.user.userId, id, {
+          difficulty: 'normal',
+          optional: { timesGuessed: 0, timesMax: 3 },
+        })
+        wordDiv.remove()
+      } catch (err) {
+        const error = err as Error
+        this.handleUserError(error)
+      }
+    }
+  }
+  handleUserError(error:Error){
+    if (error.message.includes('401')) {
+      this.service.updateToken()
+    } else {
+      alert(error)
+    }
+  }
 }
 
 export default TextBookPage

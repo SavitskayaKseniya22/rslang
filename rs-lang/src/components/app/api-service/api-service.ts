@@ -32,7 +32,7 @@ class ApiService {
       const content = await res.json()
       return content
     } else {
-      throw new Error(` error: ${res.status}`)
+      throw new Error(` error: ${res.status}, user with this adress already exists`)
     }
   }
 
