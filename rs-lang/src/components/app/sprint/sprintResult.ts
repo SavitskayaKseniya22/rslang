@@ -30,7 +30,6 @@ export class SprintResult {
     const rightResults = this.wrong.map((word) => {
       return this.makeResultItem(word)
     })
-
     const wrongResults = this.correct.map((word) => {
       return this.makeResultItem(word)
     })

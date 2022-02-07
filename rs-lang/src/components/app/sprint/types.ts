@@ -38,4 +38,5 @@ export interface SprintSettings {
   isRoundOver: boolean
   isPaused: boolean
   isLoginActive: boolean
+  isFullScreenOn: boolean
 }

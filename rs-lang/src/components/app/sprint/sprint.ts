@@ -11,7 +11,6 @@ export class Sprint {
   words: Word[]
   settings: SprintSettings
   pageNumber: number
-  music: HTMLAudioElement
   isPaused: boolean
   id: number
   timerCurrentValue: number
@@ -20,7 +19,7 @@ export class Sprint {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 5,
+      timerValue: 60,
       pageNumber: pageNumber ?? getRandomNumber(29),
       isFreeGame: pageNumber ? false : true,
       pageStorage: [],
@@ -29,6 +28,7 @@ export class Sprint {
       isRoundOver: false,
       isPaused: false,
       isLoginActive: false,
+      isFullScreenOn: false,
     }
 
     this.settings.pageStorage.push(this.settings.pageNumber)
@@ -59,8 +59,8 @@ export class Sprint {
   async render() {
     this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
     this.words = this.settings.isLoginActive
-      ? await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
-      : await this.settings.service.getAggregatedWords(this.id, this.settings.lvl, this.settings.pageNumber)
+      ? await this.settings.service.getAggregatedWords(this.id, this.settings.lvl, this.settings.pageNumber)
+      : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
     this.round
       ? this.round.updateRound(this.words, this.results)
       : (this.round = new SprintRound(this.results, this.words, this.settings))
@@ -82,9 +82,6 @@ export class Sprint {
         <li><button class="sprint__fullscreen_toggle"><i class="fas fa-expand"></i></button></li>
         <li><button class="sprint__background_toggle"><i class="fas fa-music"></i></button></li>
       </ul>
-    
-    
-    
     
     <div class="sprint__container">
       <span class="sprint__score">0</span>
@@ -116,16 +113,16 @@ export class Sprint {
   </div>`
   }
 
-  toggleFullScreen(target: HTMLElement) {
-    const toFullScreen = target.closest('.sprint__fullscreen_toggle')
-    if (toFullScreen.classList.contains('active-fullscreen')) {
-      toFullScreen.innerHTML = `<i class="fas fa-expand"></i>`
-      toFullScreen.classList.remove('active-fullscreen')
+  toggleFullScreen() {
+    const fullScreen = document.querySelector('.sprint__fullscreen_toggle')
+    if (this.settings.isFullScreenOn) {
       document.exitFullscreen()
+      fullScreen.innerHTML = `<i class="fas fa-expand"></i>`
+      this.settings.isFullScreenOn = false
     } else {
-      toFullScreen.innerHTML = `<i class="fas fa-compress"></i>`
-      toFullScreen.classList.add('active-fullscreen')
       document.documentElement.requestFullscreen()
+      fullScreen.innerHTML = `<i class="fas fa-compress"></i>`
+      this.settings.isFullScreenOn = true
     }
   }
 
@@ -140,10 +137,17 @@ export class Sprint {
     }
   }
 
+  restoreFullScreen() {
+    if (this.settings.isFullScreenOn) {
+      const fullScreen = document.querySelector('.sprint__fullscreen_toggle')
+      fullScreen.innerHTML = `<i class="fas fa-compress"></i>`
+    }
+  }
+
   restoreMusic() {
     if (this.settings.isMusicPlaying) {
-      this.music = document.querySelector('.sprint__background')
-      this.music.play()
+      const music = document.querySelector('.sprint__background') as HTMLAudioElement
+      music.play()
     }
   }
 
@@ -155,6 +159,7 @@ export class Sprint {
     }
     await this.render()
     this.restoreMusic()
+    this.restoreFullScreen()
   }
 
   initListener() {
@@ -163,7 +168,7 @@ export class Sprint {
       if (target.closest('.new-round')) {
         this.startNewSprint()
       } else if (target.closest('.sprint__fullscreen_toggle')) {
-        this.toggleFullScreen(target)
+        this.toggleFullScreen()
       } else if (target.closest('.sprint__background_toggle')) {
         this.toggleMusic()
       }
@@ -172,8 +177,7 @@ export class Sprint {
     document.addEventListener('keydown', (event) => {
       if (event.code == 'Space' && !this.settings.isRoundOver) {
         event.preventDefault()
-        this.settings.isPaused = this.settings.isPaused ? false : true
-
+        this.settings.isPaused = !this.settings.isPaused
         this.settings.isPaused
           ? (document.querySelector('.sprint__timer').innerHTML = '<i class="fas fa-pause-circle"></i>')
           : (document.querySelector('.sprint__timer').innerHTML = String(this.timerCurrentValue))
