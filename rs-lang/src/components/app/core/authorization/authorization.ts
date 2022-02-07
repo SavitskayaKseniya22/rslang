@@ -146,16 +146,20 @@ class Authorization {
     })
     document.querySelector('.register-button').addEventListener('click', async () => {
       if (eMail.validity.valid && pWord.validity.valid && nom.validity.valid) {
-        console.log('everything is guchi creating user....')
-        const resp = await this.service.requestRegistration(this.formData)
-        console.log('user was sucessfully created', resp)
-        this.formData = {
-          email: '',
-          password: '',
+        try {
+          console.log('everything is good creating user....')
+          const resp = await this.service.requestRegistration(this.formData)
+          console.log('user was sucessfully created', resp)
+          this.formData = {
+            email: '',
+            password: '',
+          }
+          form.innerHTML = ``
+          form.classList.add('hidden')
+          document.querySelector('.auth-overlay').classList.add('hidden')
+        } catch (err) {
+          alert(err)
         }
-        form.innerHTML = ``
-        form.classList.add('hidden')
-        document.querySelector('.auth-overlay').classList.add('hidden')
       }
     })
   }

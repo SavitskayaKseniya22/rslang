@@ -12,6 +12,8 @@ class ApiService {
     if (res.ok) {
       const words = await res.json()
       return words
+    } else {
+      throw new Error(` error: ${res.status}, check your connection to the server`)
     }
   }
   async requestRegistration(formData: FormInfo) {
@@ -25,9 +27,13 @@ class ApiService {
       },
       body: JSON.stringify(formData),
     })
-    console.log('ok')
-    const content = await res.json()
-    return content
+    if (res.ok) {
+      console.log('ok')
+      const content = await res.json()
+      return content
+    } else {
+      throw new Error(` error: ${res.status}`)
+    }
   }
 
   async requestLogIn(formData: FormInfo) {
@@ -88,7 +94,7 @@ class ApiService {
     if (res.ok) {
       return
     } else {
-      throw new Error('something went wrong')
+      throw new Error(` error: ${res.status}, please repeat the log-in procedure`)
     }
   }
 
@@ -105,7 +111,7 @@ class ApiService {
       const content = await res.json()
       return content
     } else {
-      throw new Error('something went wrong')
+      throw new Error(`error: ${res.status}, please repeat the log-in procedure`)
     }
   }
   async requestUpdateUserWord(userId: string, wordId: string, word: UserWordInfo) {
@@ -121,7 +127,7 @@ class ApiService {
     if (res.ok) {
       return
     } else {
-      throw new Error('something went wrong')
+      throw new Error(`error: ${res.status}, either word does not exist or a repeated log-in procedure is required`)
     }
   }
 
@@ -138,7 +144,7 @@ class ApiService {
       const content = await res.json()
       return content
     } else {
-      throw new Error('something went wrong')
+      throw new Error(`error: ${res.status}, either word does not exist or a repeated log-in procedure is required`)
     }
   }
   async requestGetUserAgregatedPageGrp(
@@ -165,7 +171,7 @@ class ApiService {
       console.log(content)
       return content[0].paginatedResults
     } else {
-      throw new Error('something went wrong')
+      throw new Error(`error: ${res.status}, check your connection or repeat the log-in procedure`)
     }
   }
   async requestGetAggregatedFIlter(userId: string, filter: string) {
@@ -181,7 +187,26 @@ class ApiService {
       const content = await res.json()
       return content[0].paginatedResults
     } else {
-      throw new Error('something went wrong')
+      throw new Error(`error: ${res.status}, check your connection or repeat the log-in procedure`)
+    }
+  }
+  async requestUpdateToken(id: string) {
+    const res = await fetch(`${this.apiUrl}/users/${id}/tokens`)
+    if (res.ok) {
+      const content = await res.json()
+      return content
+    } else {
+      throw new Error(`error user no longer exists`)
+    }
+  }
+  async updateToken() {
+    try {
+      const updatedUser = await this.requestUpdateToken(this.user.userId)
+      this.user = updatedUser
+      localStorage.setItem('user', JSON.stringify(updatedUser))
+      window.location.reload()
+    } catch (err) {
+      alert(err)
     }
   }
 }

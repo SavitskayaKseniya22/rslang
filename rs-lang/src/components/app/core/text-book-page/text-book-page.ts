@@ -6,14 +6,10 @@ class TextBookPage {
   service: ApiService
   curPage: number
   curGrp: number
-  /*difficultWords: Word[] | undefined[]
-  learnedWords: Word[] | undefined[]*/
   constructor(service: ApiService) {
     this.service = service
     this.curPage = 0
     this.curGrp = 0
-    /*this.difficultWords = []
-    this.learnedWords = []*/
   }
   async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
@@ -46,39 +42,49 @@ class TextBookPage {
     this.addControls()
   }
   async getWords() {
-    document.querySelector(`.tb-words`).innerHTML = ``
-    if (this.service.user !== null) {
-      if (this.curGrp === 99) {
-        const words: Word[] = await this.service.requestGetAggregatedFIlter(
-          this.service.user.userId,
-          `{"$and":[{"userWord.difficulty":"difficult"}]}`
-        )
-        console.log(words)
-        words.forEach((word) => {
-          this.drawWord(word)
-        })
+    try {
+      document.querySelector(`.tb-words`).innerHTML = ``
+      if (this.service.user !== null) {
+        if (this.curGrp === 99) {
+          const words: Word[] = await this.service.requestGetAggregatedFIlter(
+            this.service.user.userId,
+            `{"$and":[{"userWord.difficulty":"difficult"}]}`
+          )
+          console.log(words)
+          words.forEach((word) => {
+            this.drawWord(word)
+          })
+        } else {
+          const words: Word[] = await this.service.requestGetUserAgregatedPageGrp(
+            this.service.user.userId,
+            String(this.curGrp),
+            String(this.curPage),
+            '20'
+          )
+          console.log(words)
+          words.forEach((word) => {
+            this.drawWord(word)
+          })
+        }
       } else {
-        const words: Word[] = await this.service.requestGetUserAgregatedPageGrp(
-          this.service.user.userId,
-          String(this.curGrp),
-          String(this.curPage),
-          '20'
-        )
-        console.log(words)
+        const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
         words.forEach((word) => {
           this.drawWord(word)
         })
       }
-    } else {
-      const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
-      words.forEach((word) => {
-        this.drawWord(word)
-      })
+    } catch (err) {
+      let error = err as Error
+      if (error.message.includes('401')) {
+        await this.service.updateToken()
+      } else {
+        alert(err)
+      }
     }
   }
   drawWord(word: Word) {
-    const id = word.id ? word.id : word._id
-    document.querySelector(`.tb-words`).innerHTML += `
+    try {
+      const id = word.id ? word.id : word._id
+      document.querySelector(`.tb-words`).innerHTML += `
     <div class="tb-word" data-tb-wrd-id=${id}>
     <img class="tb-img" src=${this.service.apiUrl}/${word.image}>
     <div data-tb-wrd-info=${id} class="tb-word-info">
@@ -99,24 +105,32 @@ class TextBookPage {
 <audio src=${this.service.apiUrl}/${word.audio} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
 </div>
     `
-    if (this.service.user !== null) {
-      const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
-      const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
-      const markStr = this.curGrp === 99 ? 'Mark as normal' : 'Mark as difficult'
-      document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
+      if (this.service.user !== null) {
+        const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
+        const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
+        const markStr = this.curGrp === 99 ? 'Mark as normal' : 'Mark as difficult'
+        document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
       <div data-tb-useid="${id}" class="tb-user-functionality">
       <button data-tb-diffid="${id}" class="tb-add-difficult-btn">${markStr}</button>
        <div class="tb-learning-progress">${progress}/${max}</div>
       <button data-tb-learnid="${id}" class="tb-add-learned-btn">Mark as Learned</button>
   </div>
       `
-      if (word.userWord) {
-        if (word.userWord.difficulty === 'difficult') {
-          document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
+        if (word.userWord) {
+          if (word.userWord.difficulty === 'difficult') {
+            document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
+          }
+          if (word.userWord.difficulty === 'learned') {
+            document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
+          }
         }
-        if (word.userWord.difficulty === 'learned') {
-          document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
-        }
+      }
+    } catch (err) {
+      const error = err as Error
+      if (error.message.includes('401')) {
+        this.service.updateToken()
+      } else {
+        alert(err)
       }
     }
   }
@@ -169,39 +183,84 @@ class TextBookPage {
             const id = target.dataset.tbDiffid
             const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
             if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word')) {
-              this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {
-                difficulty: 'difficult',
-                optional: { timesGuessed: 0, timesMax: 5 },
-              })
+              try {
+                this.service.requestUpdateUserWord(this.service.user.userId, target.dataset.tbDiffid, {
+                  difficulty: 'difficult',
+                  optional: { timesGuessed: 0, timesMax: 5 },
+                })
+              } catch (err) {
+                const error = err as Error
+                if (error.message.includes('401')) {
+                  this.service.updateToken()
+                } else {
+                  alert(err)
+                }
+              }
             } else {
-              this.service.requestAddUserWord(this.service.user.userId, id, {
-                difficulty: 'difficult',
-                optional: { timesGuessed: 0, timesMax: 5 },
-              })
+              try {
+                this.service.requestAddUserWord(this.service.user.userId, id, {
+                  difficulty: 'difficult',
+                  optional: { timesGuessed: 0, timesMax: 5 },
+                })
+              } catch (err) {
+                const error = err as Error
+                if (error.message.includes('401')) {
+                  this.service.updateToken()
+                } else {
+                  alert(err)
+                }
+              }
             }
             wordDiv.classList.remove('tb-learned-word')
             wordDiv.classList.add('tb-difficult-word')
             if (this.curGrp === 99) {
-              this.service.requestUpdateUserWord(this.service.user.userId, id, {
-                difficulty: 'normal',
-                optional: { timesGuessed: 0, timesMax: 3 },
-              })
-              wordDiv.remove()
+              try {
+                this.service.requestUpdateUserWord(this.service.user.userId, id, {
+                  difficulty: 'normal',
+                  optional: { timesGuessed: 0, timesMax: 3 },
+                })
+                wordDiv.remove()
+              } catch (err) {
+                const error = err as Error
+                if (error.message.includes('401')) {
+                  this.service.updateToken()
+                } else {
+                  alert(err)
+                }
+              }
             }
           }
           if (target.classList.contains('tb-add-learned-btn')) {
             const id = target.dataset.tbLearnid
             const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
             if (wordDiv.classList.contains('tb-difficult-word') || wordDiv.classList.contains('tb-learned-word')) {
-              this.service.requestUpdateUserWord(this.service.user.userId, id, {
-                difficulty: 'learned',
-                optional: { timesGuessed: 0, timesMax: 3 },
-              })
+              try {
+                this.service.requestUpdateUserWord(this.service.user.userId, id, {
+                  difficulty: 'learned',
+                  optional: { timesGuessed: 0, timesMax: 3 },
+                })
+              } catch (err) {
+                const error = err as Error
+                if (error.message.includes('401')) {
+                  this.service.updateToken()
+                } else {
+                  alert(err)
+                }
+              }
             } else {
-              this.service.requestAddUserWord(this.service.user.userId, id, {
-                difficulty: 'learned',
-                optional: { timesGuessed: 0, timesMax: 3 },
-              })
+              try {
+                this.service.requestAddUserWord(this.service.user.userId, id, {
+                  difficulty: 'learned',
+                  optional: { timesGuessed: 0, timesMax: 3 },
+                })
+              } catch (err) {
+                const error = err as Error
+                if (error.message.includes('401')) {
+                  this.service.updateToken()
+                } else {
+                  alert(err)
+                }
+              }
             }
             wordDiv.classList.add('tb-learned-word')
             wordDiv.classList.remove('tb-difficult-word')
