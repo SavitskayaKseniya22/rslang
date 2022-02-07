@@ -6,6 +6,8 @@ export class SprintResult {
   longestStreak: number
   correct: Word[]
   wrong: Word[]
+  percent: number
+  total: number
 
   constructor(results: SprintResultType) {
     this.results = results
@@ -19,6 +21,9 @@ export class SprintResult {
 
     this.correct = this.results.answers[1]
     this.wrong = this.results.answers[0]
+    this.total = this.correct.length + this.wrong.length
+    this.percent =
+      this.total === 0 ? 0 : Math.round(100 / ((this.correct.length + this.wrong.length) / this.correct.length))
   }
 
   renderResult() {
@@ -30,18 +35,22 @@ export class SprintResult {
       return this.makeResultItem(word)
     })
 
-    return (document.querySelector('.sprint__container').innerHTML = `<div class="result">
-    <button class="new-round">new game</button>
-    <span>You earned ${this.results.points} points</span>
+    return (document.querySelector('.sprint__container').innerHTML = `
+    
+    <span>You earned - ${this.results.points} points</span>
+    <span>${this.correct.length}/${this.total} </span>
     <span>Your longest streak - ${this.longestStreak} correct answers</span>
-    <ul class="result_wrong">
+    <span>${this.percent}% correct answers</span>
     <h3>Wrong (${this.wrong.length})</h3>
+    <ul class="result_wrong">
       ${rightResults.join('')}
     </ul>
-    <ul class="result_right">
     <h3>Correct (${this.correct.length})</h3>
+    <ul class="result_right">
+    
     ${wrongResults.join('')}</ul>
-  </div>`)
+    <button class="new-round">new game</button>
+  `)
   }
 
   makeResultItem(word: Word) {

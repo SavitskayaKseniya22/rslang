@@ -12,38 +12,38 @@ export class Sprint {
   settings: SprintSettings
   pageNumber: number
   music: HTMLAudioElement
-  isBookPage: boolean
   isPaused: boolean
+  id: number
+  timerCurrentValue: number
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
-    this.isBookPage = pageNumber ? true : false
-
     this.settings = {
       service: service,
       lvl: lvl,
       timerValue: 5,
       pageNumber: pageNumber ?? getRandomNumber(29),
-      freeGame: this.isBookPage ? false : true,
+      isFreeGame: pageNumber ? false : true,
       pageStorage: [],
       basicPoints: 10,
       isMusicPlaying: false,
       isRoundOver: false,
       isPaused: false,
+      isLoginActive: false,
     }
 
     this.settings.pageStorage.push(this.settings.pageNumber)
-
+    //this.id=window.localStorasge.getItem("id")
     this.initListener()
   }
 
   addTimer() {
-    let timerCurrentValue = this.settings.timerValue
+    this.timerCurrentValue = this.settings.timerValue
 
     const timerId = setInterval(() => {
-      if (timerCurrentValue > 0) {
+      if (this.timerCurrentValue > 0) {
         if (!this.settings.isPaused) {
           if (document.querySelector('.sprint__timer')) {
-            document.querySelector('.sprint__timer').innerHTML = String((timerCurrentValue -= 1))
+            document.querySelector('.sprint__timer').innerHTML = String((this.timerCurrentValue -= 1))
           } else {
             clearInterval(timerId)
           }
@@ -58,7 +58,9 @@ export class Sprint {
 
   async render() {
     this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
-    this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+    this.words = this.settings.isLoginActive
+      ? await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+      : await this.settings.service.getAggregatedWords(this.id, this.settings.lvl, this.settings.pageNumber)
     this.round
       ? this.round.updateRound(this.words, this.results)
       : (this.round = new SprintRound(this.results, this.words, this.settings))
@@ -75,9 +77,15 @@ export class Sprint {
     
     <h2>Sprint</h2>
     <div class="sprint__timer">${this.settings.timerValue}</div>
+
+    <ul class="sprint__settings">
+        <li><button class="sprint__fullscreen_toggle"><i class="fas fa-expand"></i></button></li>
+        <li><button class="sprint__background_toggle"><i class="fas fa-music"></i></button></li>
+      </ul>
     
-    <button class="sprint__fullscreen_toggle"><i class="fas fa-expand"></i></button>
-    <button class="sprint__background_toggle"><i class="fas fa-music"></i></button>
+    
+    
+    
     <div class="sprint__container">
       <span class="sprint__score">0</span>
       <span class="sprint__points">0</span>
@@ -99,7 +107,12 @@ export class Sprint {
         <li class="sprint__verdict_wrong"><button><i class="fas fa-arrow-circle-left"></i></button></li>
         <li class="sprint__verdict_true"><button><i class="fas fa-arrow-circle-right"></i> </button></li>
       </ul>
+      <ul class="sprint__advices">
+        <li>Press the Space key to pause</li>
+        <li>Control the game using the arrows keys on your keyboard</li>
+      </ul>
     </div>
+    
   </div>`
   }
 
@@ -136,8 +149,8 @@ export class Sprint {
 
   async startNewSprint() {
     this.settings.isRoundOver = false
-
-    if (!this.isBookPage) {
+    this.settings.isPaused = false
+    if (this.settings.isFreeGame) {
       this.settings.pageNumber = getRandomNumber(29)
     }
     await this.render()
@@ -160,6 +173,10 @@ export class Sprint {
       if (event.code == 'Space' && !this.settings.isRoundOver) {
         event.preventDefault()
         this.settings.isPaused = this.settings.isPaused ? false : true
+
+        this.settings.isPaused
+          ? (document.querySelector('.sprint__timer').innerHTML = '<i class="fas fa-pause-circle"></i>')
+          : (document.querySelector('.sprint__timer').innerHTML = String(this.timerCurrentValue))
       }
     })
   }

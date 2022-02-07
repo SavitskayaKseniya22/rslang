@@ -40,7 +40,7 @@ export class SprintRound {
     if (this.words.length > 1) {
       document.querySelector('.sprint__words').innerHTML = this.makeRound()
     } else {
-      if (this.settings.freeGame) {
+      if (this.settings.isFreeGame) {
         let randomNum = getRandomNumber(29)
         while (this.settings.pageStorage.includes(randomNum)) {
           randomNum = getRandomNumber(29)
@@ -63,7 +63,6 @@ export class SprintRound {
 
   saveMiddleResult(isTrue: boolean) {
     if (isTrue) {
-      console.log(this.results.streak)
       if (this.results.streak < 3) {
         this.results.streak++
         document.querySelector(`.streak${this.results.streak}`).classList.add('counter-full')

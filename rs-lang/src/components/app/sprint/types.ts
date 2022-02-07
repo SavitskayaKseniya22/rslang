@@ -31,10 +31,11 @@ export interface SprintSettings {
   lvl: number
   timerValue: number
   pageNumber: number
-  freeGame: boolean
+  isFreeGame: boolean
   pageStorage: number[]
   basicPoints: number
   isMusicPlaying: boolean
   isRoundOver: boolean
   isPaused: boolean
+  isLoginActive: boolean
 }
