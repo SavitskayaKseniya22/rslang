@@ -2,10 +2,6 @@ import ApiService from '../../api-service/api-service'
 import { FormInfo } from '../../interfaces/interfaces'
 import './authorization.css'
 
-//auth-log-in-form
-//auth-register-form
-//auth-overlay
-
 class Authorization {
   service: ApiService
 
@@ -61,7 +57,7 @@ class Authorization {
 </div>
 <div class="form">
  <input type="email" class="form-input email-input" name="e-mail" placeholder="E-mail"
-     pattern="^[A-z0-9_\-^\s]{3,15}@[^.]+[A-Za-z0-9]{3,}\.\D{2,}" required="">
+     pattern="^[A-z0-9_\-^\s]{3,15}@[^.]+[A-Za-z0-9]{3,}\.\D{2,}" required>
      <input type="password" placeholder="Password" minlength="8" class="form-input password-input" required> 
      <input type="text" placeholder="Name" minlength="1" class="form-input name-input" required> 
  <button class="register-button submit-btn">Register</button>
@@ -147,9 +143,7 @@ class Authorization {
     document.querySelector('.register-button').addEventListener('click', async () => {
       if (eMail.validity.valid && pWord.validity.valid && nom.validity.valid) {
         try {
-          console.log('everything is good creating user....')
           const resp = await this.service.requestRegistration(this.formData)
-          console.log('user was sucessfully created', resp)
           this.formData = {
             email: '',
             password: '',

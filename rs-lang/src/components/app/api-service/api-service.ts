@@ -17,8 +17,6 @@ class ApiService {
     }
   }
   async requestRegistration(formData: FormInfo) {
-    console.log(formData)
-
     const res = await fetch(`${this.apiUrl}/users`, {
       method: 'POST',
       headers: {
@@ -28,7 +26,6 @@ class ApiService {
       body: JSON.stringify(formData),
     })
     if (res.ok) {
-      console.log('ok')
       const content = await res.json()
       return content
     } else {
@@ -37,7 +34,6 @@ class ApiService {
   }
 
   async requestLogIn(formData: FormInfo) {
-    console.log(formData)
     const res = await fetch(`${this.apiUrl}/signin`, {
       method: 'POST',
       headers: {
@@ -74,9 +70,7 @@ class ApiService {
       },
       body: JSON.stringify(word),
     })
-    if (res.ok) {
-      console.log('ok')
-    } else {
+    if (!res.ok) {
       throw new Error(`${res.status}`)
     }
   }
@@ -168,7 +162,6 @@ class ApiService {
     })
     if (res.ok) {
       const content = await res.json()
-      console.log(content)
       return content[0].paginatedResults
     } else {
       throw new Error(`error: ${res.status}, check your connection or repeat the log-in procedure`)
@@ -191,7 +184,7 @@ class ApiService {
     }
   }
   async requestUpdateToken(id: string) {
-    const res = await fetch(`${this.apiUrl}/users/${id}/tokens`,  {
+    const res = await fetch(`${this.apiUrl}/users/${id}/tokens`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${this.user.refreshToken}`,
