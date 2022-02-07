@@ -40,18 +40,15 @@ export class Sprint {
     this.timerCurrentValue = this.settings.timerValue
 
     const timerId = setInterval(() => {
-      if (this.timerCurrentValue > 0) {
-        if (!this.settings.isPaused) {
-          if (document.querySelector('.sprint__timer')) {
-            document.querySelector('.sprint__timer').innerHTML = String((this.timerCurrentValue -= 1))
-          } else {
-            clearInterval(timerId)
-          }
+      if (!this.settings.isPaused) {
+        if (this.timerCurrentValue > 0) {
+          const timer = document.querySelector('.sprint__timer')
+          timer ? (timer.innerHTML = String((this.timerCurrentValue -= 1))) : clearInterval(timerId)
+        } else {
+          clearInterval(timerId)
+          new SprintResult(this.results).renderResult()
+          this.settings.isRoundOver = true
         }
-      } else {
-        clearInterval(timerId)
-        new SprintResult(this.results).renderResult()
-        this.settings.isRoundOver = true
       }
     }, 1000)
   }
@@ -61,29 +58,37 @@ export class Sprint {
     this.words = this.settings.isLoginActive
       ? await this.settings.service.getAggregatedWords(this.id, this.settings.lvl, this.settings.pageNumber)
       : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+
     this.round
       ? this.round.updateRound(this.words, this.results)
       : (this.round = new SprintRound(this.results, this.words, this.settings))
 
-    document.querySelector('.main').innerHTML = this.makeGame()
+    document.querySelector('.sprint')
+      ? (document.querySelector('.sprint__container').innerHTML = this.makeGameContent())
+      : (document.querySelector('.main').innerHTML = this.makeGameContainer())
+
     this.addTimer()
   }
 
-  makeGame() {
+  makeGameContainer() {
     return `<div class="sprint">
     <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
     <audio class="sprint__answer_correct" src="./sounds/correctAnswer.mp3"></audio>
     <audio class="sprint__answer_wrong" src="./sounds/wrongAnswer.mp3"></audio>
-    
     <h2>Sprint</h2>
-    <div class="sprint__timer">${this.settings.timerValue}</div>
-
     <ul class="sprint__settings">
         <li><button class="sprint__fullscreen_toggle"><i class="fas fa-expand"></i></button></li>
         <li><button class="sprint__background_toggle"><i class="fas fa-music"></i></button></li>
-      </ul>
-    
+    </ul>
     <div class="sprint__container">
+    ${this.makeGameContent()}
+    </div>
+  </div>`
+  }
+
+  makeGameContent() {
+    return `
+    <div class="sprint__timer">${this.settings.timerValue}</div>
       <span class="sprint__score">0</span>
       <span class="sprint__points">0</span>
       <ul class="sprint__counter-preview">
@@ -108,9 +113,7 @@ export class Sprint {
         <li>Press the Space key to pause</li>
         <li>Control the game using the arrows keys on your keyboard</li>
       </ul>
-    </div>
-    
-  </div>`
+    `
   }
 
   toggleFullScreen() {
@@ -118,37 +121,18 @@ export class Sprint {
     if (this.settings.isFullScreenOn) {
       document.exitFullscreen()
       fullScreen.innerHTML = `<i class="fas fa-expand"></i>`
-      this.settings.isFullScreenOn = false
     } else {
       document.documentElement.requestFullscreen()
       fullScreen.innerHTML = `<i class="fas fa-compress"></i>`
-      this.settings.isFullScreenOn = true
     }
+
+    this.settings.isFullScreenOn = !this.settings.isFullScreenOn
   }
 
   toggleMusic() {
     const music = document.querySelector('.sprint__background') as HTMLAudioElement
-    if (music.paused) {
-      music.play()
-      this.settings.isMusicPlaying = true
-    } else {
-      music.pause()
-      this.settings.isMusicPlaying = false
-    }
-  }
-
-  restoreFullScreen() {
-    if (this.settings.isFullScreenOn) {
-      const fullScreen = document.querySelector('.sprint__fullscreen_toggle')
-      fullScreen.innerHTML = `<i class="fas fa-compress"></i>`
-    }
-  }
-
-  restoreMusic() {
-    if (this.settings.isMusicPlaying) {
-      const music = document.querySelector('.sprint__background') as HTMLAudioElement
-      music.play()
-    }
+    music.paused ? music.play() : music.pause()
+    this.settings.isMusicPlaying = !this.settings.isMusicPlaying
   }
 
   async startNewSprint() {
@@ -158,8 +142,6 @@ export class Sprint {
       this.settings.pageNumber = getRandomNumber(29)
     }
     await this.render()
-    this.restoreMusic()
-    this.restoreFullScreen()
   }
 
   initListener() {

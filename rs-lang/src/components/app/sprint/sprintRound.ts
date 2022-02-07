@@ -10,7 +10,6 @@ export class SprintRound {
   words: Word[]
   results: SprintResultType
   settings: SprintSettings
-  music: HTMLAudioElement
 
   constructor(results: SprintResultType, words: Word[], settings: SprintSettings) {
     this.results = results
@@ -88,10 +87,11 @@ export class SprintRound {
 
   toggleSoundEffects(isTrue: boolean) {
     if (this.settings.isMusicPlaying) {
-      this.music = isTrue
-        ? document.querySelector('.sprint__answer_correct')
-        : document.querySelector('.sprint__answer_wrong')
-      this.music.play()
+      const soundEffect = isTrue
+        ? (document.querySelector('.sprint__answer_correct') as HTMLAudioElement)
+        : (document.querySelector('.sprint__answer_wrong') as HTMLAudioElement)
+
+      soundEffect.play()
     }
   }
 
@@ -107,7 +107,6 @@ export class SprintRound {
     document.querySelectorAll(`.counter-full`).forEach((element) => {
       element.classList.remove('counter-full')
     })
-
     this.results.streak = 0
   }
 
