@@ -8,8 +8,18 @@ export class SprintResult {
   wrong: Word[]
   percent: number
   total: number
+  static instance: SprintResult
 
-  constructor(results: SprintResultType) {
+  constructor() {
+    if (typeof SprintResult.instance === 'object') {
+      return SprintResult.instance
+    }
+    SprintResult.instance = this
+
+    return SprintResult.instance
+  }
+
+  updateResult(results: SprintResultType) {
     this.results = results
 
     this.longestStreak = this.results.streaks
@@ -22,8 +32,7 @@ export class SprintResult {
     this.correct = this.results.answers[1]
     this.wrong = this.results.answers[0]
     this.total = this.correct.length + this.wrong.length
-    this.percent =
-      this.total === 0 ? 0 : Math.round(100 / ((this.correct.length + this.wrong.length) / this.correct.length))
+    this.percent = this.total === 0 ? 0 : Math.round(100 / (this.total / this.correct.length))
   }
 
   renderResult() {

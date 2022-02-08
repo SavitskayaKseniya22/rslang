@@ -1,4 +1,5 @@
 import ApiService from '../../api-service/api-service'
+import { Sprint } from '../../sprint/sprint'
 
 class DifficultySelect {
   gameName: string
@@ -21,23 +22,27 @@ class DifficultySelect {
       </div>
       </div>
       `
+    this.addListeners()
   }
   addListeners() {
     document.querySelectorAll('.level-select').forEach((el) => {
       el.addEventListener('click', (e) => {
         const lvl = Number((e.target as HTMLElement).dataset.lvl)
-        let page: Object
-        /*switch (this.gameName){                                            // Uncomment and change when you start working
-                  case 'sprint ':
-                  page = new Sprint(lvl, this.service );
-                  page.render()
-                  window.location.hash = 'sprint'
-                  break;
-                  case 'audio-challenge':
-                  page = new AudioChallenge(lvl, this.service)
-                  page.render() 
-                  window.location.hash = 'audio-challenge'
-              }*/
+        let page: Sprint
+
+        switch (
+          this.gameName // Uncomment and change when you start working
+        ) {
+          case 'sprint':
+            page = new Sprint(lvl, this.service)
+            page.render()
+            window.location.hash = 'sprint'
+            break
+          case 'audio-challenge':
+            //page = new AudioChallenge(lvl, this.service)
+            // page.render()
+            window.location.hash = 'audio-challenge'
+        }
       })
     })
   }

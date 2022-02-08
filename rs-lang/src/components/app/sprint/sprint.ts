@@ -14,60 +14,88 @@ export class Sprint {
   isPaused: boolean
   id: number
   timerCurrentValue: number
+  static instance: Sprint
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
+    if (typeof Sprint.instance === 'object') {
+      Sprint.instance.settings.lvl = lvl
+      Sprint.instance.settings.pageNumber = pageNumber ?? getRandomNumber(29)
+      Sprint.instance.settings.id = null
+      Sprint.instance.settings.isFreeGame = pageNumber ? false : true
+      Sprint.instance.settings.isMusicPlaying = false
+      Sprint.instance.settings.isRoundOver = false
+      Sprint.instance.settings.isPaused = false
+      return Sprint.instance
+    }
+
+    Sprint.instance = this
+
     this.settings = {
       service: service,
       lvl: lvl,
       timerValue: 60,
       pageNumber: pageNumber ?? getRandomNumber(29),
       isFreeGame: pageNumber ? false : true,
-      pageStorage: [],
+      pageStorage: [this.pageNumber],
       basicPoints: 10,
       isMusicPlaying: false,
       isRoundOver: false,
       isPaused: false,
-      isLoginActive: false,
       isFullScreenOn: false,
+      resultScreen: new SprintResult(),
+      id: null,
     }
 
-    this.settings.pageStorage.push(this.settings.pageNumber)
-    //this.id=window.localStorasge.getItem("id")
     this.initListener()
+    return Sprint.instance
   }
 
   addTimer() {
     this.timerCurrentValue = this.settings.timerValue
 
     const timerId = setInterval(() => {
-      if (!this.settings.isPaused) {
+      const timer = document.querySelector('.sprint__timer')
+
+      if (!this.settings.isPaused && timer) {
         if (this.timerCurrentValue > 0) {
-          const timer = document.querySelector('.sprint__timer')
-          timer ? (timer.innerHTML = String((this.timerCurrentValue -= 1))) : clearInterval(timerId)
+          timer.innerHTML = String((this.timerCurrentValue -= 1))
         } else {
           clearInterval(timerId)
-          new SprintResult(this.results).renderResult()
+          this.settings.resultScreen.updateResult(this.results)
+          this.settings.resultScreen.renderResult()
           this.settings.isRoundOver = true
         }
+      } else if (!timer) {
+        clearInterval(timerId)
       }
     }, 1000)
   }
 
   async render() {
+    console.log(this.settings)
+    this.updateSettings()
     this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
-    this.words = this.settings.isLoginActive
-      ? await this.settings.service.getAggregatedWords(this.id, this.settings.lvl, this.settings.pageNumber)
+    this.words = this.settings.id
+      ? await this.settings.service.getAggregatedWords(this.settings.id, this.settings.lvl, this.settings.pageNumber)
       : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
 
-    this.round
-      ? this.round.updateRound(this.words, this.results)
-      : (this.round = new SprintRound(this.results, this.words, this.settings))
+    this.round = this.round ?? new SprintRound()
+    this.round.updateRound(this.words, this.results, this.settings)
 
     document.querySelector('.sprint')
       ? (document.querySelector('.sprint__container').innerHTML = this.makeGameContent())
       : (document.querySelector('.main').innerHTML = this.makeGameContainer())
 
     this.addTimer()
+  }
+
+  updateSettings() {
+    this.settings.isRoundOver = false
+    this.settings.isPaused = false
+    if (this.settings.isFreeGame) {
+      this.settings.pageNumber = getRandomNumber(29)
+    }
+    this.settings.pageStorage = [this.settings.pageNumber]
   }
 
   makeGameContainer() {
@@ -136,11 +164,6 @@ export class Sprint {
   }
 
   async startNewSprint() {
-    this.settings.isRoundOver = false
-    this.settings.isPaused = false
-    if (this.settings.isFreeGame) {
-      this.settings.pageNumber = getRandomNumber(29)
-    }
     await this.render()
   }
 

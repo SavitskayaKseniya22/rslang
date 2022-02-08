@@ -13,7 +13,7 @@ class ApiService {
     return content
   }
 
-  async getAggregatedWords(id: number, lvl: number, pageNum: number) {
+  async getAggregatedWords(id: string, lvl: number, pageNum: number) {
     const rawResponse = await fetch(`${this.url}/users/${id}/aggregatedWords?group=${lvl}&page=${pageNum}`, {
       method: 'GET',
     })

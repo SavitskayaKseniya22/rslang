@@ -1,4 +1,5 @@
 import ApiService from '../api-service/api-service'
+import { SprintResult } from './sprintResult'
 
 export interface Word {
   id: string
@@ -37,6 +38,7 @@ export interface SprintSettings {
   isMusicPlaying: boolean
   isRoundOver: boolean
   isPaused: boolean
-  isLoginActive: boolean
   isFullScreenOn: boolean
+  resultScreen: SprintResult
+  id: null | string
 }

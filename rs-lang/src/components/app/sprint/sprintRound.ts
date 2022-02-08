@@ -1,6 +1,5 @@
 import { getRandomNumber, isEven } from './utils'
 import { Sound } from './sound'
-import { SprintResult } from './sprintResult'
 import { Word, SprintResultType, SprintSettings } from './types'
 
 export class SprintRound {
@@ -10,17 +9,23 @@ export class SprintRound {
   words: Word[]
   results: SprintResultType
   settings: SprintSettings
+  static instance: SprintRound
 
-  constructor(results: SprintResultType, words: Word[], settings: SprintSettings) {
-    this.results = results
-    this.words = words
-    this.settings = settings
+  constructor() {
+    if (typeof SprintRound.instance === 'object') {
+      return SprintRound.instance
+    }
+    SprintRound.instance = this
+
     this.initListener()
+
+    return SprintRound.instance
   }
 
-  updateRound(words: Word[], results: SprintResultType) {
+  updateRound(words: Word[], results: SprintResultType, settings: SprintSettings) {
     this.words = words
     this.results = results
+    this.settings = settings
   }
 
   makeRound() {
@@ -51,10 +56,17 @@ export class SprintRound {
 
       if (this.settings.pageNumber >= 0) {
         this.settings.pageStorage.push(this.settings.pageNumber)
-        this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+        this.words = this.settings.id
+          ? await this.settings.service.getAggregatedWords(
+              this.settings.id,
+              this.settings.lvl,
+              this.settings.pageNumber
+            )
+          : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
-        new SprintResult(this.results).renderResult()
+        this.settings.resultScreen.updateResult(this.results)
+        this.settings.resultScreen.renderResult()
         this.settings.isRoundOver = true
       }
     }
