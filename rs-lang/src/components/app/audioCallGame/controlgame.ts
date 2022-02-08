@@ -1,5 +1,6 @@
 import AudioGame from "./audioGame";
 import { Question, Word } from "./type";
+import './audioCall.css';
 
 class ConrolGame {
   arrayTrueWords: Word[];

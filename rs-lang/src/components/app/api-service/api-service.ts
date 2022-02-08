@@ -11,7 +11,6 @@ class ApiService {
     page = page !== -1 ? page : randomInteger(0, 29);
     const groupAgain = group;
     const pageAgain = page;
-    // let page = randomInteger(0, 29);
     await fetch(`http://localhost:3000/words?page=${page}&group=${group}`)
       .then((resp) => resp.json())
       .then((dataTrue: Word[]) => {
