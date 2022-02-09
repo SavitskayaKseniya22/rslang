@@ -109,7 +109,8 @@ class Authorization {
           }
           localStorage.setItem('user', JSON.stringify(resp))
           this.service.user = resp
-          this.renderLoggedIn(resp.name)
+          window.location.reload()
+          /*this.renderLoggedIn(resp.name)*/
         } catch (err) {
           alert(err)
         }
