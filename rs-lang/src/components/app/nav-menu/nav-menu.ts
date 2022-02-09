@@ -1,5 +1,4 @@
 import ApiService from '../api-service/api-service'
-import ConrolGame from '../audioCallGame/controlgame'
 import DifficultySelect from '../core/difficulty-select/difficulty-select'
 
 class NavMenu {
@@ -36,9 +35,7 @@ class NavMenu {
         break
       case 'audio-challenge-choose':
         page = new DifficultySelect('audio-challenge', this.service)
-        new ConrolGame(0);
-        // page.render();
-        // new ApiService().getWords(0);
+        page.render();
         break
     }
   }

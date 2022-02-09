@@ -1,5 +1,5 @@
-import ApiService from "../api-service/api-service";
 import BasicQuestion from "./basicQuestion";
+import ConrolGame from "./controlgame";
 import ResultRaund from "./resultRaund";
 import { Question, Word } from "./type";
 
@@ -125,7 +125,7 @@ class AudioGame {
   addEventListenerForButtonPlayAgain() {
     const button = document.querySelector(".button-play-again");
     button.addEventListener("click", () => {
-      // new ApiService().getWords(this.groupAgain, this.pageAgain);
+      new ConrolGame(this.groupAgain, this.pageAgain);
     });
   }
 
