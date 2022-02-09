@@ -27,7 +27,7 @@ class ApiService {
     if (res.ok) {
       const content = await res.json()
       return content
-    } else if(res.status === 417) {
+    } else if (res.status === 417) {
       throw new Error(` error: ${res.status}, user with this adress already exists`)
     } else {
       throw res

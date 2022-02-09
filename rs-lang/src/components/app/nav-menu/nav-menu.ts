@@ -4,10 +4,7 @@ import MainPage from '../core/main-page/main-page'
 import TextBookPage from '../core/text-book-page/text-book-page'
 
 class NavMenu {
-  service: ApiService
-  mainPage: MainPage
-  textBook: TextBookPage
-  constructor(service: ApiService, mainPage: MainPage, textBook: TextBookPage) {
+  constructor(public service: ApiService, public mainPage: MainPage, public textBook: TextBookPage) {
     this.service = service
     this.mainPage = mainPage
     this.textBook = textBook
@@ -37,21 +34,22 @@ class NavMenu {
     switch (e.newURL.split('#')[1]) {
       case 'main':
         page = this.mainPage
-        page.render()
+
         break
       case 'text-book':
         page = this.textBook
-        page.render()
+
         break
       case 'sprint-choose':
         page = new DifficultySelect('sprint', this.service)
-        page.render()
+
         break
       case 'audio-challenge-choose':
         page = new DifficultySelect('audio-challenge', this.service)
-        page.render()
+
         break
     }
+    page.render()
   }
 }
 export default NavMenu
