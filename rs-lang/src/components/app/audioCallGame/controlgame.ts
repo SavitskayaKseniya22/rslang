@@ -11,9 +11,9 @@ class ConrolGame {
   groupSecondPartFalse: number;
   pageSecondPartFalse: number;
   request: ApiService;
-  constructor(group: number, page = 0) {
+  constructor(group: number, page = -1) {
     this.groupTrue = group;
-    this.pageTrue = page;
+    this.pageTrue = page !== -1 ? page : this.randomInteger(0, 29);
     this.request = new ApiService();
     this.getParamsForRequest();
     this.getQuestions();
