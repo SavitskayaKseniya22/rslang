@@ -6,10 +6,12 @@ class TextBookPage {
   apiService: ApiService
   curPage: number
   curGrp: number
+  showDifficult:boolean
   constructor(apiService: ApiService) {
     this.apiService = apiService
     this.curPage = 0
     this.curGrp = 0
+    this.showDifficult = false
   }
   async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
@@ -51,7 +53,7 @@ class TextBookPage {
     try {
       document.querySelector(`.tb-words`).innerHTML = ``
       if (this.apiService.user !== null && this.apiService.user !== undefined) {
-        if (this.curGrp === 99) {
+        if (this.showDifficult === true) {
           //checking if the difficult words only page shloulld be rendered
           const words: Word[] = await this.apiService.requestGetAggregatedFIlter(
             this.apiService.user.userId,
@@ -84,7 +86,7 @@ class TextBookPage {
   }
   drawWord(word: Word) {
     try {
-      const id = word.id ? word.id : word._id
+      const id = word.id || word._id
       document.querySelector(`.tb-words`).innerHTML += `
     <div class="tb-word" data-tb-wrd-id=${id}>
     <img class="tb-img" src=${this.apiService.apiUrl}/${word.image}>
@@ -109,7 +111,7 @@ class TextBookPage {
       if (this.apiService.user !== null &&  this.apiService.user !== undefined) {
         const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
         const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
-        const markStr = this.curGrp === 99 ? 'Mark as normal' : 'Mark as difficult' //checking if the difficult words only page shloulld be rendered
+        const markStr = this.showDifficult === true ? 'Mark as normal' : 'Mark as difficult' //checking if the difficult words only page shloulld be rendered
         document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
       <div data-tb-useid="${id}" class="tb-user-functionality">
       <button data-tb-diffid="${id}" class="tb-add-difficult-btn">${markStr}</button>
@@ -118,14 +120,8 @@ class TextBookPage {
   </div>
       `
         if (word.userWord) {
-          if (word.userWord.difficulty === 'difficult') {
-            document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-difficult-word')
-          }
-          if (word.userWord.difficulty === 'learned') {
-            document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-learned-word')
-          }
-          if (word.userWord.difficulty === 'normal') {
-            document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add('tb-normal-word')
+          if (['difficult', 'learned', 'normal'].includes(word.userWord.difficulty)) {
+            document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add(`tb-${word.userWord.difficulty}-word`)
           }
         }
       }
@@ -153,10 +149,11 @@ class TextBookPage {
             elem.disabled = false
           })
           this.curGrp = Number(target.dataset.grp)
+          this.showDifficult = false
           await this.getWords()
           this.addControls()
         } else {
-          this.curGrp = 99 // marking the group as special for difficult words only
+          this.showDifficult = true// marking the group as special for difficult words only
           document.querySelectorAll('.pagination-button').forEach((btn) => {
             const elem = btn as HTMLButtonElement
             elem.disabled = true
@@ -253,7 +250,7 @@ class TextBookPage {
     wordDiv.classList.add('tb-learned-word')
     wordDiv.classList.remove('tb-normal-word')
     wordDiv.classList.remove('tb-difficult-word')
-    if (this.curGrp === 99) {
+    if (this.showDifficult === true) {
       //checking if the difficult words only page shloulld be rendered
       wordDiv.remove()
     }
@@ -288,7 +285,7 @@ class TextBookPage {
     wordDiv.classList.remove('tb-learned-word')
     wordDiv.classList.remove('tb-normal-word')
     wordDiv.classList.add('tb-difficult-word')
-    if (this.curGrp === 99) {
+    if (this.showDifficult === true) {
       //checking if the difficult words only page shloulld be rendered
       try {
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
