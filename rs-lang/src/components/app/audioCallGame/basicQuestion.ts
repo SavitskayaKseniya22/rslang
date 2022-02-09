@@ -3,52 +3,50 @@ import { Question, Word } from "./type";
 import Button from "./button";
 
 class BasicQuestion {
-  mainWrapper = document.createElement("div");
-  wrapperForIconVoice = document.createElement("button");
-  wrapperForAnswers = document.createElement("div");
-  wrapperForButton = document.createElement("div");
-  wrapperForAnswersSmall = document.createElement("button");
-  wrapperForAnswer = document.createElement("div");
-  wrapperForAnswerContent = document.createElement("div");
-  wordAnswer = document.createElement("h3");
-  button: Button;
-
   renderQuestion(question: Question) {
+    const mainWrapper = document.createElement("div");
     const arrayAnswers = [question.true].concat(question.false);
     document.querySelector('.main').innerHTML = "";
-    this.mainWrapper.classList.add("question");
-    this.mainWrapper.append(this.addIconVoice(), this.addWrapperForAnswer(question.true.image, question.true.word), this.addAnswers(arrayAnswers), this.addButtonAction());
-    document.querySelector('.main').append(this.mainWrapper);
+    mainWrapper.classList.add("question");
+    mainWrapper.append(this.addIconVoice(), this.addWrapperForAnswer(question.true.image, question.true.word), this.addAnswers(arrayAnswers), this.addButtonAction());
+    document.querySelector('.main').append(mainWrapper);
   }
   addIconVoice() {
-    this.wrapperForIconVoice.append(new ImageIconVoice().addIconVoice("images/iconVoice.svg"));
-    this.wrapperForIconVoice.classList.add("voice-icon");
-    return this.wrapperForIconVoice;
+    const wrapperForIconVoice = document.createElement("button");
+    wrapperForIconVoice.append(new ImageIconVoice().addIconVoice("images/iconVoice.svg"));
+    wrapperForIconVoice.classList.add("voice-icon");
+    return wrapperForIconVoice;
   }
   addWrapperForAnswer(pathToImage: string, word: string) {
-    this.wordAnswer.innerHTML = word;
-    this.wrapperForAnswersSmall.classList.add("voice-icon-small");
-    this.wrapperForAnswersSmall.append(new ImageIconVoice().addIconVoice("images/iconVoiceSmall.svg"));
-    this.wrapperForAnswerContent.classList.add("answer-content");
-    this.wrapperForAnswerContent.append(this.wrapperForAnswersSmall, this.wordAnswer);
-    this.wrapperForAnswer.classList.add("question", "wrapper-answer");
-    this.wrapperForAnswer.append(new ImageIconVoice().addIconVoice(`http://localhost:3000/${pathToImage}`), this.wrapperForAnswerContent);
-    return this.wrapperForAnswer;
+    const wrapperForAnswersSmall = document.createElement("button");
+    const wrapperForAnswer = document.createElement("div");
+    const wrapperForAnswerContent = document.createElement("div");
+    const wordAnswer = document.createElement("h3");
+    wordAnswer.innerHTML = word;
+    wrapperForAnswersSmall.classList.add("voice-icon-small");
+    wrapperForAnswersSmall.append(new ImageIconVoice().addIconVoice("images/iconVoiceSmall.svg"));
+    wrapperForAnswerContent.classList.add("answer-content");
+    wrapperForAnswerContent.append(wrapperForAnswersSmall, wordAnswer);
+    wrapperForAnswer.classList.add("question", "wrapper-answer");
+    wrapperForAnswer.append(new ImageIconVoice().addIconVoice(`http://localhost:3000/${pathToImage}`), wrapperForAnswerContent);
+    return wrapperForAnswer;
   }
   addAnswers(arrayAnswers: Word[]) {
+    const wrapperForAnswers = document.createElement("div");
     const sortArrQuestions = this.shuffle([1, 2, 3, 4, 5].map((item, i) => arrayAnswers[i]));
-    this.wrapperForAnswers.innerHTML = "";
-    this.wrapperForAnswers.classList.add("wrapper-answers");
+    wrapperForAnswers.innerHTML = "";
+    wrapperForAnswers.classList.add("wrapper-answers");
     sortArrQuestions.forEach((item) => {
       const button = new Button({
         className: `answer`,
         text: item.wordTranslate,
       });
-      this.wrapperForAnswers.append(button.element);
+      wrapperForAnswers.append(button.element);
     });
-    return this.wrapperForAnswers;
+    return wrapperForAnswers;
   }
   addButtonAction() {
+    const wrapperForButton = document.createElement("div");
     const buttonActive = new Button({
       className: "button-active",
       text: "I don't know",
@@ -57,8 +55,8 @@ class BasicQuestion {
       className: "button-next",
       text: "Next word",
     });
-    this.wrapperForButton.append(buttonActive.element, buttonNext.element);
-    return this.wrapperForButton;
+    wrapperForButton.append(buttonActive.element, buttonNext.element);
+    return wrapperForButton;
   }
   shuffle(arr) {
     let j, temp;
