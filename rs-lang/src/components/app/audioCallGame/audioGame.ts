@@ -30,10 +30,10 @@ class AudioGame {
     new BasicQuestion().renderQuestion(data);
     this.addEventListenerForButtonAction();
     this.addEventListenerForWrapperAnswers();
-    this.trueAnswer = data.true.wordTranslate;
-    this.addSoundAnswer(`http://localhost:3000/${data.true.audio}`);
-    this.addEventListenerForBigIconSound(`http://localhost:3000/${data.true.audio}`);
-    this.addEventListenerForSmallIconSound(`http://localhost:3000/${data.true.audio}`);
+    this.trueAnswer = data.trueAnswer.wordTranslate;
+    this.addSoundAnswer(`http://localhost:3000/${data.trueAnswer.audio}`);
+    this.addEventListenerForBigIconSound(`http://localhost:3000/${data.trueAnswer.audio}`);
+    this.addEventListenerForSmallIconSound(`http://localhost:3000/${data.trueAnswer.audio}`);
   }
   addSoundAnswer(src: string) {
     this.player.setAttribute("src", src);
