@@ -15,8 +15,8 @@ class TextBookPage {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
         <audio src='' class="tb-tts"></audio>
         <div class="tb-mini-game-select">
-            <div class="tb-minigame"><i class="fas fa-running"></i> sprint</div>
-            <div class="tb-minigame"><i class="fas fa-volume-up"></i> audio-challenge</div>
+            <button disabled class="tb-minigame"><i class="fas fa-running"></i> sprint</button>
+            <button disabled class="tb-minigame"><i class="fas fa-volume-up"></i> audio-challenge</button>
         </div>
         <div class="tb-pagination">
             <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
@@ -31,12 +31,18 @@ class TextBookPage {
             <div class="group-select" data-grp="3">4</div>
             <div class="group-select" data-grp="4">5</div>
             <div class="group-select" data-grp="5">6</div>
-            <div class="group-select difficult-select">D</div>
         </div>
         <div class="tb-words">
             
         </div>
     </div>`
+    if(this.service.user !== null && this.service.user !== undefined){
+      document.querySelector('.tb-group-select').innerHTML+= '<div class="group-select difficult-select">D</div>'
+      document.querySelectorAll(('.tb-minigame')).forEach((btn) =>{
+        let button = btn as HTMLButtonElement
+      button.disabled = false
+      })
+    }
     await this.getWords()
     this.addListeners()
     this.addControls()
@@ -44,7 +50,7 @@ class TextBookPage {
   async getWords() {
     try {
       document.querySelector(`.tb-words`).innerHTML = ``
-      if (this.service.user !== null) {
+      if (this.service.user !== null && this.service.user !== undefined) {
         if (this.curGrp === 99) {
           //checking if the difficult words only page shloulld be rendered
           const words: Word[] = await this.service.requestGetAggregatedFIlter(
@@ -100,7 +106,7 @@ class TextBookPage {
 <audio src=${this.service.apiUrl}/${word.audio} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
 </div>
     `
-      if (this.service.user !== null) {
+      if (this.service.user !== null &&  this.service.user !== undefined) {
         const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
         const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
         const markStr = this.curGrp === 99 ? 'Mark as normal' : 'Mark as difficult' //checking if the difficult words only page shloulld be rendered
@@ -168,7 +174,7 @@ class TextBookPage {
         this.playAudio(target.dataset.audioPaths)
       })
     })
-    if (this.service.user !== null) {
+    if (this.service.user !== null &&  this.service.user !== undefined) {
       document.querySelectorAll('.tb-user-functionality').forEach((div) => {
         div.addEventListener('click', async (e) => {
           const target = e.target as HTMLElement
