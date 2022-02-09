@@ -2,8 +2,7 @@ import { FormInfo, UserTemplate, UserWordInfo } from '../interfaces/interfaces'
 
 class ApiService {
   apiUrl: string
-  user: UserTemplate | null
-  constructor(user: UserTemplate | null) {
+  constructor(public user: UserTemplate | null) {
     this.user = user
     this.apiUrl = `http://127.0.0.1:3000`
   }
@@ -28,8 +27,10 @@ class ApiService {
     if (res.ok) {
       const content = await res.json()
       return content
-    } else {
+    } else if(res.status === 417) {
       throw new Error(` error: ${res.status}, user with this adress already exists`)
+    } else {
+      throw new Error(` error: ${res.status},having trouble connecting to server...we're sorry`)
     }
   }
 
