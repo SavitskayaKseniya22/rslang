@@ -3,13 +3,6 @@ import { Word } from "./type";
 import WordResult from "./wordResult";
 
 class ResultRaund {
-  wrapperResult = document.createElement("div");
-  wrapperTrueResult = document.createElement("div");
-  titleWrapperTrueResult = document.createElement("h3");
-  spanWrapperTrueResult = document.createElement("span");
-  wrapperFalseResult = document.createElement("div");
-  titleWrapperFalseResult = document.createElement("h3");
-  spanWrapperFalseResult = document.createElement("span");
   arrayTrueWords: Word[];
   constructor(arrayTrueWords: Word[], arrayNumberTrueAnswers: number[], arrayNumberFalseAnswers: number[]) {
     this.arrayTrueWords = arrayTrueWords;
@@ -17,29 +10,36 @@ class ResultRaund {
     document.querySelector('.main').append(this.addWrapperResult(arrayNumberTrueAnswers, arrayNumberFalseAnswers));
   }
   addWrapperResult(arrayNumberTrueAnswers: number[], arrayNumberFalseAnswers: number[]) {
+    const wrapperResult = document.createElement("div");
     const buttonAgain = new Button({
       className: "button-play-again",
       text: "Play again",
     });
-    this.wrapperResult.append(this.addWrapperTrueResult(arrayNumberTrueAnswers), this.addWrapperFalseResult(arrayNumberFalseAnswers), buttonAgain.element);
-    this.wrapperResult.classList.add("result-wrapper");
-    return this.wrapperResult;
+    wrapperResult.append(this.addWrapperTrueResult(arrayNumberTrueAnswers), this.addWrapperFalseResult(arrayNumberFalseAnswers), buttonAgain.element);
+    wrapperResult.classList.add("result-wrapper");
+    return wrapperResult;
   }
   addWrapperTrueResult(arrayNumberTrueAnswers: number[]) {
-    this.titleWrapperTrueResult.innerHTML = "Correct Answers";
-    this.spanWrapperTrueResult.innerHTML = ` ${arrayNumberTrueAnswers.length.toString()}`;
-    this.titleWrapperTrueResult.append(this.spanWrapperTrueResult);
-    this.wrapperTrueResult.prepend(this.titleWrapperTrueResult);
-    arrayNumberTrueAnswers.forEach((item) => this.wrapperTrueResult.append(new WordResult().addWrapperForWord(this.arrayTrueWords, item)));
-    return this.wrapperTrueResult;
+    const wrapperTrueResult = document.createElement("div");
+    const titleWrapperTrueResult = document.createElement("h3");
+    const spanWrapperTrueResult = document.createElement("span");
+    titleWrapperTrueResult.innerHTML = "Correct Answers";
+    spanWrapperTrueResult.innerHTML = ` ${arrayNumberTrueAnswers.length.toString()}`;
+    titleWrapperTrueResult.append(spanWrapperTrueResult);
+    wrapperTrueResult.prepend(titleWrapperTrueResult);
+    arrayNumberTrueAnswers.forEach((item) => wrapperTrueResult.append(new WordResult().addWrapperForWord(this.arrayTrueWords, item)));
+    return wrapperTrueResult;
   }
   addWrapperFalseResult(arrayNumberFalseAnswers: number[]) {
-    this.titleWrapperFalseResult.innerHTML = "Mistakes";
-    this.spanWrapperFalseResult.innerHTML = ` ${arrayNumberFalseAnswers.length.toString()}`;
-    this.titleWrapperFalseResult.append(this.spanWrapperFalseResult);
-    this.wrapperFalseResult.prepend(this.titleWrapperFalseResult);
-    arrayNumberFalseAnswers.forEach((item) => this.wrapperFalseResult.append(new WordResult().addWrapperForWord(this.arrayTrueWords, item)))
-    return this.wrapperFalseResult;
+    const wrapperFalseResult = document.createElement("div");
+    const titleWrapperFalseResult = document.createElement("h3");
+    const spanWrapperFalseResult = document.createElement("span");
+    titleWrapperFalseResult.innerHTML = "Mistakes";
+    spanWrapperFalseResult.innerHTML = ` ${arrayNumberFalseAnswers.length.toString()}`;
+    titleWrapperFalseResult.append(spanWrapperFalseResult);
+    wrapperFalseResult.prepend(titleWrapperFalseResult);
+    arrayNumberFalseAnswers.forEach((item) => wrapperFalseResult.append(new WordResult().addWrapperForWord(this.arrayTrueWords, item)))
+    return wrapperFalseResult;
   }
 }
 export default ResultRaund;
