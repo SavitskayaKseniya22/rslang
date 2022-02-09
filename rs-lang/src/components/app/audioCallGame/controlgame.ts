@@ -10,19 +10,18 @@ class ConrolGame {
   pageFirstPartFalse: number;
   groupSecondPartFalse: number;
   pageSecondPartFalse: number;
+  request: ApiService;
   constructor(group: number, page = 0) {
     this.groupTrue = group;
     this.pageTrue = page;
-    this.groupFirstPartFalse = this.getGroup(this.groupTrue);
-    this.pageFirstPartFalse = this.getPage(this.groupTrue);
-    this.groupSecondPartFalse = this.getGroup(this.groupFirstPartFalse);
-    this.pageSecondPartFalse = this.getGroup(this.pageFirstPartFalse);
+    this.request = new ApiService();
+    this.getParamsForRequest();
     this.getQuestions();
   }
   async getQuestions() {
-    const trueWords = await new ApiService().getAudioWords(this.groupTrue, this.pageTrue);
-    const falseFirstPartWords = await new ApiService().getAudioWords(this.groupFirstPartFalse, this.pageFirstPartFalse)
-    const falseSecondPartWords = await new ApiService().getAudioWords(this.groupSecondPartFalse, this.pageSecondPartFalse);
+    const trueWords = await this.request.getAudioWords(this.groupTrue, this.pageTrue);
+    const falseFirstPartWords = await this.request.getAudioWords(this.groupFirstPartFalse, this.pageFirstPartFalse)
+    const falseSecondPartWords = await this.request.getAudioWords(this.groupSecondPartFalse, this.pageSecondPartFalse);
     const arrayFalseWords = falseFirstPartWords.concat(falseSecondPartWords);
     const randomNumberForArrayTrueWords = this.randomInteger(0, 1);
     const arrayTrueWords = randomNumberForArrayTrueWords === 0 ? trueWords.slice(0, 10) : trueWords.slice(9, 19);
@@ -30,6 +29,12 @@ class ConrolGame {
       return { [`trueAnswer`]: arrayTrueWords[i], [`arrayFalseAnswers`]: arr[i] }
     })
     new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue);
+  }
+  getParamsForRequest() {
+    this.groupFirstPartFalse = this.getGroup(this.groupTrue);
+    this.pageFirstPartFalse = this.getPage(this.groupTrue);
+    this.groupSecondPartFalse = this.getGroup(this.groupFirstPartFalse);
+    this.pageSecondPartFalse = this.getGroup(this.pageFirstPartFalse);
   }
   getGroup(group: number) {
     if (group >= 0 && group !== 6) {
