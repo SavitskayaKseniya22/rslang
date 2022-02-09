@@ -27,7 +27,7 @@ class ConrolGame {
     const randomNumberForArrayTrueWords = this.randomInteger(0, 1);
     const arrayTrueWords = randomNumberForArrayTrueWords === 0 ? trueWords.slice(0, 10) : trueWords.slice(9, 19);
     const arrayQuestions = this.arraySplit(arrayFalseWords, 10).map((elem, i, arr) => {
-      return { [`true`]: arrayTrueWords[i], [`false`]: arr[i] }
+      return { [`trueAnswer`]: arrayTrueWords[i], [`arrayFalseAnswers`]: arr[i] }
     })
     new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue);
   }
