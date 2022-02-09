@@ -30,7 +30,7 @@ class ApiService {
     } else if(res.status === 417) {
       throw new Error(` error: ${res.status}, user with this adress already exists`)
     } else {
-      throw new Error(` error: ${res.status},having trouble connecting to server...we're sorry`)
+      throw res
     }
   }
 
@@ -46,8 +46,10 @@ class ApiService {
     if (res.ok) {
       const content = await res.json()
       return content
-    } else {
+    } else if (res.status === 422) {
       throw new Error('incorrect email or password')
+    } else {
+      throw res
     }
   }
   async requestDeleteUser(id: string) {
@@ -76,7 +78,7 @@ class ApiService {
     }
   }
 
-  async requestDeleteUserWord(userId: string, wordId: string, word: UserWordInfo) {
+  async requestDeleteUserWord(userId: string, wordId: string) {
     const res = await fetch(`${this.apiUrl}/users/${userId}/words/${wordId}`, {
       method: 'DELETE',
       headers: {
@@ -84,7 +86,6 @@ class ApiService {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(word),
     })
     if (res.ok) {
       return

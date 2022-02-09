@@ -7,7 +7,7 @@ import NavMenu from './nav-menu/nav-menu'
 
 class App {
   navMenu: NavMenu
-  service: ApiService
+  apiService: ApiService
   mainPage: MainPage
   textBook: TextBookPage
   authorization: Authorization
@@ -17,11 +17,11 @@ class App {
     if (localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
     }
-    this.service = new ApiService(this.user)
-    this.authorization = new Authorization(this.service)
+    this.apiService = new ApiService(this.user)
+    this.authorization = new Authorization(this.apiService)
     this.mainPage = new MainPage()
-    this.textBook = new TextBookPage(this.service)
-    this.navMenu = new NavMenu(this.service, this.mainPage, this.textBook)
+    this.textBook = new TextBookPage(this.apiService)
+    this.navMenu = new NavMenu(this.apiService, this.mainPage, this.textBook)
   }
   run(): void {
     document.querySelector('.body').innerHTML = `

@@ -3,11 +3,11 @@ import { Word } from '../../interfaces/interfaces'
 import './text-book-page.css'
 
 class TextBookPage {
-  service: ApiService
+  apiService: ApiService
   curPage: number
   curGrp: number
-  constructor(service: ApiService) {
-    this.service = service
+  constructor(apiService: ApiService) {
+    this.apiService = apiService
     this.curPage = 0
     this.curGrp = 0
   }
@@ -36,7 +36,7 @@ class TextBookPage {
             
         </div>
     </div>`
-    if(this.service.user !== null && this.service.user !== undefined){
+    if(this.apiService.user !== null && this.apiService.user !== undefined){
       document.querySelector('.tb-group-select').innerHTML+= '<div class="group-select difficult-select">D</div>'
       document.querySelectorAll(('.tb-minigame')).forEach((btn) =>{
         let button = btn as HTMLButtonElement
@@ -50,19 +50,19 @@ class TextBookPage {
   async getWords() {
     try {
       document.querySelector(`.tb-words`).innerHTML = ``
-      if (this.service.user !== null && this.service.user !== undefined) {
+      if (this.apiService.user !== null && this.apiService.user !== undefined) {
         if (this.curGrp === 99) {
           //checking if the difficult words only page shloulld be rendered
-          const words: Word[] = await this.service.requestGetAggregatedFIlter(
-            this.service.user.userId,
+          const words: Word[] = await this.apiService.requestGetAggregatedFIlter(
+            this.apiService.user.userId,
             `{"$and":[{"userWord.difficulty":"difficult"}]}`
           )
           words.forEach((word) => {
             this.drawWord(word)
           })
         } else {
-          const words: Word[] = await this.service.requestGetUserAgregatedPageGrp(
-            this.service.user.userId,
+          const words: Word[] = await this.apiService.requestGetUserAgregatedPageGrp(
+            this.apiService.user.userId,
             String(this.curGrp),
             String(this.curPage),
             '20'
@@ -72,7 +72,7 @@ class TextBookPage {
           })
         }
       } else {
-        const words: Word[] = await this.service.requestWords(this.curGrp, this.curPage)
+        const words: Word[] = await this.apiService.requestWords(this.curGrp, this.curPage)
         words.forEach((word) => {
           this.drawWord(word)
         })
@@ -87,12 +87,12 @@ class TextBookPage {
       const id = word.id ? word.id : word._id
       document.querySelector(`.tb-words`).innerHTML += `
     <div class="tb-word" data-tb-wrd-id=${id}>
-    <img class="tb-img" src=${this.service.apiUrl}/${word.image}>
+    <img class="tb-img" src=${this.apiService.apiUrl}/${word.image}>
     <div data-tb-wrd-info=${id} class="tb-word-info">
     <div class="tb-word-title-translation-pronounciation">
         <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
         <h3 class="tb-word-translation">${word.wordTranslate}</h3>
-        <button class="pronounce" data-tb-audio-btn-id=${id} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${id} class="fas fa-volume-up"></i></button>
+        <button class="pronounce" data-tb-audio-btn-id=${id} data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${id} class="fas fa-volume-up"></i></button>
     </div>
     <div class="tb-word-definition">
         <p class="tb-definition-english">${word.textMeaning}</p>
@@ -103,10 +103,10 @@ class TextBookPage {
         <p class="tb-sentence-translation">${word.textExampleTranslate}</p>
     </div>
     </div>
-<audio src=${this.service.apiUrl}/${word.audio} data-audio-paths="${this.service.apiUrl}/${word.audio},${this.service.apiUrl}/${word.audioMeaning},${this.service.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
+<audio src=${this.apiService.apiUrl}/${word.audio} data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
 </div>
     `
-      if (this.service.user !== null &&  this.service.user !== undefined) {
+      if (this.apiService.user !== null &&  this.apiService.user !== undefined) {
         const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
         const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
         const markStr = this.curGrp === 99 ? 'Mark as normal' : 'Mark as difficult' //checking if the difficult words only page shloulld be rendered
@@ -174,7 +174,7 @@ class TextBookPage {
         this.playAudio(target.dataset.audioPaths)
       })
     })
-    if (this.service.user !== null &&  this.service.user !== undefined) {
+    if (this.apiService.user !== null &&  this.apiService.user !== undefined) {
       document.querySelectorAll('.tb-user-functionality').forEach((div) => {
         div.addEventListener('click', async (e) => {
           const target = e.target as HTMLElement
@@ -231,7 +231,7 @@ class TextBookPage {
       wordDiv.classList.contains('tb-normal-word')
     ) {
       try {
-        this.service.requestUpdateUserWord(this.service.user.userId, id, {
+        this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
           optional: { timesGuessed: 0, timesMax: 3 },
         })
@@ -241,7 +241,7 @@ class TextBookPage {
       }
     } else {
       try {
-        this.service.requestAddUserWord(this.service.user.userId, id, {
+        this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
           optional: { timesGuessed: 0, timesMax: 3 },
         })
@@ -266,7 +266,7 @@ class TextBookPage {
       wordDiv.classList.contains('tb-normal-word')
     ) {
       try {
-        await this.service.requestUpdateUserWord(this.service.user.userId, id, {
+        await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
           optional: { timesGuessed: 0, timesMax: 5 },
         })
@@ -276,7 +276,7 @@ class TextBookPage {
       }
     } else {
       try {
-        await this.service.requestAddUserWord(this.service.user.userId, id, {
+        await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
           optional: { timesGuessed: 0, timesMax: 5 },
         })
@@ -291,7 +291,7 @@ class TextBookPage {
     if (this.curGrp === 99) {
       //checking if the difficult words only page shloulld be rendered
       try {
-        await this.service.requestUpdateUserWord(this.service.user.userId, id, {
+        await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'normal',
           optional: { timesGuessed: 0, timesMax: 3 },
         })
@@ -304,7 +304,7 @@ class TextBookPage {
   }
   async handleUserError(error: Error) {
     if (error.message.includes('401')) {
-      await this.service.updateToken()
+      await this.apiService.updateToken()
     } else {
       alert(error)
     }

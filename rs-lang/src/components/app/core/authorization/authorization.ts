@@ -3,11 +3,11 @@ import { FormInfo } from '../../interfaces/interfaces'
 import './authorization.css'
 
 class Authorization {
-  service: ApiService
+  apiService: ApiService
 
   formData: FormInfo
-  constructor(service: ApiService) {
-    this.service = service
+  constructor(apiService: ApiService) {
+    this.apiService = apiService
     this.formData = {
       email: '',
       password: '',
@@ -99,7 +99,7 @@ class Authorization {
     document.querySelector('.submit-btn').addEventListener('click', async () => {
       if (eMail.validity.valid && pWord.validity.valid) {
         try {
-          const resp = await this.service.requestLogIn(this.formData)
+          const resp = await this.apiService.requestLogIn(this.formData)
           form.innerHTML = ``
           form.classList.add('hidden')
           document.querySelector('.auth-overlay').classList.add('hidden')
@@ -108,7 +108,7 @@ class Authorization {
             password: '',
           }
           localStorage.setItem('user', JSON.stringify(resp))
-          this.service.user = resp
+          this.apiService.user = resp
           window.location.reload()
           /*this.renderLoggedIn(resp.name)*/
         } catch (err) {
@@ -144,7 +144,7 @@ class Authorization {
     document.querySelector('.register-button').addEventListener('click', async () => {
       if (eMail.validity.valid && pWord.validity.valid && nom.validity.valid) {
         try {
-          const resp = await this.service.requestRegistration(this.formData)
+          const resp = await this.apiService.requestRegistration(this.formData)
           this.formData = {
             email: '',
             password: '',
