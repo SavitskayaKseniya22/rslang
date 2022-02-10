@@ -20,14 +20,14 @@ class ConrolGame {
   }
   async getQuestions() {
     const trueWords = await this.apiService.getAudioWords(this.groupTrue, this.pageTrue);
-    const falseFirstPartWords = await this.apiService.getAudioWords(this.groupFirstPartFalse, this.pageFirstPartFalse)
+    const falseFirstPartWords = await this.apiService.getAudioWords(this.groupFirstPartFalse, this.pageFirstPartFalse);
     const falseSecondPartWords = await this.apiService.getAudioWords(this.groupSecondPartFalse, this.pageSecondPartFalse);
     const arrayFalseWords = falseFirstPartWords.concat(falseSecondPartWords);
     const randomNumberForArrayTrueWords = this.randomInteger(0, 1);
     const arrayTrueWords = randomNumberForArrayTrueWords === 0 ? trueWords.slice(0, 10) : trueWords.slice(9, 19);
     const arrayQuestions = this.arraySplit(arrayFalseWords, 10).map((elem, i, arr) => {
-      return { [`trueAnswer`]: arrayTrueWords[i], [`arrayFalseAnswers`]: arr[i] }
-    })
+      return { "truthyAnswer": arrayTrueWords[i], "falsyAnswers": arr[i] };
+    });
     new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue);
   }
   getParamsForRequest() {

@@ -5,10 +5,10 @@ import Button from "./button";
 class BasicQuestion {
   renderQuestion(question: Question) {
     const mainWrapper = document.createElement("div");
-    const arrayAnswers = [question.trueAnswer].concat(question.arrayFalseAnswers);
+    const arrayAnswers = [question.truthyAnswer].concat(question.falsyAnswers);
     document.querySelector('.main').innerHTML = "";
     mainWrapper.classList.add("question");
-    mainWrapper.append(this.addIconVoice(), this.addWrapperForAnswer(question.trueAnswer.image, question.trueAnswer.word), this.addAnswers(arrayAnswers), this.addButtonAction());
+    mainWrapper.append(this.addIconVoice(), this.addWrapperForAnswer(question.truthyAnswer.image, question.truthyAnswer.word), this.addAnswers(arrayAnswers), this.addButtonAction());
     document.querySelector('.main').append(mainWrapper);
   }
   addIconVoice() {

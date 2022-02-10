@@ -15,8 +15,8 @@ export type Word = {
   wordTranslate: string;
 }
 export type Question = {
-  trueAnswer: Word;
-  arrayFalseAnswers: Word;
+  truthyAnswer: Word;
+  falsyAnswers: Word[];
 }
 export interface ButtonProperties {
   text: string;
