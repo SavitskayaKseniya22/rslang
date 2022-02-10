@@ -1,6 +1,7 @@
 import ImageIconVoice from "./imageIconVoice";
 import { Question, Word } from "./type";
 import Button from "./button";
+import Answer from "./answer";
 
 class BasicQuestion {
   renderQuestion(question: Question) {
@@ -35,13 +36,16 @@ class BasicQuestion {
     const wrapperForAnswers = document.createElement("div");
     const sortArrQuestions = this.shuffle([1, 2, 3, 4, 5].map((item, i) => arrayAnswers[i]));
     wrapperForAnswers.innerHTML = "";
-    wrapperForAnswers.classList.add("wrapper-answers");
+    wrapperForAnswers.classList.add("wrapper-answers", "answer-content");
     sortArrQuestions.forEach((item: Word, i) => {
-      const button = new Button({
-        className: `answer`,
-        text: `${i + 1} ${item.wordTranslate}`,
-      });
-      wrapperForAnswers.append(button.element);
+      // const button = new Button({
+      //   className: `answer`,
+      //   text: item.wordTranslate,
+      // });
+      // wrapperForAnswers.append(button.element);
+      // wrapperForAnswers.classList.add("answer-content");
+      wrapperForAnswers.append(new Answer().addWrapperForAnswer(item, i));
+      // 
     });
     return wrapperForAnswers;
   }
