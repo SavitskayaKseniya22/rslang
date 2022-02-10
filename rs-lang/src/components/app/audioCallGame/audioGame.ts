@@ -57,13 +57,14 @@ class AudioGame {
     this.addEventListenerForSmallIconSound(`http://localhost:3000/${data.truthyAnswer.audio}`);
   }
   addAnswerFromKeyboard(count: number) {
+    const answers = document.querySelectorAll(".answer");
     this.countSpace++;
-    if (this.arrayQuestions[this.count].truthyAnswer.wordTranslate !== document.querySelectorAll(".answer")[count].innerHTML) {
+    if (this.arrayQuestions[this.count].truthyAnswer.wordTranslate !== answers[count].innerHTML) {
       this.addMarkFalseAnswer((<HTMLElement>document.querySelectorAll(".answer")[count]));
       this.arrayNumberFalseAnswers.push(this.count);
       this.addSoundAnswer(`images/false-call.mp3`);
     } else {
-      this.addMarkTrueAnswer((<HTMLElement>document.querySelectorAll(".answer")[count]));
+      this.addMarkTrueAnswer((<HTMLElement>answers[count]));
       this.arrayNumberTrueAnswers.push(this.count);
       this.addSoundAnswer(`images/true-call.mp3`);
     }
@@ -117,9 +118,15 @@ class AudioGame {
     element.style.border = "5px solid green";
   }
   showAnswer() {
+    const answers = document.querySelectorAll(".answer");
     this.addAtributeDisabled();
     this.addAnswer();
     this.arrayNumberFalseAnswers.push(this.count);
+    answers.forEach((answer) => {
+      if (answer.innerHTML === this.arrayQuestions[this.count].truthyAnswer.wordTranslate) {
+        this.addMarkTrueAnswer((<HTMLElement>answer));
+      }
+    });
   }
   changeQuestion() {
     this.count++;
