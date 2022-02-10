@@ -12,6 +12,7 @@ class AudioGame {
   arrayNumberFalseAnswers: number[];
   groupAgain: number;
   pageAgain: number;
+  countSpace: number;
   player = document.createElement("audio");
   constructor(data: Question[], arrayTrueWords: Word[], group: number, page: number) {
     this.groupAgain = group;
@@ -19,12 +20,32 @@ class AudioGame {
     this.arrayNumberTrueAnswers = [];
     this.arrayNumberFalseAnswers = [];
     this.arrayTrueWords = arrayTrueWords;
-    // this.arrayTrueWords.forEach((item) => {
-    //   console.log(item.wordTranslate);
-    // });
     this.count = 0;
+    this.countSpace = 0;
     this.arrayQuestions = data;
     this.startGame(this.arrayQuestions[0]);
+    document.addEventListener('keydown', (event) => {
+      if (event.code === "Digit1" && this.count < 10) {
+        this.addAnswerFromKeyboard(0);
+      } else if (event.code === "Digit2" && this.count < 10) {
+        this.addAnswerFromKeyboard(1);
+      } else if (event.code === "Digit3" && this.count < 10) {
+        this.addAnswerFromKeyboard(2);
+      } else if (event.code === "Digit4" && this.count < 10) {
+        this.addAnswerFromKeyboard(3);
+      } else if (event.code === "Digit5" && this.count < 10) {
+        this.addAnswerFromKeyboard(4);
+      } else if (event.code === "Space") {
+        event.preventDefault();
+        this.countSpace++;
+        if (this.countSpace === 1) {
+          this.showAnswer();
+        } else if (this.countSpace === 2) {
+          this.changeQuestion();
+          this.countSpace = 0;
+        }
+      }
+    });
   }
   startGame(data: Question) {
     new BasicQuestion().renderQuestion(data);
@@ -34,6 +55,21 @@ class AudioGame {
     this.addSoundAnswer(`http://localhost:3000/${data.truthyAnswer.audio}`);
     this.addEventListenerForBigIconSound(`http://localhost:3000/${data.truthyAnswer.audio}`);
     this.addEventListenerForSmallIconSound(`http://localhost:3000/${data.truthyAnswer.audio}`);
+  }
+  addAnswerFromKeyboard(count: number) {
+    this.countSpace++;
+    if (this.arrayQuestions[this.count].truthyAnswer.wordTranslate !== document.querySelectorAll(".answer")[count].innerHTML) {
+      this.addMarkFalseAnswer((<HTMLElement>document.querySelectorAll(".answer")[count]));
+      this.arrayNumberFalseAnswers.push(this.count);
+      this.addSoundAnswer(`images/false-call.mp3`);
+    } else {
+      this.addMarkTrueAnswer((<HTMLElement>document.querySelectorAll(".answer")[count]));
+      this.arrayNumberTrueAnswers.push(this.count);
+      this.addSoundAnswer(`images/true-call.mp3`);
+    }
+    this.addAtributeDisabled();
+    this.addAnswer();
+
   }
   addSoundAnswer(src: string) {
     this.player.setAttribute("src", src);
@@ -51,7 +87,7 @@ class AudioGame {
       } else if ((<HTMLElement>event.target).innerText !== this.trueAnswer) {
         this.addSoundAnswer(`images/false-call.mp3`);
         this.arrayNumberFalseAnswers.push(this.count);
-        this.addMarkFalseAnswer((<HTMLElement>event.target))
+        this.addMarkFalseAnswer((<HTMLElement>event.target));
         this.addAnswer();
         this.addAtributeDisabled();
       }
@@ -75,31 +111,36 @@ class AudioGame {
     this.addEventListenerForButtonNext();
   }
   addMarkFalseAnswer(element: HTMLElement) {
-    element.style.backgroundColor = "red";
+    element.style.border = "5px solid red";
   }
   addMarkTrueAnswer(element: HTMLElement) {
-    element.style.backgroundColor = "green";
+    element.style.border = "5px solid green";
+  }
+  showAnswer() {
+    this.addAtributeDisabled();
+    this.addAnswer();
+    this.arrayNumberFalseAnswers.push(this.count);
+  }
+  changeQuestion() {
+    this.count++;
+    if (this.count < 10) {
+      this.startGame(this.arrayQuestions[this.count]);
+    } else {
+      new ResultRaund(this.arrayTrueWords, this.arrayNumberTrueAnswers, this.arrayNumberFalseAnswers);
+      this.addEventListenerForResultWrapper();
+      this.addEventListenerForButtonPlayAgain();
+    }
   }
   addEventListenerForButtonAction() {
     const buttonActive = document.querySelector(".button-active");
     buttonActive.addEventListener("click", () => {
-      this.addAtributeDisabled();
-      this.addAnswer();
-      this.arrayNumberFalseAnswers.push(this.count);
+      this.showAnswer();
     });
   }
   addEventListenerForButtonNext() {
     const buttonNext = document.querySelector(".button-next");
     buttonNext.addEventListener("click", () => {
-      this.count++;
-      if (this.count < 10) {
-        this.startGame(this.arrayQuestions[this.count]);
-      } else {
-        new ResultRaund(this.arrayTrueWords, this.arrayNumberTrueAnswers, this.arrayNumberFalseAnswers);
-        this.addEventListenerForResultWrapper();
-        this.addEventListenerForButtonPlayAgain();
-      }
-
+      this.changeQuestion();
     })
   }
   addEventListenerForBigIconSound(src: string) {
@@ -128,6 +169,5 @@ class AudioGame {
       new ConrolGame(this.groupAgain, this.pageAgain);
     });
   }
-
 }
 export default AudioGame; 
