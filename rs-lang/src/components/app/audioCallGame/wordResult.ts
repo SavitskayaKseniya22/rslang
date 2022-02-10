@@ -16,8 +16,8 @@ class WordResult {
       buttonSound.prepend(new ImageIconVoice().addIconVoice("images/iconVoiceForResult.svg"));
       wrapperForWord.append(buttonSound, titleWord);
       wrapperForWord.classList.add("answer-content");
-      return wrapperForWord;
-    } else return wrapperForWord;
+    }
+    return wrapperForWord;
   }
 }
 export default WordResult;
