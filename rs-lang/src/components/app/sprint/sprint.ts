@@ -14,40 +14,22 @@ export class Sprint {
   isPaused: boolean
   id: number
   timerCurrentValue: number
-  static instance: Sprint
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
-    if (typeof Sprint.instance === 'object') {
-      Sprint.instance.settings.lvl = lvl
-      Sprint.instance.settings.pageNumber = pageNumber ?? getRandomNumber(29)
-      Sprint.instance.settings.id = null
-      Sprint.instance.settings.isFreeGame = pageNumber ? false : true
-      Sprint.instance.settings.isMusicPlaying = false
-      Sprint.instance.settings.isRoundOver = false
-      Sprint.instance.settings.isPaused = false
-      return Sprint.instance
-    }
-
-    Sprint.instance = this
-
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 60,
+      timerValue: 3,
       pageNumber: pageNumber ?? getRandomNumber(29),
-      isFreeGame: pageNumber ? false : true,
+      isFreeGame: !pageNumber,
       pageStorage: [this.pageNumber],
       basicPoints: 10,
       isMusicPlaying: false,
       isRoundOver: false,
       isPaused: false,
-      isFullScreenOn: false,
       resultScreen: new SprintResult(),
       id: null,
     }
-
-    this.initListener()
-    return Sprint.instance
   }
 
   addTimer() {
@@ -63,16 +45,18 @@ export class Sprint {
           clearInterval(timerId)
           this.settings.resultScreen.updateResult(this.results)
           this.settings.resultScreen.renderResult()
+          document.querySelector('.new-round').addEventListener('click', this.render.bind(this))
           this.settings.isRoundOver = true
         }
       } else if (!timer) {
         clearInterval(timerId)
+      } else if (this.settings.isPaused && timer) {
+        timer.innerHTML = '<i class="fas fa-pause-circle"></i>'
       }
     }, 1000)
   }
 
   async render() {
-    console.log(this.settings)
     this.updateSettings()
     this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
     this.words = this.settings.id
@@ -87,6 +71,7 @@ export class Sprint {
       : (document.querySelector('.main').innerHTML = this.makeGameContainer())
 
     this.addTimer()
+    this.initListener()
   }
 
   updateSettings() {
@@ -99,62 +84,70 @@ export class Sprint {
   }
 
   makeGameContainer() {
-    return `<div class="sprint">
+    const fullScreenIcon = document.fullscreenElement ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand">'
+
+    return `
+    <div class="sprint">
     <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
     <audio class="sprint__answer_correct" src="./sounds/correctAnswer.mp3"></audio>
     <audio class="sprint__answer_wrong" src="./sounds/wrongAnswer.mp3"></audio>
     <h2>Sprint</h2>
     <ul class="sprint__settings">
-        <li><button class="sprint__fullscreen_toggle"><i class="fas fa-expand"></i></button></li>
-        <li><button class="sprint__background_toggle"><i class="fas fa-music"></i></button></li>
+      <li>
+        <button class="sprint__fullscreen_toggle">${fullScreenIcon}</i></button>
+      </li>
+      <li>
+        <button class="sprint__background_toggle"><i class="fas fa-music"></i></button>
+      </li>
     </ul>
-    <div class="sprint__container">
-    ${this.makeGameContent()}
-    </div>
+    <div class="sprint__container">${this.makeGameContent()}</div>
   </div>`
   }
 
   makeGameContent() {
     return `
     <div class="sprint__timer">${this.settings.timerValue}</div>
-      <span class="sprint__score">0</span>
-      <span class="sprint__points">0</span>
-      <ul class="sprint__counter-preview">
-        <li><i class="far fa-circle streak1"></i></li>
-        <li><i class="far fa-circle streak2"></i></li>
-        <li><i class="far fa-circle streak3"></i></li>
-      </ul>
-
-      <ul class="sprint__words">
-       ${this.round.makeRound()}
-      </ul>
-
-      <ul class="sprint__verdict">
-        <li class="sprint__verdict_wrong"><button><i class="fas fa-times-circle"></i></button></li>
-        <li class="sprint__verdict_true"><button><i class="fas fa-check-circle"></i></button></li>
-      </ul>
-      <ul class="sprint__verdict">
-        <li class="sprint__verdict_wrong"><button><i class="fas fa-arrow-circle-left"></i></button></li>
-        <li class="sprint__verdict_true"><button><i class="fas fa-arrow-circle-right"></i> </button></li>
-      </ul>
-      <ul class="sprint__advices">
-        <li>Press the Space key to pause</li>
-        <li>Control the game using the arrows keys on your keyboard</li>
-      </ul>
-    `
+    <span class="sprint__score">0</span>
+    <span class="sprint__points">0</span>
+    <ul class="sprint__counter-preview">
+      <li><i class="far fa-circle streak1"></i></li>
+      <li><i class="far fa-circle streak2"></i></li>
+      <li><i class="far fa-circle streak3"></i></li>
+    </ul>
+    <ul class="sprint__words">
+      ${this.round.makeRound()}
+    </ul>
+    <ul class="sprint__verdict">
+      <li class="sprint__verdict_wrong">
+        <button><i class="fas fa-times-circle"></i></button>
+      </li>
+      <li class="sprint__verdict_true">
+        <button><i class="fas fa-check-circle"></i></button>
+      </li>
+    </ul>
+    <ul class="sprint__verdict">
+      <li class="sprint__verdict_wrong">
+        <button><i class="fas fa-arrow-circle-left"></i></button>
+      </li>
+      <li class="sprint__verdict_true">
+        <button><i class="fas fa-arrow-circle-right"></i></button>
+      </li>
+    </ul>
+    <ul class="sprint__advices">
+      <li>Press the Space key to pause</li>
+      <li>Control the game using the arrows keys on your keyboard</li>
+    </ul>`
   }
 
   toggleFullScreen() {
     const fullScreen = document.querySelector('.sprint__fullscreen_toggle')
-    if (this.settings.isFullScreenOn) {
+    if (document.fullscreenElement) {
       document.exitFullscreen()
       fullScreen.innerHTML = `<i class="fas fa-expand"></i>`
     } else {
       document.documentElement.requestFullscreen()
       fullScreen.innerHTML = `<i class="fas fa-compress"></i>`
     }
-
-    this.settings.isFullScreenOn = !this.settings.isFullScreenOn
   }
 
   toggleMusic() {
@@ -163,29 +156,25 @@ export class Sprint {
     this.settings.isMusicPlaying = !this.settings.isMusicPlaying
   }
 
-  async startNewSprint() {
-    await this.render()
+  removeListener() {
+    document.removeEventListener('keydown', (e) => {
+      if (e.code == 'Space' && !this.settings.isRoundOver && document.querySelector('.sprint__timer')) {
+        e.preventDefault()
+        this.settings.isPaused = !this.settings.isPaused
+      }
+    })
   }
 
   initListener() {
-    document.addEventListener('click', async (e) => {
-      const target = e.target as HTMLElement
-      if (target.closest('.new-round')) {
-        this.startNewSprint()
-      } else if (target.closest('.sprint__fullscreen_toggle')) {
-        this.toggleFullScreen()
-      } else if (target.closest('.sprint__background_toggle')) {
-        this.toggleMusic()
-      }
-    })
+    this.removeListener()
 
-    document.addEventListener('keydown', (event) => {
-      if (event.code == 'Space' && !this.settings.isRoundOver) {
-        event.preventDefault()
+    document.querySelector('.sprint__fullscreen_toggle').addEventListener('click', this.toggleFullScreen.bind(this))
+    document.querySelector('.sprint__background_toggle').addEventListener('click', this.toggleMusic.bind(this))
+
+    document.addEventListener('keydown', (e) => {
+      if (e.code == 'Space' && !this.settings.isRoundOver && document.querySelector('.sprint__timer')) {
+        e.preventDefault()
         this.settings.isPaused = !this.settings.isPaused
-        this.settings.isPaused
-          ? (document.querySelector('.sprint__timer').innerHTML = '<i class="fas fa-pause-circle"></i>')
-          : (document.querySelector('.sprint__timer').innerHTML = String(this.timerCurrentValue))
       }
     })
   }

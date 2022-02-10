@@ -55,19 +55,17 @@ export class SprintResult {
     </ul>
     <h3>Correct (${this.correct.length})</h3>
     <ul class="result_right">
-    
-    ${wrongResults.join('')}</ul>
+      ${wrongResults.join('')}
+    </ul>
     <button class="new-round">new game</button>
   `)
   }
 
   makeResultItem(word: Word) {
-    return `<li>${new Sound(word.audio).render()} <span class="result_word">${
-      word.word
-    }</span> - <span class="result_translation">${word.wordTranslate}</span></li>`
-  }
-
-  get result() {
-    return this.result
+    return `
+<li>
+  ${new Sound(word.audio).render()} 
+  <span class="result_word">${word.word}</span>-<span class="result_translation">${word.wordTranslate}</span>
+</li>`
   }
 }

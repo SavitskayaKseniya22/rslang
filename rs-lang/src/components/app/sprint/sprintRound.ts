@@ -141,11 +141,10 @@ export class SprintRound {
 
     document.addEventListener('keydown', (event) => {
       if (!this.settings.isRoundOver && !this.settings.isPaused) {
+        event.preventDefault()
         if (event.code == 'ArrowLeft') {
-          event.preventDefault()
           this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
         } else if (event.code == 'ArrowRight') {
-          event.preventDefault()
           this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
         }
       }

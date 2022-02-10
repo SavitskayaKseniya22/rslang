@@ -4,5 +4,5 @@ export function getRandomNumber(max: number) {
 }
 
 export function isEven(firstWord: string, secondWord: string) {
-  return firstWord === secondWord ? true : false
+  return firstWord === secondWord
 }
