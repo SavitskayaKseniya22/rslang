@@ -10,18 +10,18 @@ class ConrolGame {
   pageFirstPartFalse: number;
   groupSecondPartFalse: number;
   pageSecondPartFalse: number;
-  request: ApiService;
+  apiService: ApiService;
   constructor(group: number, page = -1) {
     this.groupTrue = group;
     this.pageTrue = page !== -1 ? page : this.randomInteger(0, 29);
-    this.request = new ApiService();
+    this.apiService = new ApiService();
     this.getParamsForRequest();
     this.getQuestions();
   }
   async getQuestions() {
-    const trueWords = await this.request.getAudioWords(this.groupTrue, this.pageTrue);
-    const falseFirstPartWords = await this.request.getAudioWords(this.groupFirstPartFalse, this.pageFirstPartFalse)
-    const falseSecondPartWords = await this.request.getAudioWords(this.groupSecondPartFalse, this.pageSecondPartFalse);
+    const trueWords = await this.apiService.getAudioWords(this.groupTrue, this.pageTrue);
+    const falseFirstPartWords = await this.apiService.getAudioWords(this.groupFirstPartFalse, this.pageFirstPartFalse)
+    const falseSecondPartWords = await this.apiService.getAudioWords(this.groupSecondPartFalse, this.pageSecondPartFalse);
     const arrayFalseWords = falseFirstPartWords.concat(falseSecondPartWords);
     const randomNumberForArrayTrueWords = this.randomInteger(0, 1);
     const arrayTrueWords = randomNumberForArrayTrueWords === 0 ? trueWords.slice(0, 10) : trueWords.slice(9, 19);
