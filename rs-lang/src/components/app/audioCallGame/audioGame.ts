@@ -35,7 +35,7 @@ class AudioGame {
         this.addAnswerFromKeyboard(3);
       } else if (event.code === "Digit5" && this.count < 10) {
         this.addAnswerFromKeyboard(4);
-      } else if (event.code === "Space") {
+      } else if (event.code === "Space" && this.count < 10) {
         event.preventDefault();
         this.countSpace++;
         if (this.countSpace === 1) {
