@@ -1,6 +1,7 @@
 import AudioGame from "./audioGame";
 import ApiService from "../api-service/api-service";
 import './audioCall.css';
+import { Word } from "./type";
 
 
 class ConrolGame {
@@ -52,7 +53,7 @@ class ConrolGame {
     }
     return page;
   }
-  arraySplit(arr, c) {
+  arraySplit(arr: Word[], c: number) {
     const result = new Array(c);
     for (let i = 0; i < c; ++i) {
       result[i] = [];
@@ -62,7 +63,7 @@ class ConrolGame {
     }
     return result;
   }
-  randomInteger(min, max) {
+  randomInteger(min: number, max: number) {
     const rand = min + Math.random() * (max + 1 - min);
     return Math.floor(rand);
   }

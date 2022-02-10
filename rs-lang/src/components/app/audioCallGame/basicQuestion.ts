@@ -36,7 +36,7 @@ class BasicQuestion {
     const sortArrQuestions = this.shuffle([1, 2, 3, 4, 5].map((item, i) => arrayAnswers[i]));
     wrapperForAnswers.innerHTML = "";
     wrapperForAnswers.classList.add("wrapper-answers");
-    sortArrQuestions.forEach((item) => {
+    sortArrQuestions.forEach((item: Word) => {
       const button = new Button({
         className: `answer`,
         text: item.wordTranslate,
@@ -58,7 +58,7 @@ class BasicQuestion {
     wrapperForButton.append(buttonActive.element, buttonNext.element);
     return wrapperForButton;
   }
-  shuffle(arr) {
+  shuffle(arr: Word[]) {
     let j, temp;
     for (let i = arr.length - 1; i > 0; i--) {
       j = Math.floor(Math.random() * (i + 1));
