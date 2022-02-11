@@ -14,12 +14,13 @@ export class Sprint {
   isPaused: boolean
   id: number
   timerCurrentValue: number
+  handleSprint: (e: KeyboardEvent | Event) => void
 
   constructor(lvl: number, service: ApiService, pageNumber?: number) {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 3,
+      timerValue: 15,
       pageNumber: pageNumber ?? getRandomNumber(29),
       isFreeGame: !pageNumber,
       pageStorage: [this.pageNumber],
@@ -30,6 +31,7 @@ export class Sprint {
       resultScreen: new SprintResult(),
       id: null,
     }
+    this.handleSprint = this.addListener.bind(this)
   }
 
   addTimer() {
@@ -72,6 +74,7 @@ export class Sprint {
 
     this.addTimer()
     this.initListener()
+    this.round.initListener()
   }
 
   updateSettings() {
@@ -85,7 +88,6 @@ export class Sprint {
 
   makeGameContainer() {
     const fullScreenIcon = document.fullscreenElement ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand">'
-
     return `
     <div class="sprint">
     <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
@@ -127,7 +129,7 @@ export class Sprint {
     </ul>
     <ul class="sprint__verdict">
       <li class="sprint__verdict_wrong">
-        <button><i class="fas fa-arrow-circle-left"></i></button>
+        <button onclick=${this.round.handleRound}><i class="fas fa-arrow-circle-left"></i></button>
       </li>
       <li class="sprint__verdict_true">
         <button><i class="fas fa-arrow-circle-right"></i></button>
@@ -156,26 +158,30 @@ export class Sprint {
     this.settings.isMusicPlaying = !this.settings.isMusicPlaying
   }
 
-  removeListener() {
-    document.removeEventListener('keydown', (e) => {
-      if (e.code == 'Space' && !this.settings.isRoundOver && document.querySelector('.sprint__timer')) {
-        e.preventDefault()
-        this.settings.isPaused = !this.settings.isPaused
-      }
-    })
+  addListener(e: KeyboardEvent | Event) {
+    const target = e.target as HTMLElement
+    if (
+      (e as KeyboardEvent).code == 'Space' &&
+      !this.settings.isRoundOver &&
+      document.querySelector('.sprint__timer')
+    ) {
+      e.preventDefault()
+      this.settings.isPaused = !this.settings.isPaused
+    } else if (target.closest('.sprint__fullscreen_toggle')) {
+      this.toggleFullScreen()
+    } else if (target.closest('.sprint__background_toggle')) {
+      this.toggleMusic()
+    }
   }
 
   initListener() {
-    this.removeListener()
+    document.addEventListener('click', this.handleSprint)
+    document.addEventListener('keydown', this.handleSprint)
 
-    document.querySelector('.sprint__fullscreen_toggle').addEventListener('click', this.toggleFullScreen.bind(this))
-    document.querySelector('.sprint__background_toggle').addEventListener('click', this.toggleMusic.bind(this))
-
-    document.addEventListener('keydown', (e) => {
-      if (e.code == 'Space' && !this.settings.isRoundOver && document.querySelector('.sprint__timer')) {
-        e.preventDefault()
-        this.settings.isPaused = !this.settings.isPaused
-      }
+    window.addEventListener('hashchange', () => {
+      document.removeEventListener('keydown', this.handleSprint)
+      document.removeEventListener('click', this.handleSprint)
+      this.round.removeListener()
     })
   }
 }

@@ -9,17 +9,10 @@ export class SprintRound {
   words: Word[]
   results: SprintResultType
   settings: SprintSettings
-  static instance: SprintRound
+  handleRound: (e: Event | KeyboardEvent) => void
 
   constructor() {
-    if (typeof SprintRound.instance === 'object') {
-      return SprintRound.instance
-    }
-    SprintRound.instance = this
-
-    this.initListener()
-
-    return SprintRound.instance
+    this.handleRound = this.startNewRound.bind(this)
   }
 
   updateRound(words: Word[], results: SprintResultType, settings: SprintSettings) {
@@ -122,32 +115,51 @@ export class SprintRound {
     this.results.streak = 0
   }
 
-  startNewRound(isTrue: boolean) {
-    this.saveMiddleResult(isTrue)
-    this.renderRound()
+  startNewRound(e: Event | KeyboardEvent) {
+    const target = e.target as HTMLElement
+    let isTrue: boolean
+    if (
+      target.closest('.sprint__verdict_wrong') ||
+      target.closest('.sprint__verdict_true') ||
+      (e as KeyboardEvent).code == 'ArrowRight' ||
+      (e as KeyboardEvent).code == 'ArrowLeft'
+    ) {
+      if (!this.settings.isRoundOver && !this.settings.isPaused) {
+        if (target.closest('.sprint__verdict_wrong') && !isEven(this.sugestedWord.word, this.sugestedAnswer.word)) {
+          isTrue = true
+        } else if (
+          target.closest('.sprint__verdict_true') &&
+          isEven(this.sugestedWord.word, this.sugestedAnswer.word)
+        ) {
+          isTrue = true
+        } else if (
+          (e as KeyboardEvent).code == 'ArrowLeft' &&
+          !isEven(this.sugestedWord.word, this.sugestedAnswer.word)
+        ) {
+          isTrue = true
+        } else if (
+          (e as KeyboardEvent).code == 'ArrowRight' &&
+          isEven(this.sugestedWord.word, this.sugestedAnswer.word)
+        ) {
+          isTrue = true
+        } else {
+          isTrue = false
+        }
+      }
+
+      e.preventDefault()
+      this.saveMiddleResult(isTrue)
+      this.renderRound()
+    }
+  }
+
+  removeListener() {
+    document.removeEventListener('keydown', this.handleRound)
+    document.removeEventListener('click', this.handleRound)
   }
 
   initListener() {
-    document.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement
-      if (!this.settings.isRoundOver && !this.settings.isPaused) {
-        if (target.closest('.sprint__verdict_wrong')) {
-          this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        } else if (target.closest('.sprint__verdict_true')) {
-          this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        }
-      }
-    })
-
-    document.addEventListener('keydown', (event) => {
-      if (!this.settings.isRoundOver && !this.settings.isPaused) {
-        event.preventDefault()
-        if (event.code == 'ArrowLeft') {
-          this.startNewRound(!isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        } else if (event.code == 'ArrowRight') {
-          this.startNewRound(isEven(this.sugestedWord.word, this.sugestedAnswer.word))
-        }
-      }
-    })
+    document.addEventListener('click', this.handleRound)
+    document.addEventListener('keydown', this.handleRound)
   }
 }
