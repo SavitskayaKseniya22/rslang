@@ -1,5 +1,6 @@
 import { Sound } from './sound'
 import { Word, SprintResultType } from './types'
+import { SprintSettings } from './types'
 
 export class SprintResult {
   results: SprintResultType
@@ -8,20 +9,14 @@ export class SprintResult {
   wrong: Word[]
   percent: number
   total: number
-  static instance: SprintResult
+  settings: SprintSettings
 
-  constructor() {
-    if (typeof SprintResult.instance === 'object') {
-      return SprintResult.instance
-    }
-    SprintResult.instance = this
+  constructor() {}
 
-    return SprintResult.instance
-  }
-
-  updateResult(results: SprintResultType) {
+  private updateResult(results: SprintResultType, settings: SprintSettings) {
+    this.settings = settings
     this.results = results
-
+    this.settings.isRoundOver = true
     this.longestStreak = this.results.streaks
       .join('')
       .split('0')
@@ -35,7 +30,8 @@ export class SprintResult {
     this.percent = this.total === 0 ? 0 : Math.round(100 / (this.total / this.correct.length))
   }
 
-  renderResult() {
+  public renderResult(results: SprintResultType, settings: SprintSettings) {
+    this.updateResult(results, settings)
     const rightResults = this.wrong.map((word) => {
       return this.makeResultItem(word)
     })
@@ -61,7 +57,7 @@ export class SprintResult {
   `)
   }
 
-  makeResultItem(word: Word) {
+  private makeResultItem(word: Word) {
     return `
 <li>
   ${new Sound(word.audio).render()} 

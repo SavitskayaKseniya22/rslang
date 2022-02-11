@@ -20,7 +20,7 @@ export class Sprint {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 15,
+      timerValue: 5,
       pageNumber: pageNumber ?? getRandomNumber(29),
       isFreeGame: !pageNumber,
       pageStorage: [this.pageNumber],
@@ -32,9 +32,12 @@ export class Sprint {
       id: null,
     }
     this.handleSprint = this.addListener.bind(this)
+    this.round = new SprintRound()
+    this.initListener()
+    this.round.initListener()
   }
 
-  addTimer() {
+  private addTimer() {
     this.timerCurrentValue = this.settings.timerValue
 
     const timerId = setInterval(() => {
@@ -45,10 +48,7 @@ export class Sprint {
           timer.innerHTML = String((this.timerCurrentValue -= 1))
         } else {
           clearInterval(timerId)
-          this.settings.resultScreen.updateResult(this.results)
-          this.settings.resultScreen.renderResult()
-          document.querySelector('.new-round').addEventListener('click', this.render.bind(this))
-          this.settings.isRoundOver = true
+          this.settings.resultScreen.renderResult(this.results, this.settings)
         }
       } else if (!timer) {
         clearInterval(timerId)
@@ -58,14 +58,13 @@ export class Sprint {
     }, 1000)
   }
 
-  async render() {
+  public async render() {
     this.updateSettings()
     this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
     this.words = this.settings.id
       ? await this.settings.service.getAggregatedWords(this.settings.id, this.settings.lvl, this.settings.pageNumber)
       : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
 
-    this.round = this.round ?? new SprintRound()
     this.round.updateRound(this.words, this.results, this.settings)
 
     document.querySelector('.sprint')
@@ -73,11 +72,9 @@ export class Sprint {
       : (document.querySelector('.main').innerHTML = this.makeGameContainer())
 
     this.addTimer()
-    this.initListener()
-    this.round.initListener()
   }
 
-  updateSettings() {
+  private updateSettings() {
     this.settings.isRoundOver = false
     this.settings.isPaused = false
     if (this.settings.isFreeGame) {
@@ -86,7 +83,7 @@ export class Sprint {
     this.settings.pageStorage = [this.settings.pageNumber]
   }
 
-  makeGameContainer() {
+  private makeGameContainer() {
     const fullScreenIcon = document.fullscreenElement ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand">'
     return `
     <div class="sprint">
@@ -106,7 +103,7 @@ export class Sprint {
   </div>`
   }
 
-  makeGameContent() {
+  private makeGameContent() {
     return `
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <span class="sprint__score">0</span>
@@ -141,7 +138,7 @@ export class Sprint {
     </ul>`
   }
 
-  toggleFullScreen() {
+  private toggleFullScreen() {
     const fullScreen = document.querySelector('.sprint__fullscreen_toggle')
     if (document.fullscreenElement) {
       document.exitFullscreen()
@@ -152,13 +149,13 @@ export class Sprint {
     }
   }
 
-  toggleMusic() {
+  private toggleMusic() {
     const music = document.querySelector('.sprint__background') as HTMLAudioElement
     music.paused ? music.play() : music.pause()
     this.settings.isMusicPlaying = !this.settings.isMusicPlaying
   }
 
-  addListener(e: KeyboardEvent | Event) {
+  private addListener(e: KeyboardEvent | Event) {
     const target = e.target as HTMLElement
     if (
       (e as KeyboardEvent).code == 'Space' &&
@@ -171,17 +168,21 @@ export class Sprint {
       this.toggleFullScreen()
     } else if (target.closest('.sprint__background_toggle')) {
       this.toggleMusic()
+    } else if (target.closest('.new-round')) {
+      this.render()
     }
   }
 
-  initListener() {
+  private initListener() {
     document.addEventListener('click', this.handleSprint)
     document.addEventListener('keydown', this.handleSprint)
 
     window.addEventListener('hashchange', () => {
-      document.removeEventListener('keydown', this.handleSprint)
-      document.removeEventListener('click', this.handleSprint)
-      this.round.removeListener()
+      if (window.location.hash !== '#sprint') {
+        document.removeEventListener('keydown', this.handleSprint)
+        document.removeEventListener('click', this.handleSprint)
+        this.round.removeListener()
+      }
     })
   }
 }

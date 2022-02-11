@@ -15,13 +15,13 @@ export class SprintRound {
     this.handleRound = this.startNewRound.bind(this)
   }
 
-  updateRound(words: Word[], results: SprintResultType, settings: SprintSettings) {
+  public updateRound(words: Word[], results: SprintResultType, settings: SprintSettings) {
     this.words = words
     this.results = results
     this.settings = settings
   }
 
-  makeRound() {
+  public makeRound() {
     const randomNum = Math.random() > 0.7 ? 1 : 0
     const maxValue = this.words.length - 1
     const randomIndex = getRandomNumber(maxValue)
@@ -33,7 +33,7 @@ export class SprintRound {
     <li><span class="sprint__words_translation">${this.sugestedAnswer.wordTranslate}</span></li>`
   }
 
-  async renderRound() {
+  public async renderRound() {
     if (this.words.length > 1) {
       document.querySelector('.sprint__words').innerHTML = this.makeRound()
     } else {
@@ -58,14 +58,13 @@ export class SprintRound {
           : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
-        this.settings.resultScreen.updateResult(this.results)
-        this.settings.resultScreen.renderResult()
-        this.settings.isRoundOver = true
+        this.settings.resultScreen.renderResult(this.results, this.settings)
+        //this.settings.isRoundOver = true
       }
     }
   }
 
-  saveMiddleResult(isTrue: boolean) {
+  private saveMiddleResult(isTrue: boolean) {
     if (isTrue) {
       if (this.results.streak < 3) {
         this.results.streak++
@@ -90,7 +89,7 @@ export class SprintRound {
     document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
   }
 
-  toggleSoundEffects(isTrue: boolean) {
+  private toggleSoundEffects(isTrue: boolean) {
     if (this.settings.isMusicPlaying) {
       const soundEffect = isTrue
         ? (document.querySelector('.sprint__answer_correct') as HTMLAudioElement)
@@ -100,22 +99,22 @@ export class SprintRound {
     }
   }
 
-  getPoints() {
+  private getPoints() {
     return this.settings.basicPoints * this.results.multiplier
   }
 
-  fillStreak(value: 1 | 0) {
+  private fillStreak(value: 1 | 0) {
     this.results.streaks.push(value)
   }
 
-  clearStreak() {
+  private clearStreak() {
     document.querySelectorAll(`.counter-full`).forEach((element) => {
       element.classList.remove('counter-full')
     })
     this.results.streak = 0
   }
 
-  startNewRound(e: Event | KeyboardEvent) {
+  private startNewRound(e: Event | KeyboardEvent) {
     const target = e.target as HTMLElement
     let isTrue: boolean
     if (
@@ -153,12 +152,12 @@ export class SprintRound {
     }
   }
 
-  removeListener() {
+  public removeListener() {
     document.removeEventListener('keydown', this.handleRound)
     document.removeEventListener('click', this.handleRound)
   }
 
-  initListener() {
+  public initListener() {
     document.addEventListener('click', this.handleRound)
     document.addEventListener('keydown', this.handleRound)
   }
