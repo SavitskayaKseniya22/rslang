@@ -67,7 +67,7 @@ class TextBookPage {
             this.apiService.user.userId,
             String(this.curGrp),
             String(this.curPage),
-            '20'
+            '20',
           )
           words.forEach((word) => {
             this.drawWord(word)

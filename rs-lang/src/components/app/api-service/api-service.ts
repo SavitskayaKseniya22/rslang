@@ -148,12 +148,8 @@ class ApiService {
     group: string,
     page: string,
     wordsPerPage: string,
-    filter?: string
   ) {
-    let query = `${this.apiUrl}/users/${userId}/aggregatedWords?page=${page}&group=${group}&wordsPerPage=${wordsPerPage}`
-    if (filter) {
-      query += `&filter=${filter}`
-    }
+    let query = `${this.apiUrl}/users/${userId}/aggregatedWords?wordsPerPage=${wordsPerPage}&filter={"$and":[{"page":${page}}, {"group":${group}}]}`
     const res = await fetch(query, {
       method: 'GET',
       headers: {
@@ -164,6 +160,7 @@ class ApiService {
     })
     if (res.ok) {
       const content = await res.json()
+      console.log(content[0].paginatedResults)
       return content[0].paginatedResults
     } else {
       throw new Error(`error: ${res.status}, check your connection or repeat the log-in procedure`)
