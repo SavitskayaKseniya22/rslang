@@ -7,18 +7,20 @@ class TextBookPage {
   curPage: number
   curGrp: number
   showDifficult: boolean
+  pageWordsArr: Word[]
   constructor(apiService: ApiService) {
     this.apiService = apiService
     this.curPage = 0
     this.curGrp = 0
     this.showDifficult = false
+    this.pageWordsArr = []
   }
   async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
         <audio src='' class="tb-tts"></audio>
         <div class="tb-mini-game-select">
-            <button disabled class="tb-minigame"><i class="fas fa-running"></i> sprint</button>
-            <button disabled class="tb-minigame"><i class="fas fa-volume-up"></i> audio-challenge</button>
+            <button disabled class="tb-minigame" data-game-name="sprint"><i class="fas fa-running"></i> sprint</button>
+            <button disabled class="tb-minigame" data-game-name="audio-challenge"><i class="fas fa-volume-up"></i> audio-challenge</button>
         </div>
         <div class="tb-pagination">
             <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
@@ -38,14 +40,18 @@ class TextBookPage {
             
         </div>
     </div>`
+
+    await this.getWords()
     if (this.apiService.user !== null && this.apiService.user !== undefined) {
       document.querySelector('.tb-group-select').innerHTML += '<div class="group-select difficult-select">D</div>'
       document.querySelectorAll('.tb-minigame').forEach((btn) => {
         let button = btn as HTMLButtonElement
         button.disabled = false
+        if (this.pageWordsArr.every((elem) => elem.userWord && elem.userWord.difficulty === 'learned')) {
+          button.disabled = true
+        }
       })
     }
-    await this.getWords()
     this.addListeners()
     this.addControls()
   }
@@ -69,6 +75,7 @@ class TextBookPage {
             String(this.curPage),
             '20'
           )
+          this.pageWordsArr = words
           words.forEach((word) => {
             this.drawWord(word)
           })
@@ -145,6 +152,13 @@ class TextBookPage {
           await this.getWords()
           this.addControls()
         }
+      })
+    })
+
+    document.querySelectorAll('.tb-minigame').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const target = e.target as HTMLButtonElement
+        await this.composeGameArr()
       })
     })
   }
@@ -291,6 +305,24 @@ class TextBookPage {
           document.querySelector(`[data-tb-wrd-id="${id}"]`).classList.add(`tb-${word.userWord.difficulty}-word`)
         }
       }
+    }
+  }
+  async composeGameArr() {
+  
+    let gameArr = await this.apiService.requestGetAggregatedFIlter(
+      this.apiService.user.userId,
+      `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
+    )
+    if (gameArr.length < 20) {
+      const supplementaryWrds = await this.apiService.requestGetAggregatedFIlter(
+        this.apiService.user.userId,
+        `{"$and":[{"page":{"$lt": ${this.curPage}}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
+      )
+      const slice =
+        supplementaryWrds.length > 20 - gameArr.length
+          ? supplementaryWrds.slice(0, 20 - gameArr.length)
+          : supplementaryWrds
+      gameArr = gameArr.concat(slice)
     }
   }
 }

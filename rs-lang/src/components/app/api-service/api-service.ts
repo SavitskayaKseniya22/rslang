@@ -143,12 +143,7 @@ class ApiService {
       throw new Error(`error: ${res.status}, either word does not exist or a repeated log-in procedure is required`)
     }
   }
-  async requestGetUserAgregatedPageGrp(
-    userId: string,
-    group: string,
-    page: string,
-    wordsPerPage: string,
-  ) {
+  async requestGetUserAgregatedPageGrp(userId: string, group: string, page: string, wordsPerPage: string) {
     let query = `${this.apiUrl}/users/${userId}/aggregatedWords?wordsPerPage=${wordsPerPage}&filter={"$and":[{"page":${page}}, {"group":${group}}]}`
     const res = await fetch(query, {
       method: 'GET',
@@ -167,7 +162,7 @@ class ApiService {
     }
   }
   async requestGetAggregatedFIlter(userId: string, filter: string) {
-    const res = await fetch(`${this.apiUrl}/users/${userId}/aggregatedWords?filter=${filter}`, {
+    const res = await fetch(`${this.apiUrl}/users/${userId}/aggregatedWords?wordsPerPage=20&filter=${filter}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${this.user.token}`,
@@ -206,10 +201,10 @@ class ApiService {
       window.location.reload()
     } catch (err) {
       const error = err as Error
-     if (error.message.includes('no longer exists')){
-     localStorage.removeItem('user')
-     window.location.reload()
-     }
+      if (error.message.includes('no longer exists')) {
+        localStorage.removeItem('user')
+        window.location.reload()
+      }
     }
   }
 }
