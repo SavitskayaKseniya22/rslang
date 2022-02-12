@@ -29,7 +29,7 @@ export class Sprint {
       isRoundOver: false,
       isPaused: false,
       resultScreen: new SprintResult(),
-      id: null,
+      id: service.user.userId,
     }
     this.handleSprint = this.addListener.bind(this)
     this.round = new SprintRound()
@@ -62,7 +62,12 @@ export class Sprint {
     this.updateSettings()
     this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
     this.words = this.settings.id
-      ? await this.settings.service.getAggregatedWords(this.settings.id, this.settings.lvl, this.settings.pageNumber)
+      ? await this.settings.service.requestGetUserAgregatedPageGrp(
+          this.settings.id,
+          this.settings.lvl,
+          this.settings.pageNumber,
+          20
+        )
       : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
 
     this.round.updateRound(this.words, this.results, this.settings)

@@ -1,6 +1,8 @@
 import { getRandomNumber, isEven } from './utils'
 import { Sound } from './sound'
-import { Word, SprintResultType, SprintSettings } from './types'
+import { SprintResultType, SprintSettings } from './types'
+import { UserWordInfo } from '../interfaces/interfaces'
+import { Word } from '../interfaces/interfaces'
 
 export class SprintRound {
   sugestedWord: Word
@@ -19,6 +21,31 @@ export class SprintRound {
     this.words = words
     this.results = results
     this.settings = settings
+  }
+
+  private async checkWord(word: Word, isTrue: boolean) {
+    if (this.settings.id) {
+      if (!word.userWord) {
+        await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
+          difficulty: 'normal',
+          optional: { timesGuessed: 0, timesMax: 3 },
+        })
+      } else {
+        if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
+          word.userWord.optional.timesGuessed++
+          if (word.userWord.optional.timesGuessed >= word.userWord.optional.timesMax) {
+            word.userWord.difficulty = 'learned'
+          }
+        }
+        if (!isTrue) {
+          word.userWord.optional.timesGuessed = 0
+        }
+        if (!isTrue && word.userWord.difficulty === 'learned') {
+          word.userWord.difficulty = 'normal'
+        }
+      }
+      await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
+    }
   }
 
   public makeRound() {
@@ -50,16 +77,16 @@ export class SprintRound {
       if (this.settings.pageNumber >= 0) {
         this.settings.pageStorage.push(this.settings.pageNumber)
         this.words = this.settings.id
-          ? await this.settings.service.getAggregatedWords(
+          ? await this.settings.service.requestGetUserAgregatedPageGrp(
               this.settings.id,
               this.settings.lvl,
-              this.settings.pageNumber
+              this.settings.pageNumber,
+              20
             )
           : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
         this.settings.resultScreen.renderResult(this.results, this.settings)
-        //this.settings.isRoundOver = true
       }
     }
   }
@@ -85,6 +112,7 @@ export class SprintRound {
       this.fillStreak(0)
     }
 
+    this.checkWord(this.sugestedWord, isTrue)
     this.toggleSoundEffects(isTrue)
     document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
   }
