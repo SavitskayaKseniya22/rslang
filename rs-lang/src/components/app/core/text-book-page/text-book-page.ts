@@ -67,7 +67,7 @@ class TextBookPage {
             this.apiService.user.userId,
             String(this.curGrp),
             String(this.curPage),
-            '20',
+            '20'
           )
           words.forEach((word) => {
             this.drawWord(word)
@@ -211,12 +211,12 @@ class TextBookPage {
       ) {
         this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 0, timesMax: 3 },
+          optional: { timesGuessed: 3, timesMax: 3 },
         })
       } else {
         this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 0, timesMax: 3 },
+          optional: { timesGuessed: 3, timesMax: 3 },
         })
       }
       wordDiv.classList.add('tb-learned-word')

@@ -205,7 +205,11 @@ class ApiService {
       localStorage.setItem('user', JSON.stringify(updatedUser))
       window.location.reload()
     } catch (err) {
-      alert(err)
+      const error = err as Error
+     if (error.message.includes('no longer exists')){
+     localStorage.removeItem('user')
+     window.location.reload()
+     }
     }
   }
 }
