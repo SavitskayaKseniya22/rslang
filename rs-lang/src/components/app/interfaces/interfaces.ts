@@ -1,3 +1,6 @@
+import ApiService from '../api-service/api-service'
+import { SprintResult } from '../sprint/sprintResult'
+
 export interface Word {
   _id?: string
   id: string
@@ -37,4 +40,27 @@ export interface UserWordInfo {
     timesGuessed: number // 3 times for a normal word to become learned, 5 times for a difficult one
     timesMax: number // 3 for normal ones 5 for difficult ones
   }
+}
+
+export interface SprintResultType {
+  answers: { [key: string]: Word[] }
+  points: number
+  multiplier: number
+  streak: number
+  streaks: number
+}
+
+export interface SprintSettings {
+  service: ApiService
+  lvl: number
+  timerValue: number
+  pageNumber: number
+  isFreeGame: boolean
+  pageStorage: number[]
+  basicPoints: number
+  isMusicPlaying: boolean
+  isRoundOver: boolean
+  isPaused: boolean
+  resultScreen: SprintResult
+  id: null | string
 }

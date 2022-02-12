@@ -1,49 +1,41 @@
 import { Sound } from './sound'
-import { Word, SprintResultType } from './types'
-import { SprintSettings } from './types'
+import { Word, SprintResultType, SprintSettings } from '../interfaces/interfaces'
 
 export class SprintResult {
-  results: SprintResultType
-  longestStreak: number
   correct: Word[]
   wrong: Word[]
   percent: number
   total: number
-  settings: SprintSettings
+  points: number
+  streaks: number
 
   constructor() {}
 
   private updateResult(results: SprintResultType, settings: SprintSettings) {
-    this.settings = settings
-    this.results = results
-    this.settings.isRoundOver = true
-    this.longestStreak = this.results.streaks
-      .join('')
-      .split('0')
-      .sort((a, b) => {
-        return b.length - a.length
-      })[0].length
-
-    this.correct = this.results.answers[1]
-    this.wrong = this.results.answers[0]
+    settings.isRoundOver = true
+    this.points = results.points
+    this.streaks = results.streaks
+    this.correct = results.answers.true
+    this.wrong = results.answers.false
     this.total = this.correct.length + this.wrong.length
     this.percent = this.total === 0 ? 0 : Math.round(100 / (this.total / this.correct.length))
   }
 
   public renderResult(results: SprintResultType, settings: SprintSettings) {
     this.updateResult(results, settings)
+
     const rightResults = this.wrong.map((word) => {
       return this.makeResultItem(word)
     })
     const wrongResults = this.correct.map((word) => {
       return this.makeResultItem(word)
     })
-
+    //console.log(this)
     return (document.querySelector('.sprint__container').innerHTML = `
     
-    <span>You earned - ${this.results.points} points</span>
+    <span>You earned - ${this.points} points</span>
     <span>${this.correct.length}/${this.total} </span>
-    <span>Your longest streak - ${this.longestStreak} correct answers</span>
+    <span>Your longest streak - ${this.streaks} correct answers</span>
     <span>${this.percent}% correct answers</span>
     <h3>Wrong (${this.wrong.length})</h3>
     <ul class="result_wrong">

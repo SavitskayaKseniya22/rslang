@@ -1,7 +1,6 @@
 import { getRandomNumber, isEven } from './utils'
 import { Sound } from './sound'
-import { SprintResultType, SprintSettings } from './types'
-import { UserWordInfo } from '../interfaces/interfaces'
+import { SprintResultType, SprintSettings } from '../interfaces/interfaces'
 import { Word } from '../interfaces/interfaces'
 
 export class SprintRound {
@@ -100,21 +99,16 @@ export class SprintRound {
         this.clearStreak()
         this.results.multiplier++
       }
-
-      this.results.answers[1].push(this.sugestedWord)
       this.results.points += this.getPoints()
-      document.querySelector('.sprint__score').innerHTML = String(this.results.points)
-      this.fillStreak(1)
+      this.results.streaks++
     } else {
-      this.results.answers[0].push(this.sugestedWord)
-      this.clearStreak()
-      this.results.multiplier = 1
-      this.fillStreak(0)
+      this.dropCounters()
     }
 
-    this.checkWord(this.sugestedWord, isTrue)
+    this.results.answers[String(isTrue)].push(this.sugestedWord)
     this.toggleSoundEffects(isTrue)
-    document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
+    this.updatePointsPreview()
+    this.checkWord(this.sugestedWord, isTrue)
   }
 
   private toggleSoundEffects(isTrue: boolean) {
@@ -131,8 +125,15 @@ export class SprintRound {
     return this.settings.basicPoints * this.results.multiplier
   }
 
-  private fillStreak(value: 1 | 0) {
-    this.results.streaks.push(value)
+  private updatePointsPreview() {
+    document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
+    document.querySelector('.sprint__score').innerHTML = String(this.results.points)
+  }
+
+  private dropCounters() {
+    this.clearStreak()
+    this.results.multiplier = 1
+    this.results.streaks = 0
   }
 
   private clearStreak() {

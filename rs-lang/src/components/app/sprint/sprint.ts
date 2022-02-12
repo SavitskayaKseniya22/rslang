@@ -3,7 +3,7 @@ import ApiService from '../api-service/api-service'
 import { SprintRound } from './sprintRound'
 import { SprintResult } from './sprintResult'
 import { getRandomNumber } from './utils'
-import { Word, SprintResultType, SprintSettings } from './types'
+import { Word, SprintResultType, SprintSettings } from '../interfaces/interfaces'
 
 export class Sprint {
   round: SprintRound
@@ -60,7 +60,7 @@ export class Sprint {
 
   public async render() {
     this.updateSettings()
-    this.results = { answers: [[], []], points: 0, multiplier: 1, streak: 0, streaks: [] }
+    this.results = { answers: { false: [], true: [] }, points: 0, multiplier: 1, streak: 0, streaks: 0 }
     this.words = this.settings.id
       ? await this.settings.service.requestGetUserAgregatedPageGrp(
           this.settings.id,
