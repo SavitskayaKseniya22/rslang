@@ -15,7 +15,9 @@ class ConrolGame {
   apiServiceUser: ApiService;
   user: UserTemplate;
   wordsPerPage: number;
+  bookQuestions: Word[];
   constructor(group = -1, page = -1, bookQuestions = [] as Word[]) {
+    this.bookQuestions = bookQuestions;
     this.user = localStorage.getItem("user")
       ? JSON.parse(localStorage.getItem("user"))
       : null;
@@ -26,8 +28,15 @@ class ConrolGame {
     this.getParamsForRequest();
     if (this.user === null) {
       this.getQuestions();
-    } else this.getQuestionsUser();
+    } else if (this.user !== null && this.bookQuestions.length === 0) {
+      this.getQuestionsUser();
+    } else if (this.user !== null && this.bookQuestions.length !== 0) {
+      this.getQuestionsUserFromBook();
+    }
     // this.apiService.requestUpdateToken(this.user.userId);
+  }
+  getQuestionsUserFromBook() {
+    console.log("From book");
   }
   async getQuestionsUser() {
     const trueWords =
