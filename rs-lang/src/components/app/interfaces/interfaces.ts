@@ -1,3 +1,6 @@
+import ApiService from '../api-service/api-service'
+import { SprintResult } from '../sprint/sprintResult'
+
 export interface Word {
   _id?: string
   id: string
@@ -17,11 +20,17 @@ export interface Word {
   textExampleTranslate: string
 }
 
+export type Question = {
+  truthyAnswer: Word;
+  falsyAnswers: Word[];
+}
+
 export interface FormInfo {
   email: string
   password: string
   name?: string
 }
+
 export interface UserTemplate {
   message: string
   token: string
@@ -40,3 +49,32 @@ export interface UserWordInfo {
     dateLearned: number | null
   }
 }
+
+export interface SprintResultType {
+  answers: { [key: string]: Word[] }
+  points: number
+  multiplier: number
+  streak: number
+  streaks: number
+}
+
+export interface SprintSettings {
+  service: ApiService
+  lvl: number
+  timerValue: number
+  pageNumber: number
+  isFreeGame: boolean
+  pageStorage: number[]
+  basicPoints: number
+  isMusicPlaying: boolean
+  isRoundOver: boolean
+  isPaused: boolean
+  resultScreen: SprintResult
+  id: null | string
+}
+
+export interface ButtonProperties {
+  text: string;
+  className: string;
+}
+
