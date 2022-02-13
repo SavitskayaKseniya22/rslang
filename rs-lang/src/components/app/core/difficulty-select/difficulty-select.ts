@@ -1,5 +1,7 @@
 import ApiService from '../../api-service/api-service'
 import { Sprint } from '../../sprint/sprint'
+import ConrolGame from '../../audioCallGame/controlgame'
+
 
 class DifficultySelect {
   gameName: string
@@ -21,26 +23,25 @@ class DifficultySelect {
           <div class="level-select" data-lvl="5">6</div>
       </div>
       </div>
+
       `
-    this.addListeners()
+      `;
+    this.addListeners();
+
   }
   addListeners() {
     document.querySelectorAll('.level-select').forEach((el) => {
       el.addEventListener('click', (e) => {
-        const lvl = Number((e.target as HTMLElement).dataset.lvl)
-        let page: Sprint
-
-        switch (
-          this.gameName // Uncomment and change when you start working
-        ) {
+        const lvl = Number((e.target as HTMLElement).dataset.lvl);
+        let page: Object;
+        switch (this.gameName) {                                            // Uncomment and change when you start working
           case 'sprint':
             page = new Sprint(lvl, this.service)
             page.render()
             window.location.hash = 'sprint'
             break
           case 'audio-challenge':
-            //page = new AudioChallenge(lvl, this.service)
-            // page.render()
+            new ConrolGame(lvl);
             window.location.hash = 'audio-challenge'
         }
       })

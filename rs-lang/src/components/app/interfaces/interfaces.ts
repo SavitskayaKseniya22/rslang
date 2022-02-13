@@ -20,11 +20,17 @@ export interface Word {
   textExampleTranslate: string
 }
 
+export type Question = {
+  truthyAnswer: Word;
+  falsyAnswers: Word[];
+}
+
 export interface FormInfo {
   email: string
   password: string
   name?: string
 }
+
 export interface UserTemplate {
   message: string
   token: string
@@ -64,3 +70,9 @@ export interface SprintSettings {
   resultScreen: SprintResult
   id: null | string
 }
+
+export interface ButtonProperties {
+  text: string;
+  className: string;
+}
+

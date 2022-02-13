@@ -1,3 +1,4 @@
+
 import { FormInfo, UserTemplate, UserWordInfo } from '../interfaces/interfaces'
 
 class ApiService {
@@ -5,7 +6,8 @@ class ApiService {
   apiUrl: string
   constructor(public user: UserTemplate | null) {
     this.user = user
-    this.apiUrl = `http://127.0.0.1:3000`
+    this.apiUrl = `http://localhost:3000`
+    // console.log(this.user);
   }
 
   async requestWords(grp: number, page: number) {
@@ -152,10 +154,10 @@ class ApiService {
 
   async requestGetUserAgregatedPageGrp(
     userId: string,
-    group: number,
-    page: number,
-    wordsPerPage: number,
-    filter?: string
+    group: string,
+    page: string,
+    wordsPerPage: string
+
   ) {
     const query = `${this.apiUrl}/users/${userId}/aggregatedWords?wordsPerPage=${wordsPerPage}&filter={"$and":[{"page":${page}}, {"group":${group}}]}`
     const res = await fetch(query, {
@@ -220,6 +222,7 @@ class ApiService {
     }
   }
 
+
   async getWords(lvl: number, pageNum: number) {
     const rawResponse = await fetch(`${this.apiUrl}/words?group=${lvl}&page=${pageNum}`, {
       method: 'GET',
@@ -236,6 +239,12 @@ class ApiService {
     const content = await rawResponse.json()
 
     return content
+
+  async getAudioWords(group: number, page: number) {
+    const response = await fetch(`${this.apiUrl}/words?page=${page}&group=${group}`);
+    const exam = await response.json();
+    return exam;
+
   }
 }
 
