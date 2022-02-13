@@ -1,4 +1,4 @@
-.voice-icon{
+.voice-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,7 +8,7 @@
   height: 80px;
   border-radius: 50%;
 }
-.voice-icon-small{
+.voice-icon-small {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,7 +19,7 @@
   border-radius: 50%;
   margin-right: 20px;
 }
-.voice-icon-result{
+.voice-icon-result {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,12 +30,12 @@
   border-radius: 50%;
   margin-right: 20px;
 }
-.question{
+.question {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.answer-content{
+.answer-content {
   display: flex;
   align-items: center;
 }
@@ -45,7 +45,7 @@
 .button-next {
   display: none;
 }
-.none { 
+.none {
   display: none !important;
 }
 .flex {

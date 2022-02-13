@@ -34,22 +34,21 @@ class NavMenu {
     switch (e.newURL.split('#')[1]) {
       case 'main':
         page = this.mainPage
-
+        page.render()
         break
       case 'text-book':
         page = this.textBook
-
+        page.render()
         break
       case 'sprint-choose':
         page = new DifficultySelect('sprint', this.service)
-
+        page.render()
         break
       case 'audio-challenge-choose':
         page = new DifficultySelect('audio-challenge', this.service)
         page.render()
         break
     }
-
   }
 }
 export default NavMenu
