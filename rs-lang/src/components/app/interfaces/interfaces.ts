@@ -36,5 +36,7 @@ export interface UserWordInfo {
   optional: {
     timesGuessed: number // 3 times for a normal word to become learned, 5 times for a difficult one
     timesMax: number // 3 for normal ones 5 for difficult ones
+    dateEncountered: number
+    dateLearned: number | null
   }
 }

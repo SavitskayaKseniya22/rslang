@@ -175,13 +175,13 @@ class TextBookPage {
           const target = e.target as HTMLElement
           if (target.classList.contains('tb-add-difficult-btn')) {
             const id = target.dataset.tbDiffid
-
-            await this.MarkAsDIfficult(id)
+            const date = target.dataset.date
+            await this.MarkAsDIfficult(id, date)
           }
           if (target.classList.contains('tb-add-learned-btn')) {
             const id = target.dataset.tbLearnid
-
-            await this.MarkAsLearned(id)
+            const date = target.dataset.date
+            await this.MarkAsLearned(id, date)
           }
         })
       })
@@ -215,7 +215,7 @@ class TextBookPage {
     })
     audio.play()
   }
-  async MarkAsLearned(id: string) {
+  async MarkAsLearned(id: string, date: string) {
     const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
     try {
       if (
@@ -225,12 +225,12 @@ class TextBookPage {
       ) {
         this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 3, timesMax: 3 },
+          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Number(date), dateLearned: Date.now() },
         })
       } else {
         this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 3, timesMax: 3 },
+          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Number(date), dateLearned: Date.now() },
         })
       }
       wordDiv.classList.add('tb-learned-word')
@@ -245,7 +245,7 @@ class TextBookPage {
       await this.handleUserError(error)
     }
   }
-  async MarkAsDIfficult(id: string) {
+  async MarkAsDIfficult(id: string, date:string) {
     try {
       const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
       if (
@@ -255,12 +255,12 @@ class TextBookPage {
       ) {
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5 },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Number(date), dateLearned: null },
         })
       } else {
         await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5 },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Number(date), dateLearned: null },
         })
       }
       wordDiv.classList.remove('tb-learned-word')
@@ -271,7 +271,7 @@ class TextBookPage {
 
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'normal',
-          optional: { timesGuessed: 0, timesMax: 3 },
+          optional: { timesGuessed: 0, timesMax: 3, dateEncountered: Number(date), dateLearned: null },
         })
         wordDiv.remove()
       }
@@ -290,14 +290,15 @@ class TextBookPage {
   drawUserWord(word: Word) {
     const id = word.id || word._id
     if (this.apiService.user !== null && this.apiService.user !== undefined) {
+    const date = word.userWord ? word.userWord.optional.dateEncountered : null
       const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
       const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
       const markStr = this.showDifficult === true ? 'Mark as normal' : 'Mark as difficult' //checking if the difficult words only page shloulld be rendered
       document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
     <div data-tb-useid="${id}" class="tb-user-functionality">
-    <button data-tb-diffid="${id}" class="tb-add-difficult-btn">${markStr}</button>
+    <button data-tb-diffid="${id}" data-date="${date}" class="tb-add-difficult-btn">${markStr}</button>
      <div class="tb-learning-progress">${progress}/${max}</div>
-    <button data-tb-learnid="${id}" class="tb-add-learned-btn">Mark as Learned</button>
+    <button data-tb-learnid="${id}" data-date="${date}" class="tb-add-learned-btn">Mark as Learned</button>
 </div>
     `
       if (word.userWord) {
@@ -308,7 +309,6 @@ class TextBookPage {
     }
   }
   async composeGameArr() {
-  
     let gameArr = await this.apiService.requestGetAggregatedFIlter(
       this.apiService.user.userId,
       `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
