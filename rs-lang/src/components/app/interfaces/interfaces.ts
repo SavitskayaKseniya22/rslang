@@ -16,7 +16,10 @@ export interface Word {
   textMeaningTranslate: string
   textExampleTranslate: string
 }
-
+export type Question = {
+  truthyAnswer: Word;
+  falsyAnswers: Word[];
+}
 export interface FormInfo {
   email: string
   password: string
@@ -37,4 +40,8 @@ export interface UserWordInfo {
     timesGuessed: number // 3 times for a normal word to become learned, 5 times for a difficult one
     timesMax: number // 3 for normal ones 5 for difficult ones
   }
+}
+export interface ButtonProperties {
+  text: string;
+  className: string;
 }
