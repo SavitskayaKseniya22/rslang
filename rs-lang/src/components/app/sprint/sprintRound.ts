@@ -25,10 +25,15 @@ export class SprintRound {
   private async checkWord(word: Word, isTrue: boolean) {
     if (this.settings.id) {
       if (!word.userWord) {
-        await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
-          difficulty: 'normal',
-          optional: { timesGuessed: 0, timesMax: 3 },
-        })
+        isTrue
+          ? await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
+              difficulty: 'normal',
+              optional: { timesGuessed: 1, timesMax: 3 },
+            })
+          : await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
+              difficulty: 'normal',
+              optional: { timesGuessed: 0, timesMax: 3 },
+            })
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
@@ -42,8 +47,8 @@ export class SprintRound {
         if (!isTrue && word.userWord.difficulty === 'learned') {
           word.userWord.difficulty = 'normal'
         }
+        await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
       }
-      await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
     }
   }
 
@@ -173,11 +178,10 @@ export class SprintRound {
         } else {
           isTrue = false
         }
+        e.preventDefault()
+        this.saveMiddleResult(isTrue)
+        this.renderRound()
       }
-
-      e.preventDefault()
-      this.saveMiddleResult(isTrue)
-      this.renderRound()
     }
   }
 

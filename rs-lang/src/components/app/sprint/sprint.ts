@@ -8,7 +8,7 @@ import { Word, SprintResultType, SprintSettings } from '../interfaces/interfaces
 export class Sprint {
   round: SprintRound
   results: SprintResultType
-  words: Word[]
+  words: Word[] | null
   settings: SprintSettings
   pageNumber: number
   isPaused: boolean
@@ -16,13 +16,13 @@ export class Sprint {
   timerCurrentValue: number
   handleSprint: (e: KeyboardEvent | Event) => void
 
-  constructor(lvl: number, service: ApiService, pageNumber?: number) {
+  constructor(lvl: number, service: ApiService, wordCollection?: Word[]) {
     this.settings = {
       service: service,
       lvl: lvl,
-      timerValue: 5,
-      pageNumber: pageNumber ?? getRandomNumber(29),
-      isFreeGame: !pageNumber,
+      timerValue: 60,
+      pageNumber: getRandomNumber(29),
+      isFreeGame: !wordCollection,
       pageStorage: [this.pageNumber],
       basicPoints: 10,
       isMusicPlaying: false,
@@ -31,6 +31,7 @@ export class Sprint {
       resultScreen: new SprintResult(),
       id: service.user.userId,
     }
+    this.words = wordCollection ?? null
     this.handleSprint = this.addListener.bind(this)
     this.round = new SprintRound()
     this.initListener()
@@ -61,14 +62,30 @@ export class Sprint {
   public async render() {
     this.updateSettings()
     this.results = { answers: { false: [], true: [] }, points: 0, multiplier: 1, streak: 0, streaks: 0 }
-    this.words = this.settings.id
-      ? await this.settings.service.requestGetUserAgregatedPageGrp(
-          this.settings.id,
-          this.settings.lvl,
-          this.settings.pageNumber,
-          20
-        )
-      : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+
+    if (this.settings.id) {
+      if (this.settings.isFreeGame) {
+        try {
+          this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
+            this.settings.id,
+            this.settings.lvl,
+            this.settings.pageNumber,
+            20
+          )
+        } catch (error) {
+          console.log(this.settings.id)
+          await this.settings.service.requestUpdateToken(this.settings.id)
+          this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
+            this.settings.id,
+            this.settings.lvl,
+            this.settings.pageNumber,
+            20
+          )
+        }
+      }
+    } else {
+      this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+    }
 
     this.round.updateRound(this.words, this.results, this.settings)
 
@@ -131,7 +148,7 @@ export class Sprint {
     </ul>
     <ul class="sprint__verdict">
       <li class="sprint__verdict_wrong">
-        <button onclick=${this.round.handleRound}><i class="fas fa-arrow-circle-left"></i></button>
+        <button><i class="fas fa-arrow-circle-left"></i></button>
       </li>
       <li class="sprint__verdict_true">
         <button><i class="fas fa-arrow-circle-right"></i></button>
@@ -160,6 +177,19 @@ export class Sprint {
     this.settings.isMusicPlaying = !this.settings.isMusicPlaying
   }
 
+  private blockButtons(isPaused: boolean) {
+    const buttons = document.querySelectorAll('.sprint__verdict button')
+    if (isPaused) {
+      buttons.forEach((element) => {
+        element.setAttribute('disabled', 'disabled')
+      })
+    } else {
+      buttons.forEach((element) => {
+        element.removeAttribute('disabled')
+      })
+    }
+  }
+
   private addListener(e: KeyboardEvent | Event) {
     const target = e.target as HTMLElement
     if (
@@ -169,6 +199,7 @@ export class Sprint {
     ) {
       e.preventDefault()
       this.settings.isPaused = !this.settings.isPaused
+      this.blockButtons(this.settings.isPaused)
     } else if (target.closest('.sprint__fullscreen_toggle')) {
       this.toggleFullScreen()
     } else if (target.closest('.sprint__background_toggle')) {

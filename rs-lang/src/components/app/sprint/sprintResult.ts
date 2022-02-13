@@ -47,7 +47,7 @@ export class SprintResult {
     const wrongResults = this.correct.map((word) => {
       return this.makeResultItem(word)
     })
-    //console.log(this)
+    console.log(this)
     return (document.querySelector('.sprint__container').innerHTML = `
     
     <span>You earned - ${this.points} points</span>
