@@ -1,4 +1,3 @@
-
 import { FormInfo, UserTemplate, UserWordInfo } from '../interfaces/interfaces'
 
 class ApiService {
@@ -151,13 +150,7 @@ class ApiService {
       throw new Error(`error: ${res.status}, either word does not exist or a repeated log-in procedure is required`)
     }
   }
-  async requestGetUserAgregatedPageGrp(
-    userId: string,
-    group: string,
-    page: string,
-    wordsPerPage: string
-
-  ) {
+  async requestGetUserAgregatedPageGrp(userId: string, group: string, page: string, wordsPerPage: string) {
     const query = `${this.apiUrl}/users/${userId}/aggregatedWords?wordsPerPage=${wordsPerPage}&filter={"$and":[{"page":${page}}, {"group":${group}}]}`
     const res = await fetch(query, {
       method: 'GET',
@@ -225,7 +218,6 @@ class ApiService {
     }
   }
 
-
   async getWords(lvl: number, pageNum: number) {
     const rawResponse = await fetch(`${this.apiUrl}/words?group=${lvl}&page=${pageNum}`, {
       method: 'GET',
@@ -242,12 +234,12 @@ class ApiService {
     const content = await rawResponse.json()
 
     return content
+  }
 
   async getAudioWords(group: number, page: number) {
-    const response = await fetch(`${this.apiUrl}/words?page=${page}&group=${group}`);
-    const exam = await response.json();
-    return exam;
-
+    const response = await fetch(`${this.apiUrl}/words?page=${page}&group=${group}`)
+    const exam = await response.json()
+    return exam
   }
 }
 

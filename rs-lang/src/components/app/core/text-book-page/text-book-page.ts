@@ -228,10 +228,12 @@ class TextBookPage {
           optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Number(date), dateLearned: Date.now() },
         })
       } else {
+        console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
         this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Number(date), dateLearned: Date.now() },
+          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() },
         })
+        console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
       }
       wordDiv.classList.add('tb-learned-word')
       wordDiv.classList.remove('tb-normal-word')
@@ -245,7 +247,7 @@ class TextBookPage {
       await this.handleUserError(error)
     }
   }
-  async MarkAsDIfficult(id: string, date:string) {
+  async MarkAsDIfficult(id: string, date: string) {
     try {
       const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
       if (
@@ -255,12 +257,12 @@ class TextBookPage {
       ) {
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Number(date), dateLearned: null },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Number(date), dateLearned: 0 },
         })
       } else {
         await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Number(date), dateLearned: null },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Date.now(), dateLearned: 0 },
         })
       }
       wordDiv.classList.remove('tb-learned-word')
@@ -268,10 +270,9 @@ class TextBookPage {
       wordDiv.classList.add('tb-difficult-word')
       if (this.showDifficult === true) {
         //checking if the difficult words only page shloulld be rendered
-
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'normal',
-          optional: { timesGuessed: 0, timesMax: 3, dateEncountered: Number(date), dateLearned: null },
+          optional: { timesGuessed: 0, timesMax: 3, dateEncountered: Number(date), dateLearned: 0 },
         })
         wordDiv.remove()
       }
@@ -290,7 +291,7 @@ class TextBookPage {
   drawUserWord(word: Word) {
     const id = word.id || word._id
     if (this.apiService.user !== null && this.apiService.user !== undefined) {
-    const date = word.userWord ? word.userWord.optional.dateEncountered : null
+      const date = word.userWord ? word.userWord.optional.dateEncountered : null
       const progress = word.userWord ? `${word.userWord.optional.timesGuessed}` : '0'
       const max = word.userWord ? `${word.userWord.optional.timesMax}` : '3'
       const markStr = this.showDifficult === true ? 'Mark as normal' : 'Mark as difficult' //checking if the difficult words only page shloulld be rendered

@@ -28,17 +28,18 @@ export class SprintRound {
         isTrue
           ? await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
               difficulty: 'normal',
-              optional: { timesGuessed: 1, timesMax: 3 },
+              optional: { timesGuessed: 1, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
             })
           : await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
               difficulty: 'normal',
-              optional: { timesGuessed: 0, timesMax: 3 },
+              optional: { timesGuessed: 0, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
             })
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
           if (word.userWord.optional.timesGuessed >= word.userWord.optional.timesMax) {
             word.userWord.difficulty = 'learned'
+            word.userWord.optional.dateLearned = Date.now()
           }
         }
         if (!isTrue) {
@@ -46,6 +47,7 @@ export class SprintRound {
         }
         if (!isTrue && word.userWord.difficulty === 'learned') {
           word.userWord.difficulty = 'normal'
+          word.userWord.optional.dateLearned = 0
         }
         await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
       }
@@ -79,17 +81,17 @@ export class SprintRound {
           try {
             this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
               this.settings.id,
-              this.settings.lvl,
-              this.settings.pageNumber,
-              20
+              `${this.settings.lvl}`,
+              `${this.settings.pageNumber}`,
+              `20`
             )
           } catch (error) {
             await this.settings.service.requestUpdateToken(this.settings.id)
             this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
               this.settings.id,
-              this.settings.lvl,
-              this.settings.pageNumber,
-              20
+              `${this.settings.lvl}`,
+              `${this.settings.pageNumber}`,
+              `20`
             )
           }
         } else {

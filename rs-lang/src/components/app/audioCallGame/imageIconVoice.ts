@@ -1,10 +1,10 @@
 class ImageIconVoice {
-  element = document.createElement("img");
+  element = document.createElement('img')
 
   addIconVoice(path: string) {
-    this.element.setAttribute("src", path);
-    this.element.setAttribute("alt", "icon voice");
+    this.element.setAttribute('src', path)
+    this.element.setAttribute('alt', 'icon voice')
     return this.element
   }
 }
-export default ImageIconVoice;
+export default ImageIconVoice

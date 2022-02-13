@@ -29,7 +29,7 @@ export class Sprint {
       isRoundOver: false,
       isPaused: false,
       resultScreen: new SprintResult(),
-      id: service.user.userId,
+      id: service.user?.userId,
     }
     this.words = wordCollection ?? null
     this.handleSprint = this.addListener.bind(this)
@@ -68,17 +68,17 @@ export class Sprint {
         try {
           this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
             this.settings.id,
-            this.settings.lvl,
-            this.settings.pageNumber,
-            20
+            `${this.settings.lvl}`,
+            `${this.settings.pageNumber}`,
+            `20`
           )
         } catch (error) {
           await this.settings.service.requestUpdateToken(this.settings.id)
           this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
             this.settings.id,
-            this.settings.lvl,
-            this.settings.pageNumber,
-            20
+            `${this.settings.lvl}`,
+            `${this.settings.pageNumber}`,
+            `20`
           )
         }
       }
