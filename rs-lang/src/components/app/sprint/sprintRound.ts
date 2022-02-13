@@ -74,20 +74,27 @@ export class SprintRound {
           randomNum = getRandomNumber(29)
         }
         this.settings.pageNumber = randomNum
-      } else {
-        this.settings.pageNumber--
-      }
-
-      if (this.settings.pageNumber >= 0) {
         this.settings.pageStorage.push(this.settings.pageNumber)
-        this.words = this.settings.id
-          ? await this.settings.service.requestGetUserAgregatedPageGrp(
+        if (this.settings.id) {
+          try {
+            this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
               this.settings.id,
               this.settings.lvl,
               this.settings.pageNumber,
               20
             )
-          : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+          } catch (error) {
+            await this.settings.service.requestUpdateToken(this.settings.id)
+            this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
+              this.settings.id,
+              this.settings.lvl,
+              this.settings.pageNumber,
+              20
+            )
+          }
+        } else {
+          this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+        }
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
         this.settings.resultScreen.renderResult(this.results, this.settings)

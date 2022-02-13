@@ -73,7 +73,6 @@ export class Sprint {
             20
           )
         } catch (error) {
-          console.log(this.settings.id)
           await this.settings.service.requestUpdateToken(this.settings.id)
           this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
             this.settings.id,
