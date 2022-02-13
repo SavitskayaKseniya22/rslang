@@ -8,6 +8,7 @@ export class SprintResult {
   total: number
   points: number
   streaks: number
+  message: string
 
   constructor() {}
 
@@ -19,6 +20,22 @@ export class SprintResult {
     this.wrong = results.answers.false
     this.total = this.correct.length + this.wrong.length
     this.percent = this.total === 0 ? 0 : Math.round(100 / (this.total / this.correct.length))
+  }
+
+  private getMessage() {
+    let message: string
+    if (this.percent <= 30) {
+      message = 'Try another game. You useless!'
+    } else if (this.percent <= 50) {
+      message = 'You can do better. Maybe.'
+    } else if (this.percent <= 75) {
+      message = 'Nice! You start learning!'
+    } else if (this.percent < 100) {
+      message = 'Almost done!'
+    } else if (this.percent == 100) {
+      message = 'You are native speaker now. Congrats!'
+    }
+    return message
   }
 
   public renderResult(results: SprintResultType, settings: SprintSettings) {
@@ -37,14 +54,22 @@ export class SprintResult {
     <span>${this.correct.length}/${this.total} </span>
     <span>Your longest streak - ${this.streaks} correct answers</span>
     <span>${this.percent}% correct answers</span>
-    <h3>Wrong (${this.wrong.length})</h3>
-    <ul class="result_wrong">
-      ${rightResults.join('')}
+    <span>${this.getMessage()}</span>
+    <ul class="answer-list">
+      <li>
+        <h3>Wrong (${this.wrong.length})</h3>
+        <ul class="result_wrong">
+        ${rightResults.join('')}
+        </ul>
+      </li>
+      <li>
+        <h3>Correct (${this.correct.length})</h3>
+        <ul class="result_right">
+        ${wrongResults.join('')}
+        </ul>
+      </li>
     </ul>
-    <h3>Correct (${this.correct.length})</h3>
-    <ul class="result_right">
-      ${wrongResults.join('')}
-    </ul>
+  
     <button class="new-round">new game</button>
   `)
   }
