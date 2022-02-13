@@ -29,11 +29,20 @@ class ConrolGame {
     if (this.user === null) {
       this.getQuestions();
     } else if (this.user !== null && this.bookQuestions.length === 0) {
-      this.getQuestionsUser();
+      try {
+        this.getQuestionsUser();
+      } catch (error) {
+        this.apiService.requestUpdateToken(this.user.userId);
+        this.getQuestionsUser();
+      }
     } else if (this.user !== null && this.bookQuestions.length !== 0) {
-      this.getQuestionsUserFromBook();
+      try {
+        this.getQuestionsUserFromBook();
+      } catch (error) {
+        this.apiService.requestUpdateToken(this.user.userId);
+        this.getQuestionsUserFromBook();
+      }
     }
-    // this.apiService.requestUpdateToken(this.user.userId);
   }
   getQuestionsUserFromBook() {
     console.log("From book");
