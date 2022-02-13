@@ -1,7 +1,7 @@
+import { Question, Word } from "../interfaces/interfaces";
 import BasicQuestion from "./basicQuestion";
 import ConrolGame from "./controlgame";
 import ResultRaund from "./resultRaund";
-import { Question, Word } from "./type";
 
 class AudioGame {
   count: number;
@@ -13,6 +13,8 @@ class AudioGame {
   groupAgain: number;
   pageAgain: number;
   countSpace: number;
+  countInRow: number;
+  arrayCountInRow: number[] = [];
   player = document.createElement("audio");
   constructor(data: Question[], arrayTrueWords: Word[], group: number, page: number) {
     this.groupAgain = group;
@@ -22,20 +24,21 @@ class AudioGame {
     this.arrayTrueWords = arrayTrueWords;
     this.count = 0;
     this.countSpace = 0;
+    this.countInRow = 0;
     this.arrayQuestions = data;
     this.startGame(this.arrayQuestions[0]);
     document.addEventListener('keydown', (event) => {
-      if (event.code === "Digit1" && this.count < 10) {
+      if (event.code === "Digit1" && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(0);
-      } else if (event.code === "Digit2" && this.count < 10) {
+      } else if (event.code === "Digit2" && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(1);
-      } else if (event.code === "Digit3" && this.count < 10) {
+      } else if (event.code === "Digit3" && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(2);
-      } else if (event.code === "Digit4" && this.count < 10) {
+      } else if (event.code === "Digit4" && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(3);
-      } else if (event.code === "Digit5" && this.count < 10) {
+      } else if (event.code === "Digit5" && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(4);
-      } else if (event.code === "Space" && this.count < 10) {
+      } else if (event.code === "Space" && this.count < this.arrayQuestions.length) {
         event.preventDefault();
         this.countSpace++;
         if (this.countSpace === 1) {
@@ -80,12 +83,15 @@ class AudioGame {
     const wrapperForAnswers = document.querySelector(".wrapper-answers");
     wrapperForAnswers.addEventListener("click", (event) => {
       if ((<HTMLElement>event.target).innerText === this.trueAnswer) {
+        this.countInRow++;
+        this.arrayCountInRow.push(this.countInRow);
         this.addSoundAnswer(`images/true-call.mp3`);
         this.arrayNumberTrueAnswers.push(this.count);
         this.addMarkTrueAnswer((<HTMLElement>event.target))
         this.addAnswer();
         this.addAtributeDisabled();
       } else if ((<HTMLElement>event.target).innerText !== this.trueAnswer) {
+        this.countInRow = 0;
         this.addSoundAnswer(`images/false-call.mp3`);
         this.arrayNumberFalseAnswers.push(this.count);
         this.addMarkFalseAnswer((<HTMLElement>event.target));
@@ -119,6 +125,9 @@ class AudioGame {
   }
   showAnswer() {
     const answers = document.querySelectorAll(".answer");
+    this.countInRow = 0;
+
+    this.addSoundAnswer(`images/false-call.mp3`);
     this.addAtributeDisabled();
     this.addAnswer();
     this.arrayNumberFalseAnswers.push(this.count);
@@ -130,10 +139,10 @@ class AudioGame {
   }
   changeQuestion() {
     this.count++;
-    if (this.count < 10) {
+    if (this.count < this.arrayQuestions.length) {
       this.startGame(this.arrayQuestions[this.count]);
     } else {
-      new ResultRaund(this.arrayTrueWords, this.arrayNumberTrueAnswers, this.arrayNumberFalseAnswers);
+      new ResultRaund(this.arrayTrueWords, this.arrayNumberTrueAnswers, this.arrayNumberFalseAnswers, this.arrayCountInRow);
       this.addEventListenerForResultWrapper();
       this.addEventListenerForButtonPlayAgain();
     }

@@ -1,4 +1,4 @@
-import { ButtonProperties } from "./type";
+import { ButtonProperties } from "../interfaces/interfaces";
 
 class Button {
   public element = document.createElement("button");

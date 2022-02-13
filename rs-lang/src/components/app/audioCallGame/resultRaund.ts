@@ -1,13 +1,66 @@
+import ApiService from "../api-service/api-service";
+import { UserTemplate, Word } from "../interfaces/interfaces";
 import Button from "./button";
-import { Word } from "./type";
 import WordResult from "./wordResult";
 
 class ResultRaund {
   arrayTrueWords: Word[];
-  constructor(arrayTrueWords: Word[], arrayNumberTrueAnswers: number[], arrayNumberFalseAnswers: number[]) {
+  arrayNumberTrueAnswers: number[];
+  arrayNumberFalseAnswers: number[];
+  user: UserTemplate;
+  apiServiceUser: ApiService;
+  constructor(arrayTrueWords: Word[], arrayNumberTrueAnswers: number[], arrayNumberFalseAnswers: number[], arrayCountInRow: number[]) {
+    console.log(arrayCountInRow);
+    this.user = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null;
+    this.apiServiceUser = new ApiService(this.user);
     this.arrayTrueWords = arrayTrueWords;
+    this.arrayNumberTrueAnswers = arrayNumberTrueAnswers;
+    this.arrayNumberFalseAnswers = arrayNumberFalseAnswers;
     document.querySelector('.main').innerHTML = "";
     document.querySelector('.main').append(this.addWrapperResult(arrayNumberTrueAnswers, arrayNumberFalseAnswers));
+    if (this.user !== null) this.requestResultRaund();
+  }
+  requestResultRaund() {
+    this.arrayTrueWords.forEach((word, i, words) => {
+      if (word.userWord === undefined) {
+        this.apiServiceUser.requestAddUserWord(this.apiServiceUser.user.userId, word._id, { difficulty: "normal", optional: { timesGuessed: 0, timesMax: 3 } });
+      } else {
+        if (this.arrayNumberTrueAnswers.includes(i)) {
+          this.requestUpdateUserWordForTrueAnswer(words, i);
+        } else if (this.arrayNumberFalseAnswers.includes(i)) {
+          this.requestUpdateUserWordForFalseAnswer(words, i);
+        }
+      }
+    });
+  }
+  async requestUpdateUserWordForTrueAnswer(words: Word[], i: number) {
+    const trueAnswer = await this.apiServiceUser.requestGetUserWord(this.apiServiceUser.user.userId, words[i]._id);
+    if (trueAnswer.difficulty === "difficult" || trueAnswer.difficulty === "normal") {
+      const timesMax = trueAnswer.optional.timesGuessed;
+      let timesGuessed = trueAnswer.optional.timesGuessed;
+      timesGuessed++;
+      if (timesGuessed >= timesMax) {
+        this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, { difficulty: "learned", optional: { timesGuessed: timesGuessed, timesMax: 3 } });
+      }
+    } else if (trueAnswer.difficulty === "learned") {
+      const timesMax = trueAnswer.optional.timesGuessed;
+      const timesGuessed = trueAnswer.optional.timesGuessed;
+      if (timesGuessed < timesMax) {
+        this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, { difficulty: "learned", optional: { timesGuessed: timesGuessed, timesMax: 3 } });
+      }
+    }
+  }
+  async requestUpdateUserWordForFalseAnswer(words: Word[], i: number) {
+    const falseAnswer = await this.apiServiceUser.requestGetUserWord(this.apiServiceUser.user.userId, words[i]._id);
+    if (falseAnswer.difficulty === "difficult" || falseAnswer.difficulty === "normal") {
+      const difficulty = falseAnswer.difficulty;
+      this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, { difficulty: difficulty, optional: { timesGuessed: 0, timesMax: 3 } });
+    } else if (falseAnswer.difficulty === "learned") {
+      this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, { difficulty: "normal", optional: { timesGuessed: 0, timesMax: 3 } });
+    }
+
   }
   addWrapperResult(arrayNumberTrueAnswers: number[], arrayNumberFalseAnswers: number[]) {
     const wrapperResult = document.createElement("div");

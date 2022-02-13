@@ -1,5 +1,5 @@
+import { Word } from "../interfaces/interfaces";
 import Button from "./button";
-import { Word } from "./type";
 
 class Answer {
   addWrapperForAnswer(word: Word, number: number) {

@@ -46,10 +46,10 @@ class NavMenu {
         break
       case 'audio-challenge-choose':
         page = new DifficultySelect('audio-challenge', this.service)
-        
+        page.render()
         break
     }
-    page.render()
+
   }
 }
 export default NavMenu

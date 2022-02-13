@@ -1,5 +1,6 @@
+import { Word } from "../interfaces/interfaces";
 import ImageIconVoice from "./imageIconVoice";
-import { Word } from "./type";
+
 
 class WordResult {
   addWrapperForWord(arrayTrueWords: Word[], count: number) {

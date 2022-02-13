@@ -1,7 +1,7 @@
 import ImageIconVoice from "./imageIconVoice";
-import { Question, Word } from "./type";
 import Button from "./button";
 import Answer from "./answer";
+import { Question, Word } from "../interfaces/interfaces";
 
 class BasicQuestion {
   renderQuestion(question: Question) {
@@ -38,14 +38,7 @@ class BasicQuestion {
     wrapperForAnswers.innerHTML = "";
     wrapperForAnswers.classList.add("wrapper-answers", "answer-content");
     sortArrQuestions.forEach((item: Word, i) => {
-      // const button = new Button({
-      //   className: `answer`,
-      //   text: item.wordTranslate,
-      // });
-      // wrapperForAnswers.append(button.element);
-      // wrapperForAnswers.classList.add("answer-content");
       wrapperForAnswers.append(new Answer().addWrapperForAnswer(item, i));
-      // 
     });
     return wrapperForAnswers;
   }
