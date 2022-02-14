@@ -25,15 +25,10 @@ export class SprintRound {
   private async checkWord(word: Word, isTrue: boolean) {
     if (this.settings.id) {
       if (!word.userWord) {
-        isTrue
-          ? await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
-              difficulty: 'normal',
-              optional: { timesGuessed: 1, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
-            })
-          : await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
-              difficulty: 'normal',
-              optional: { timesGuessed: 0, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
-            })
+        await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
+          difficulty: 'normal',
+          optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
+        })
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
@@ -60,6 +55,7 @@ export class SprintRound {
     const randomIndex = getRandomNumber(maxValue)
     this.sugestedWord = this.words[randomIndex]
     this.sugestedAnswer = randomNum ? this.sugestedWord : this.words[getRandomNumber(maxValue)]
+
     this.words.splice(randomIndex, 1)
     this.sound = new Sound(this.sugestedWord.audio)
     return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span> ${this.sound.render()}</li>
@@ -67,7 +63,7 @@ export class SprintRound {
   }
 
   public async renderRound() {
-    if (this.words.length > 1) {
+    if (this.words.length > 0) {
       document.querySelector('.sprint__words').innerHTML = this.makeRound()
     } else {
       if (this.settings.isFreeGame) {
@@ -78,22 +74,12 @@ export class SprintRound {
         this.settings.pageNumber = randomNum
         this.settings.pageStorage.push(this.settings.pageNumber)
         if (this.settings.id) {
-          try {
-            this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
-              this.settings.id,
-              `${this.settings.lvl}`,
-              `${this.settings.pageNumber}`,
-              `20`
-            )
-          } catch (error) {
-            await this.settings.service.requestUpdateToken(this.settings.id)
-            this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
-              this.settings.id,
-              `${this.settings.lvl}`,
-              `${this.settings.pageNumber}`,
-              `20`
-            )
-          }
+          this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
+            this.settings.id,
+            `${this.settings.lvl}`,
+            `${this.settings.pageNumber}`,
+            `20`
+          )
         } else {
           this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
         }
