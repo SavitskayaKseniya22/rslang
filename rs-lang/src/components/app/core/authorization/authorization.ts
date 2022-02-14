@@ -24,6 +24,7 @@ class Authorization {
     document.querySelector('.header').append(logged)
     document.querySelector(`.log-out`).addEventListener('click', () => {
       localStorage.removeItem('user')
+      this.apiService.user = null;
       window.location.reload()
     })
   }

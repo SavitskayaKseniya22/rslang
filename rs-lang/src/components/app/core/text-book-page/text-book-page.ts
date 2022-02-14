@@ -330,8 +330,9 @@ class TextBookPage {
     }
   }
   async composeGameArr() {
-
-    let gameArr = await this.apiService.requestGetAggregatedFIlter(
+    let gameArr
+    if (this.apiService.user!== null && this.apiService.user!== undefined){
+    gameArr = await this.apiService.requestGetAggregatedFIlter(
       this.apiService.user.userId,
       `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
     )
@@ -347,7 +348,10 @@ class TextBookPage {
       gameArr = gameArr.concat(slice);
     }
     return gameArr
-
+  } else {
+     gameArr = await this.apiService.requestWords(this.curGrp, this.curPage)
+  }
+  return gameArr
   }
   async checkWords() {
     this.pageWordsArr = await this.apiService.requestGetAggregatedFIlter(
