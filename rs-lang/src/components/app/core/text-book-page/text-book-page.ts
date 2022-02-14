@@ -159,11 +159,15 @@ class TextBookPage {
 
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
+        /*
+
+        func for sprint
+
         const target = e.target as HTMLButtonElement
         const gameArr = await this.composeGameArr()
         const page = target.dataset.gameName === 'sprint' ? new Sprint(1, this.apiService, gameArr) : null
         window.location.hash = `#${target.dataset.gameName}`
-        page.render()
+        page.render()*/
       })
     })
   }
