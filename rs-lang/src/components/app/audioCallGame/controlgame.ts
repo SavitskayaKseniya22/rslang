@@ -10,6 +10,10 @@ class ConrolGame {
   pageFirstPartFalse: number
   groupSecondPartFalse: number
   pageSecondPartFalse: number
+  groupThirdPartFalse: number
+  pageThirdPartFalse: number
+  groupFourthPartFalse: number
+  pageFourthPartFalse: number
   apiService: ApiService
   apiServiceUser: ApiService
   user: UserTemplate
@@ -18,31 +22,50 @@ class ConrolGame {
   constructor(group = -1, page = -1, bookQuestions = [] as Word[]) {
     this.bookQuestions = bookQuestions
     this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
-    this.groupTrue = group
-    this.pageTrue = page !== -1 ? page : this.randomInteger(0, 29)
-    this.wordsPerPage = 20
-    this.apiService = new ApiService(this.user)
-    this.getParamsForRequest()
+    this.groupTrue = group === -1 ? this.bookQuestions[0].group : group;
+    this.pageTrue = page !== -1 ? page : page === -1 && group !== -1 ? this.randomInteger(0, 29) : this.bookQuestions[0].page;
+    this.wordsPerPage = 20;
+    this.apiService = new ApiService(this.user);
+    this.getParamsForRequest();
     if (this.user === null) {
-      this.getQuestions()
-    } else if (this.user !== null && this.bookQuestions.length === 0) {
-      try {
-        this.getQuestionsUser()
-      } catch (error) {
-        this.apiService.requestUpdateToken(this.user.userId)
-        this.getQuestionsUser()
-      }
-    } else if (this.user !== null && this.bookQuestions.length !== 0) {
-      try {
-        this.getQuestionsUserFromBook()
-      } catch (error) {
-        this.apiService.requestUpdateToken(this.user.userId)
-        this.getQuestionsUserFromBook()
-      }
+      this.getQuestions();
+    } else if (this.user !== null && group !== -1) {
+      this.getQuestionsUser();
+    } else if (this.user !== null && group === -1) {
+      this.getQuestionsUserFromBook();
     }
   }
-  getQuestionsUserFromBook() {
-    console.log('From book')
+  async getQuestionsUserFromBook() {
+    const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+      this.apiService.user.userId,
+      this.groupFirstPartFalse.toString(),
+      this.pageFirstPartFalse.toString(),
+      this.wordsPerPage.toString()
+    )
+    const falseSecondPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+      this.apiService.user.userId,
+      this.groupSecondPartFalse.toString(),
+      this.pageSecondPartFalse.toString(),
+      this.wordsPerPage.toString()
+    )
+    const falseThirdPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+      this.apiService.user.userId,
+      this.groupThirdPartFalse.toString(),
+      this.pageThirdPartFalse.toString(),
+      this.wordsPerPage.toString()
+    )
+    const falseFourthPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+      this.apiService.user.userId,
+      this.groupFourthPartFalse.toString(),
+      this.pageFourthPartFalse.toString(),
+      this.wordsPerPage.toString()
+    )
+    const {
+      arrayQuestions,
+      arrayTrueWords
+    } = this.createQuestionsFromBook(this.bookQuestions, falseFirstPartWords, falseSecondPartWords, falseThirdPartWords, falseFourthPartWords);
+    console.log(arrayQuestions);
+    new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue);
   }
   async getQuestionsUser() {
     const trueWords = await this.apiService.requestGetUserAgregatedPageGrp(
@@ -91,13 +114,24 @@ class ConrolGame {
     const arrayQuestions = this.arraySplit(arrayFalseWords, 10).map((elem, i, arr) => {
       return { truthyAnswer: arrayTrueWords[i], falsyAnswers: arr[i] }
     })
-    return { arrayQuestions, arrayTrueWords }
+    return { arrayQuestions, arrayTrueWords };
+  }
+  createQuestionsFromBook(arrayTrueWords: Word[], falseFirstPartWords: Word[], falseSecondPartWords: Word[], falseThirdPartWords: Word[], falseFourthPartWords: Word[]) {
+    const arrayFalseWords = falseFirstPartWords.concat(falseSecondPartWords.concat(falseThirdPartWords.concat(falseFourthPartWords)));
+    const arrayQuestions = this.arraySplit(arrayFalseWords, arrayTrueWords.length).map((elem, i, arr) => {
+      return { truthyAnswer: arrayTrueWords[i], falsyAnswers: arr[i] }
+    });
+    return { arrayQuestions, arrayTrueWords };
   }
   getParamsForRequest() {
-    this.groupFirstPartFalse = this.getGroup(this.groupTrue)
-    this.pageFirstPartFalse = this.getPage(this.groupTrue)
-    this.groupSecondPartFalse = this.getGroup(this.groupFirstPartFalse)
-    this.pageSecondPartFalse = this.getGroup(this.pageFirstPartFalse)
+    this.groupFirstPartFalse = this.getGroup(this.groupTrue);
+    this.pageFirstPartFalse = this.getPage(this.pageTrue);
+    this.groupSecondPartFalse = this.getGroup(this.groupFirstPartFalse);
+    this.pageSecondPartFalse = this.getGroup(this.pageFirstPartFalse);
+    this.groupThirdPartFalse = this.getGroup(this.groupSecondPartFalse);
+    this.pageThirdPartFalse = this.getGroup(this.pageSecondPartFalse);
+    this.groupFourthPartFalse = this.getGroup(this.groupThirdPartFalse);
+    this.pageFourthPartFalse = this.getGroup(this.pageThirdPartFalse);
   }
   getGroup(group: number) {
     if (group >= 0 && group !== 6) {

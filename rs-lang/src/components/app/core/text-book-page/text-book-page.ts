@@ -1,4 +1,5 @@
 import ApiService from '../../api-service/api-service'
+import ConrolGame from '../../audioCallGame/controlgame'
 import { Word } from '../../interfaces/interfaces'
 import { Sprint } from '../../sprint/sprint'
 import './text-book-page.css'
@@ -159,15 +160,22 @@ class TextBookPage {
 
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
-        /*
 
+    /*
         func for sprint
-
         const target = e.target as HTMLButtonElement
         const gameArr = await this.composeGameArr()
         const page = target.dataset.gameName === 'sprint' ? new Sprint(1, this.apiService, gameArr) : null
         window.location.hash = `#${target.dataset.gameName}`
-        page.render()*/
+        page.render()
+    */
+        const target = e.target as HTMLButtonElement;
+        const gameArr = await this.composeGameArr();
+        //--------audioGame
+        // new ConrolGame(-1, -1, gameArr); 
+        // window.location.hash = 'audio-challenge';
+        //--------
+
       })
     })
   }
@@ -237,12 +245,12 @@ class TextBookPage {
           optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Number(date), dateLearned: Date.now() },
         })
       } else {
-        console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
+        // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
         this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
           optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() },
         })
-        console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
+        // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
       }
       wordDiv.classList.add('tb-learned-word')
       wordDiv.classList.remove('tb-normal-word')
@@ -319,6 +327,7 @@ class TextBookPage {
     }
   }
   async composeGameArr() {
+
     let gameArr = await this.apiService.requestGetAggregatedFIlter(
       this.apiService.user.userId,
       `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
@@ -332,7 +341,7 @@ class TextBookPage {
         supplementaryWrds.length > 20 - gameArr.length
           ? supplementaryWrds.slice(0, 20 - gameArr.length)
           : supplementaryWrds
-      gameArr = gameArr.concat(slice)
+      gameArr = gameArr.concat(slice);
     }
     return gameArr
   }

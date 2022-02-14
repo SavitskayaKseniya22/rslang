@@ -162,7 +162,7 @@ class ApiService {
     })
     if (res.ok) {
       const content = await res.json()
-      console.log(content[0].paginatedResults)
+      // console.log(content[0].paginatedResults)
       return content[0].paginatedResults
     } else {
       throw new Error(`error: ${res.status}, check your connection or repeat the log-in procedure`)
