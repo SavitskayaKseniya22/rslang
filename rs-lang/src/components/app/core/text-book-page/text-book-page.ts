@@ -24,7 +24,7 @@ class TextBookPage {
         </div>
         <div class="tb-pagination">
             <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
-            <div class="page-num">${this.curPage +1}</div>
+            <input type="number" min="1" max="30" value="${this.curPage + 1}" class="page-num">
             <button data-direction="right" class="pagination-button"><i data-direction="right" class="fas fa-caret-right"></i></button>
         </div>
         <div class="tb-group-select">
@@ -128,6 +128,12 @@ class TextBookPage {
         const target = e.target as HTMLButtonElement
         this.switchPage(target.dataset.direction)
       })
+    });
+    document.querySelector('.page-num').addEventListener('input', async(e)=>{
+      const target = e.target as  HTMLInputElement
+      this.curPage =  Number(target.value)
+      await this.getWords()
+      this.addControls()
     })
     document.querySelectorAll('.group-select').forEach((div) => {
       div.addEventListener('click', async (e) => {
@@ -195,7 +201,7 @@ class TextBookPage {
     if (direction === 'left' && this.curPage > 0) {
       this.curPage--
     }
-    document.querySelector('.page-num').textContent = `${this.curPage + 1}`
+    (document.querySelector('.page-num') as HTMLInputElement).value = `${this.curPage + 1}`
     await this.getWords()
     this.addControls()
   }
@@ -336,9 +342,11 @@ class TextBookPage {
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
       let button = btn as HTMLButtonElement
       button.disabled = false
-      document.querySelector('.page-num').classList.remove('tb-finished-page')
+      document.querySelector('.page-num').classList.remove('tb-finished-page');
+      (document.querySelector('.page-num') as HTMLInputElement).disabled = false
       if (this.pageWordsArr.length === 20 || this.showDifficult) {
-        button.disabled = true
+        button.disabled = true;
+        (document.querySelector('.page-num') as HTMLInputElement).disabled = true
         document.querySelector('.page-num').classList.add('tb-finished-page')
       }
     })
