@@ -15,7 +15,6 @@ class ResultRaund {
     arrayNumberFalseAnswers: number[],
     arrayCountInRow: number[]
   ) {
-    console.log(arrayCountInRow)
     this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
     this.apiServiceUser = new ApiService(this.user)
     this.arrayTrueWords = arrayTrueWords
@@ -23,14 +22,23 @@ class ResultRaund {
     this.arrayNumberFalseAnswers = arrayNumberFalseAnswers
     document.querySelector('.main').innerHTML = ''
     document.querySelector('.main').append(this.addWrapperResult(arrayNumberTrueAnswers, arrayNumberFalseAnswers))
+    this.createStatistic(arrayCountInRow);
     if (this.user !== null) this.requestResultRaund()
+  }
+  createStatistic(arrayCountInRow: number[]) {
+    arrayCountInRow.sort((a, b) => a - b);
+    return {
+      countNewWord: 0,
+      percentTrueAnswer: (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 10,
+      inRow: arrayCountInRow[arrayCountInRow.length - 1],
+    };
   }
   requestResultRaund() {
     this.arrayTrueWords.forEach((word, i, words) => {
       if (word.userWord === undefined) {
         this.apiServiceUser.requestAddUserWord(this.apiServiceUser.user.userId, word._id, {
           difficulty: 'normal',
-          optional: { timesGuessed: 0, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
+          optional: { timesGuessed: 1, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
         })
       } else {
         if (this.arrayNumberTrueAnswers.includes(i)) {
