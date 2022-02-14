@@ -17,7 +17,6 @@ class AudioGame {
   arrayCountInRow: number[] = []
   player = document.createElement('audio')
   constructor(data: Question[], arrayTrueWords: Word[], group: number, page: number) {
-    console.log(data)
     this.groupAgain = group
     this.pageAgain = page
     this.arrayNumberTrueAnswers = []
