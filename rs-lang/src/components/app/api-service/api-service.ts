@@ -241,8 +241,8 @@ class ApiService {
     const exam = await response.json()
     return exam
   }
-  
-  async requestUpdStatistics( userId: string, statistics: statObj) {
+
+  async requestUpdStatistics(userId: string, statistics: statObj) {
     const res = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
       method: 'PUT',
       headers: {
@@ -254,6 +254,5 @@ class ApiService {
     })
   }
 }
-
 
 export default ApiService

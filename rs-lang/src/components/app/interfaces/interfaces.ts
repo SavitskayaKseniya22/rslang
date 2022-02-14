@@ -78,11 +78,10 @@ export interface ButtonProperties {
   className: string
 }
 
-export interface statObj{
-  learnedWords: 0,
-  optional:{
-  sprintStat: Object
-  audioStat: Object
+export interface statObj {
+  learnedWords: 0
+  optional: {
+    sprintStat: Object
+    audioStat: Object
   }
-
 }
