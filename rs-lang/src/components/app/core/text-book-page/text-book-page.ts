@@ -21,17 +21,17 @@ class TextBookPage {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
         <audio src='' class="tb-tts"></audio>
         <div class="tb-mini-game-select">
-            <button disabled class="tb-minigame" data-game-name="sprint"><i class="fas fa-running"></i> sprint</button>
-            <button disabled class="tb-minigame" data-game-name="audio-challenge"><i class="fas fa-volume-up"></i> audio-challenge</button>
+            <button class="tb-minigame" data-game-name="sprint"><i class="fas fa-running"></i> sprint</button>
+            <button class="tb-minigame" data-game-name="audio-challenge"><i class="fas fa-volume-up"></i> audio-challenge</button>
         </div>
         <div class="tb-pagination">
             <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
-            <div class="page-num">1</div>
+            <input type="number" min="1" max="30" value="${this.curPage + 1}" class="page-num">
             <button data-direction="right" class="pagination-button"><i data-direction="right" class="fas fa-caret-right"></i></button>
         </div>
         <div class="tb-group-select">
         <p>groups</p>
-            <div class="group-select tb-group-selected" data-grp="0">1</div>
+            <div class="group-select" data-grp="0">1</div>
             <div class="group-select" data-grp="1">2</div>
             <div class="group-select" data-grp="2">3</div>
             <div class="group-select" data-grp="3">4</div>
@@ -42,18 +42,17 @@ class TextBookPage {
             
         </div>
     </div>`
-
+    if (!this.showDifficult) {
+      document.querySelector(`[data-grp="${this.curGrp}"]`).classList.add('tb-group-selected')
+    }
     await this.getWords()
     if (this.apiService.user !== null && this.apiService.user !== undefined) {
       document.querySelector('.tb-group-select').innerHTML += '<div class="group-select difficult-select">D</div>'
-      document.querySelectorAll('.tb-minigame').forEach((btn) => {
-        let button = btn as HTMLButtonElement
-        button.disabled = false
 
-        if (this.pageWordsArr.every((elem) => elem.userWord && elem.userWord.difficulty === 'learned')) {
-          button.disabled = true
-        }
-      })
+      if (this.showDifficult) {
+        document.querySelector('.difficult-select').classList.add('tb-group-selected')
+      }
+      await this.checkWords()
     }
     this.addListeners()
     this.addControls()
@@ -83,6 +82,7 @@ class TextBookPage {
             this.drawWord(word)
           })
         }
+        await this.checkWords()
       } else {
         const words: Word[] = await this.apiService.requestWords(this.curGrp, this.curPage)
         words.forEach((word) => {
@@ -132,6 +132,12 @@ class TextBookPage {
         this.switchPage(target.dataset.direction)
       })
     })
+    document.querySelector('.page-num').addEventListener('input', async (e) => {
+      const target = e.target as HTMLInputElement
+      this.curPage = Number(target.value)
+      await this.getWords()
+      this.addControls()
+    })
     document.querySelectorAll('.group-select').forEach((div) => {
       div.addEventListener('click', async (e) => {
         const target = e.target as HTMLElement
@@ -160,22 +166,17 @@ class TextBookPage {
 
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
-
-    /*
-        func for sprint
         const target = e.target as HTMLButtonElement
         const gameArr = await this.composeGameArr()
-        const page = target.dataset.gameName === 'sprint' ? new Sprint(1, this.apiService, gameArr) : null
-        window.location.hash = `#${target.dataset.gameName}`
-        page.render()
-    */
-        const target = e.target as HTMLButtonElement;
-        const gameArr = await this.composeGameArr();
-        //--------audioGame
-        // new ConrolGame(-1, -1, gameArr); 
-        // window.location.hash = 'audio-challenge';
-        //--------
-
+        if ( target.dataset.gameName === 'sprint'){
+           const page =  new Sprint(1, this.apiService, gameArr)
+            window.location.hash = `#${target.dataset.gameName}`
+            page.render()
+        } else if( target.dataset.gameName === 'audio-challenge') {
+         new ConrolGame(-1, -1, gameArr); 
+         window.location.hash = 'audio-challenge';
+        }
+      
       })
     })
   }
@@ -212,7 +213,7 @@ class TextBookPage {
     if (direction === 'left' && this.curPage > 0) {
       this.curPage--
     }
-    document.querySelector('.page-num').textContent = `${this.curPage + 1}`
+    ;(document.querySelector('.page-num') as HTMLInputElement).value = `${this.curPage + 1}`
     await this.getWords()
     this.addControls()
   }
@@ -259,6 +260,7 @@ class TextBookPage {
         //checking if the difficult words only page shloulld be rendered
         wordDiv.remove()
       }
+      this.checkWords()
     } catch (err) {
       const error = err as Error
       await this.handleUserError(error)
@@ -293,6 +295,7 @@ class TextBookPage {
         })
         wordDiv.remove()
       }
+      this.checkWords()
     } catch (err) {
       const error = err as Error
       await this.handleUserError(error)
@@ -344,6 +347,25 @@ class TextBookPage {
       gameArr = gameArr.concat(slice);
     }
     return gameArr
+
+  }
+  async checkWords() {
+    this.pageWordsArr = await this.apiService.requestGetAggregatedFIlter(
+      this.apiService.user.userId,
+      `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"userWord.difficulty":"learned"}]}`
+    )
+    document.querySelectorAll('.tb-minigame').forEach((btn) => {
+      let button = btn as HTMLButtonElement
+      button.disabled = false
+      document.querySelector('.page-num').classList.remove('tb-finished-page')
+      ;(document.querySelector('.page-num') as HTMLInputElement).disabled = false
+      if (this.pageWordsArr.length === 20 || this.showDifficult) {
+        button.disabled = true
+        ;(document.querySelector('.page-num') as HTMLInputElement).disabled = true
+        document.querySelector('.page-num').classList.add('tb-finished-page')
+      }
+    })
+
   }
 }
 

@@ -1,4 +1,4 @@
-import { FormInfo, UserTemplate, UserWordInfo } from '../interfaces/interfaces'
+import { FormInfo, statObj, UserTemplate, UserWordInfo } from '../interfaces/interfaces'
 
 class ApiService {
   url: string
@@ -240,6 +240,18 @@ class ApiService {
     const response = await fetch(`${this.apiUrl}/words?page=${page}&group=${group}`)
     const exam = await response.json()
     return exam
+  }
+
+  async requestUpdStatistics(userId: string, statistics: statObj) {
+    const res = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(statistics),
+    })
   }
 }
 
