@@ -48,6 +48,10 @@ export class SprintResult {
       return this.makeResultItem(word)
     })
     console.log(this)
+    const button = settings.isFreeGame
+      ? `<button class="new-round">new game</button>`
+      : `<button class="back-study">back to study</button>`
+
     return (document.querySelector('.sprint__container').innerHTML = `
     
     <span>You earned - ${this.points} points</span>
@@ -70,7 +74,7 @@ export class SprintResult {
       </li>
     </ul>
   
-    <button class="new-round">new game</button>
+    ${button}
   `)
   }
 

@@ -1,6 +1,7 @@
 import ApiService from '../../api-service/api-service'
 import ConrolGame from '../../audioCallGame/controlgame'
 import { Word } from '../../interfaces/interfaces'
+import { Sprint } from '../../sprint/sprint'
 import './text-book-page.css'
 
 class TextBookPage {
@@ -48,6 +49,7 @@ class TextBookPage {
       document.querySelectorAll('.tb-minigame').forEach((btn) => {
         let button = btn as HTMLButtonElement
         button.disabled = false
+
         if (this.pageWordsArr.every((elem) => elem.userWord && elem.userWord.difficulty === 'learned')) {
           button.disabled = true
         }
@@ -158,12 +160,22 @@ class TextBookPage {
 
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
+
+    /*
+        func for sprint
+        const target = e.target as HTMLButtonElement
+        const gameArr = await this.composeGameArr()
+        const page = target.dataset.gameName === 'sprint' ? new Sprint(1, this.apiService, gameArr) : null
+        window.location.hash = `#${target.dataset.gameName}`
+        page.render()
+    */
         const target = e.target as HTMLButtonElement;
         const gameArr = await this.composeGameArr();
         //--------audioGame
         // new ConrolGame(-1, -1, gameArr); 
         // window.location.hash = 'audio-challenge';
         //--------
+
       })
     })
   }

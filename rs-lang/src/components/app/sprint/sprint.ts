@@ -65,22 +65,12 @@ export class Sprint {
 
     if (this.settings.id) {
       if (this.settings.isFreeGame) {
-        try {
-          this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
-            this.settings.id,
-            `${this.settings.lvl}`,
-            `${this.settings.pageNumber}`,
-            `20`
-          )
-        } catch (error) {
-          await this.settings.service.requestUpdateToken(this.settings.id)
-          this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
-            this.settings.id,
-            `${this.settings.lvl}`,
-            `${this.settings.pageNumber}`,
-            `20`
-          )
-        }
+        this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
+          this.settings.id,
+          `${this.settings.lvl}`,
+          `${this.settings.pageNumber}`,
+          `20`
+        )
       }
     } else {
       this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
@@ -205,6 +195,8 @@ export class Sprint {
       this.toggleMusic()
     } else if (target.closest('.new-round')) {
       this.render()
+    } else if (target.closest('.back-study')) {
+      window.location.hash = '#text-book'
     }
   }
 
