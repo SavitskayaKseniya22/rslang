@@ -336,8 +336,10 @@ class TextBookPage {
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
       let button = btn as HTMLButtonElement
       button.disabled = false
+      document.querySelector('.page-num').classList.remove('tb-finished-page')
       if (this.pageWordsArr.length === 20 || this.showDifficult) {
         button.disabled = true
+        document.querySelector('.page-num').classList.add('tb-finished-page')
       }
     })
   }
