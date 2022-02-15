@@ -84,6 +84,11 @@ export interface statObj {
   learnedWords: 0
   optional: {
     sprintStat: { streak: number; percent: number; newWords: number }
-    audioStat: { streak: number; percent: number; newWords: number }
+    audioStat: statAudio
   }
+}
+export interface statAudio {
+  countNewWord: number,
+  percentTrueAnswer: number,
+  inRow: number,
 }
