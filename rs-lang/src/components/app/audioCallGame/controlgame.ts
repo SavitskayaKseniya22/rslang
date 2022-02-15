@@ -35,25 +35,8 @@ class ConrolGame {
     } else if (this.user !== null && group === -1) {
       this.getQuestionsUserFromBook();
     }
+  }
 
-  }
-  async stat() {
-    // const statObj = {
-    //   learnedWords: 0,
-    //   optional: {
-    //     sprintStat: {
-    //       percentTrueAnswer: 100,
-    //       inRow: 3,
-    //     },
-    //     audioStat: {
-    //       percentTrueAnswer: 100,
-    //       inRow: 3,
-    //     }
-    //   }
-    // };
-    // await this.apiService.requestUpdStatistics(this.apiService.user.userId, statObj);
-    // await this.apiService.getUserStatistics(this.apiService.user.userId);
-  }
   async getQuestionsUserFromBook() {
     const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
       this.apiService.user.userId,
