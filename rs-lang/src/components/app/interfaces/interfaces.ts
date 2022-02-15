@@ -77,3 +77,11 @@ export interface ButtonProperties {
   text: string
   className: string
 }
+
+export interface statObj {
+  learnedWords: 0
+  optional: {
+    sprintStat: Object
+    audioStat: Object
+  }
+}
