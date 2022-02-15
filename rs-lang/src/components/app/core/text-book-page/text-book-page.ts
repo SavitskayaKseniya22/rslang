@@ -191,15 +191,16 @@ class TextBookPage {
       document.querySelectorAll('.tb-user-functionality').forEach((div) => {
         div.addEventListener('click', async (e) => {
           const target = e.target as HTMLElement
+          const date = target.dataset.date
+          const dateObj = new Date()
+          const dateStr = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`
           if (target.classList.contains('tb-add-difficult-btn')) {
             const id = target.dataset.tbDiffid
-            const date = target.dataset.date
-            await this.MarkAsDIfficult(id, date)
+            await this.MarkAsDIfficult(id, date, dateStr)
           }
           if (target.classList.contains('tb-add-learned-btn')) {
             const id = target.dataset.tbLearnid
-            const date = target.dataset.date
-            await this.MarkAsLearned(id, date)
+            await this.MarkAsLearned(id, date ,dateStr)
           }
         })
       })
@@ -233,7 +234,7 @@ class TextBookPage {
     })
     audio.play()
   }
-  async MarkAsLearned(id: string, date: string) {
+  async MarkAsLearned(id: string, date: string, dateStr: string) {
     const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
     try {
       if (
@@ -243,13 +244,13 @@ class TextBookPage {
       ) {
         this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Number(date), dateLearned: Date.now() },
+          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: date, dateLearned: dateStr },
         })
       } else {
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
         this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() },
+          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: dateStr, dateLearned: dateStr },
         })
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
       }
@@ -266,7 +267,7 @@ class TextBookPage {
       await this.handleUserError(error)
     }
   }
-  async MarkAsDIfficult(id: string, date: string) {
+  async MarkAsDIfficult(id: string, date: string, dateStr: string) {
     try {
       const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
       if (
@@ -276,12 +277,12 @@ class TextBookPage {
       ) {
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Number(date), dateLearned: 0 },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: date, dateLearned: '0' },
         })
       } else {
         await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: Date.now(), dateLearned: 0 },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: dateStr, dateLearned: '0' },
         })
       }
       wordDiv.classList.remove('tb-learned-word')
@@ -291,7 +292,7 @@ class TextBookPage {
         //checking if the difficult words only page shloulld be rendered
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'normal',
-          optional: { timesGuessed: 0, timesMax: 3, dateEncountered: Number(date), dateLearned: 0 },
+          optional: { timesGuessed: 0, timesMax: 3, dateEncountered: date, dateLearned: '0' },
         })
         wordDiv.remove()
       }

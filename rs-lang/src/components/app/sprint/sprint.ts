@@ -61,19 +61,24 @@ export class Sprint {
 
   public async render() {
     this.updateSettings()
-    this.results = { answers: { false: [], true: [] }, points: 0, multiplier: 1, streak: 0, streaks: 0 }
-
-    if (this.settings.id) {
-      if (this.settings.isFreeGame) {
-        this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
-          this.settings.id,
-          `${this.settings.lvl}`,
-          `${this.settings.pageNumber}`,
-          `20`
-        )
-      }
-    } else {
-      this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+    this.results = {
+      answers: { false: [], true: [] },
+      points: 0,
+      multiplier: 1,
+      streak: 0,
+      bestStreak: 0,
+      counter: 0,
+      newWords: 0,
+    }
+    if (this.settings.isFreeGame) {
+      this.words = this.settings.id
+        ? await this.settings.service.requestGetUserAgregatedPageGrp(
+            this.settings.id,
+            `${this.settings.lvl}`,
+            `${this.settings.pageNumber}`,
+            `20`
+          )
+        : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
     }
 
     this.round.updateRound(this.words, this.results, this.settings)

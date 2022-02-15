@@ -9,19 +9,22 @@ class ResultRaund {
   arrayNumberFalseAnswers: number[]
   user: UserTemplate
   apiServiceUser: ApiService
+  dateObj: Date
+  dateStr: string
   constructor(
     arrayTrueWords: Word[],
     arrayNumberTrueAnswers: number[],
     arrayNumberFalseAnswers: number[],
     arrayCountInRow: number[]
-
-
   ) {
     this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
     this.apiServiceUser = new ApiService(this.user)
     this.arrayTrueWords = arrayTrueWords
     this.arrayNumberTrueAnswers = arrayNumberTrueAnswers
     this.arrayNumberFalseAnswers = arrayNumberFalseAnswers
+    this.dateObj= new Date()
+    this.dateStr = `${this.dateObj.getDate()}/${this.dateObj.getMonth()}/${this.dateObj.getFullYear()}`
+
     document.querySelector('.main').innerHTML = ''
     document.querySelector('.main').append(this.addWrapperResult(arrayNumberTrueAnswers, arrayNumberFalseAnswers))
     if (this.user !== null) this.requestResultRaund()
@@ -64,7 +67,7 @@ class ResultRaund {
       if (word.userWord === undefined) {
         this.apiServiceUser.requestAddUserWord(this.apiServiceUser.user.userId, word._id, {
           difficulty: 'normal',
-          optional: { timesGuessed: 1, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
+          optional: { timesGuessed: 1, timesMax: 3, dateEncountered: this.dateStr, dateLearned: '0' },
         })
       } else {
         if (this.arrayNumberTrueAnswers.includes(i)) {
@@ -85,7 +88,7 @@ class ResultRaund {
       if (timesGuessed >= timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: 'learned',
-          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: Date.now() },
+          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: this.dateStr },
         })
       }
     } else if (trueAnswer.difficulty === 'learned') {
@@ -95,7 +98,7 @@ class ResultRaund {
       if (timesGuessed < timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: 'learned',
-          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: Date.now() },
+          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: this.dateStr },
         })
       }
     }
@@ -107,13 +110,13 @@ class ResultRaund {
       const date = falseAnswer.optional.dateEncountered
       this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
         difficulty: difficulty,
-        optional: { timesGuessed: 0, timesMax: 3, dateEncountered: date, dateLearned: 0 },
+        optional: { timesGuessed: 0, timesMax: 3, dateEncountered: date, dateLearned: '0' },
       })
     } else if (falseAnswer.difficulty === 'learned') {
       const date = falseAnswer.optional.dateEncountered
       this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
         difficulty: 'normal',
-        optional: { timesGuessed: 0, timesMax: 3, dateEncountered: date, dateLearned: 0 },
+        optional: { timesGuessed: 0, timesMax: 3, dateEncountered: date, dateLearned: '0' },
       })
     }
   }

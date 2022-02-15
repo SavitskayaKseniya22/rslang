@@ -6,7 +6,7 @@ class ApiService {
   constructor(public user: UserTemplate | null) {
     this.user = user
     this.apiUrl = `http://localhost:3000`
-    // console.log(this.user);
+
   }
 
   async requestWords(grp: number, page: number) {
@@ -266,6 +266,8 @@ class ApiService {
     const content = await rawResponse.json()
     return content;
   }
+
+ 
 }
 
 export default ApiService

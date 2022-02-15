@@ -45,8 +45,8 @@ export interface UserWordInfo {
   optional: {
     timesGuessed: number // 3 times for a normal word to become learned, 5 times for a difficult one
     timesMax: number // 3 for normal ones 5 for difficult ones
-    dateEncountered: number
-    dateLearned: number | null | undefined
+    dateEncountered: string
+    dateLearned: string | null | undefined
   }
 }
 
@@ -55,7 +55,9 @@ export interface SprintResultType {
   points: number
   multiplier: number
   streak: number
-  streaks: number
+  bestStreak: number
+  counter: number
+  newWords: number
 }
 
 export interface SprintSettings {
@@ -81,7 +83,7 @@ export interface ButtonProperties {
 export interface statObj {
   learnedWords: 0
   optional: {
-    sprintStat: any
+    sprintStat: { streak: number; percent: number; newWords: number }
     audioStat: statAudio
   }
 }
