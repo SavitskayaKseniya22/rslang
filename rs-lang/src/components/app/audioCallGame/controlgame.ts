@@ -20,6 +20,7 @@ class ConrolGame {
   wordsPerPage: number
   bookQuestions: Word[]
   constructor(group = -1, page = -1, bookQuestions = [] as Word[]) {
+
     this.bookQuestions = bookQuestions
     this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
     this.groupTrue = group === -1 ? this.bookQuestions[0].group : group;
@@ -34,6 +35,24 @@ class ConrolGame {
     } else if (this.user !== null && group === -1) {
       this.getQuestionsUserFromBook();
     }
+
+  }
+  async stat() {
+    // const statObj = {
+    //   learnedWords: 0,
+    //   optional: {
+    //     sprintStat: {
+    //       percentTrueAnswer: 100,
+    //       inRow: 3,
+    //     },
+    //     audioStat: {
+    //       percentTrueAnswer: 100,
+    //       inRow: 3,
+    //     }
+    //   }
+    // };
+    // await this.apiService.requestUpdStatistics(this.apiService.user.userId, statObj);
+    // await this.apiService.getUserStatistics(this.apiService.user.userId);
   }
   async getQuestionsUserFromBook() {
     const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(

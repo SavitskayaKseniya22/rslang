@@ -81,7 +81,12 @@ export interface ButtonProperties {
 export interface statObj {
   learnedWords: 0
   optional: {
-    sprintStat: Object
-    audioStat: Object
+    sprintStat: any
+    audioStat: statAudio
   }
+}
+export interface statAudio {
+  countNewWord: number,
+  percentTrueAnswer: number,
+  inRow: number,
 }

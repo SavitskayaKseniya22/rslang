@@ -6,7 +6,7 @@ class ApiService {
   constructor(public user: UserTemplate | null) {
     this.user = user
     this.apiUrl = `http://localhost:3000`
-    console.log(this.user);
+    // console.log(this.user);
   }
 
   async requestWords(grp: number, page: number) {
@@ -252,6 +252,19 @@ class ApiService {
       },
       body: JSON.stringify(statistics),
     })
+    console.log(res);
+  }
+  async getUserStatistics(userId: string) {
+    const rawResponse = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    const content = await rawResponse.json()
+    return content;
   }
 }
 
