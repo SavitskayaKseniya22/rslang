@@ -46,22 +46,24 @@ export class SprintResult {
   async updateStats() {
     if (this.settings.id) {
       this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords }
-
-      const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
-
-      if (tempStats) {
+      let audioStat: { streak: number; percent: number; newWords: number }
+      try {
+        const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
         this.stats.streak =
           tempStats.optional.sprintStat.streak < this.streak ? this.streak : tempStats.optional.sprintStat.streak
 
         this.stats.percent = (tempStats.optional.sprintStat.percent + this.percent) / 2
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
+        audioStat = tempStats.optional.audioStat
+      } catch (error) {
+        audioStat = { streak: 0, percent: 0, newWords: 0 }
       }
 
       await this.settings.service.requestUpdStatistics(this.settings.id, {
         learnedWords: 0,
         optional: {
           sprintStat: this.stats,
-          audioStat: tempStats.optional.sprintStat,
+          audioStat: audioStat,
         },
       })
     }
