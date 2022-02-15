@@ -23,11 +23,13 @@ export class SprintRound {
   }
 
   private async checkWord(word: Word, isTrue: boolean) {
+    const dateObj = new Date()
+    const dateStr = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`
     if (this.settings.id) {
       if (!word.userWord) {
         await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
           difficulty: 'normal',
-          optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
+          optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: dateStr, dateLearned: '0' },
         })
         this.results.newWords++
       } else {
@@ -35,7 +37,7 @@ export class SprintRound {
           word.userWord.optional.timesGuessed++
           if (word.userWord.optional.timesGuessed >= word.userWord.optional.timesMax) {
             word.userWord.difficulty = 'learned'
-            word.userWord.optional.dateLearned = Date.now()
+            word.userWord.optional.dateLearned = dateStr
           }
         }
         if (!isTrue) {
@@ -43,7 +45,7 @@ export class SprintRound {
         }
         if (!isTrue && word.userWord.difficulty === 'learned') {
           word.userWord.difficulty = 'normal'
-          word.userWord.optional.dateLearned = 0
+          word.userWord.optional.dateLearned = '0'
         }
         await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
       }

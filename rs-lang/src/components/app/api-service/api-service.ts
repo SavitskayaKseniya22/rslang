@@ -267,19 +267,7 @@ class ApiService {
     return content;
   }
 
-  async getUserStatistics(userId: string) {
-    const rawResponse = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${this.user.token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-    const content = await rawResponse.json()
-
-    return content
-  }
+ 
 }
 
 export default ApiService
