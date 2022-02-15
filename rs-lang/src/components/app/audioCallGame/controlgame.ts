@@ -20,6 +20,7 @@ class ConrolGame {
   wordsPerPage: number
   bookQuestions: Word[]
   constructor(group = -1, page = -1, bookQuestions = [] as Word[]) {
+
     this.bookQuestions = bookQuestions
     this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
     this.groupTrue = group === -1 ? this.bookQuestions[0].group : group;
@@ -35,6 +36,7 @@ class ConrolGame {
       this.getQuestionsUserFromBook();
     }
   }
+
   async getQuestionsUserFromBook() {
     const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
       this.apiService.user.userId,
