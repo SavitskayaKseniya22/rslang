@@ -57,7 +57,7 @@ export class SprintRound {
     this.sugestedAnswer = randomNum ? this.sugestedWord : this.words[getRandomNumber(maxValue)]
 
     this.words.splice(randomIndex, 1)
-    this.sound = new Sound(this.sugestedWord.audio)
+    this.sound = new Sound(this.sugestedWord.audio, this.settings)
     return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span> ${this.sound.render()}</li>
     <li><span class="sprint__words_translation">${this.sugestedAnswer.wordTranslate}</span></li>`
   }

@@ -9,10 +9,12 @@ export class SprintResult {
   points: number
   streaks: number
   message: string
+  settings: SprintSettings
 
   constructor() {}
 
   private updateResult(results: SprintResultType, settings: SprintSettings) {
+    this.settings = settings
     settings.isRoundOver = true
     this.points = results.points
     this.streaks = results.streaks
@@ -81,7 +83,7 @@ export class SprintResult {
   private makeResultItem(word: Word) {
     return `
 <li>
-  ${new Sound(word.audio).render()} 
+  ${new Sound(word.audio, this.settings).render()} 
   <span class="result_word">${word.word}</span>-<span class="result_translation">${word.wordTranslate}</span>
 </li>`
   }
