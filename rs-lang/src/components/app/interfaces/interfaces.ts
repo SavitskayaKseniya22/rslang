@@ -92,3 +92,8 @@ export interface statAudio {
   percentTrueAnswer: number,
   inRow: number,
 }
+export interface statSprint {
+  streak: number,
+  percent: number,
+  newWords: number,
+}

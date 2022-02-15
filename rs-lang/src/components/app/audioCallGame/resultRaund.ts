@@ -1,5 +1,5 @@
 import ApiService from '../api-service/api-service'
-import { UserTemplate, Word } from '../interfaces/interfaces'
+import { statSprint, UserTemplate, Word } from '../interfaces/interfaces'
 import Button from './button'
 import WordResult from './wordResult'
 
@@ -22,7 +22,7 @@ class ResultRaund {
     this.arrayTrueWords = arrayTrueWords
     this.arrayNumberTrueAnswers = arrayNumberTrueAnswers
     this.arrayNumberFalseAnswers = arrayNumberFalseAnswers
-    this.dateObj= new Date()
+    this.dateObj = new Date()
     this.dateStr = `${this.dateObj.getDate()}/${this.dateObj.getMonth()}/${this.dateObj.getFullYear()}`
 
     document.querySelector('.main').innerHTML = ''
@@ -43,10 +43,10 @@ class ResultRaund {
       inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow;
       this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow);
     } catch (error) {
-      this.requestStatistics({}, countNewWord, percentTrueAnswer, inRow);
+      this.requestStatistics({ streak: 0, percent: 0, newWords: 0 }, countNewWord, percentTrueAnswer, inRow);
     }
   }
-  requestStatistics(sprintStat: any, countNewWord: number, percentTrueAnswer: number, inRow: number) {
+  requestStatistics(sprintStat: statSprint, countNewWord: number, percentTrueAnswer: number, inRow: number) {
     this.apiServiceUser.requestUpdStatistics(
       this.apiServiceUser.user.userId,
       {
@@ -69,7 +69,7 @@ class ResultRaund {
           difficulty: 'normal',
           optional: { timesGuessed: 1, timesMax: 3, dateEncountered: this.dateStr, dateLearned: '0' },
         })
-      } else {
+      } else if (word.userWord !== undefined) {
         if (this.arrayNumberTrueAnswers.includes(i)) {
           this.requestUpdateUserWordForTrueAnswer(words, i)
         } else if (this.arrayNumberFalseAnswers.includes(i)) {
@@ -80,14 +80,21 @@ class ResultRaund {
   }
   async requestUpdateUserWordForTrueAnswer(words: Word[], i: number) {
     const trueAnswer = await this.apiServiceUser.requestGetUserWord(this.apiServiceUser.user.userId, words[i]._id)
+    console.log(trueAnswer);
     if (trueAnswer.difficulty === 'difficult' || trueAnswer.difficulty === 'normal') {
-      const timesMax = trueAnswer.optional.timesGuessed
+      const timesMax = trueAnswer.optional.timesMax
       let timesGuessed = trueAnswer.optional.timesGuessed
       const date = trueAnswer.optional.dateEncountered
+      const difficulty = trueAnswer.optional.difficulty
       timesGuessed++
       if (timesGuessed >= timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: 'learned',
+          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: this.dateStr },
+        })
+      } else if (timesGuessed < timesMax) {
+        this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
+          difficulty: difficulty,
           optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: this.dateStr },
         })
       }
