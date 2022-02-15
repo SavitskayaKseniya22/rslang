@@ -29,6 +29,7 @@ export class SprintRound {
           difficulty: 'normal',
           optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: Date.now(), dateLearned: 0 },
         })
+        this.results.newWords++
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
@@ -57,7 +58,7 @@ export class SprintRound {
     this.sugestedAnswer = randomNum ? this.sugestedWord : this.words[getRandomNumber(maxValue)]
 
     this.words.splice(randomIndex, 1)
-    this.sound = new Sound(this.sugestedWord.audio)
+    this.sound = new Sound(this.sugestedWord.audio, this.settings)
     return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span> ${this.sound.render()}</li>
     <li><span class="sprint__words_translation">${this.sugestedAnswer.wordTranslate}</span></li>`
   }
@@ -100,9 +101,13 @@ export class SprintRound {
         this.results.multiplier++
       }
       this.results.points += this.getPoints()
-      this.results.streaks++
+      this.results.counter++
     } else {
       this.dropCounters()
+    }
+
+    if (this.results.counter > this.results.bestStreak) {
+      this.results.bestStreak = this.results.counter
     }
 
     this.results.answers[String(isTrue)].push(this.sugestedWord)
@@ -133,7 +138,8 @@ export class SprintRound {
   private dropCounters() {
     this.clearStreak()
     this.results.multiplier = 1
-    this.results.streaks = 0
+
+    this.results.counter = 0
   }
 
   private clearStreak() {

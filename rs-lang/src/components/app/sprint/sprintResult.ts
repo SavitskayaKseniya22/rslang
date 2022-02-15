@@ -1,5 +1,5 @@
 import { Sound } from './sound'
-import { Word, SprintResultType, SprintSettings } from '../interfaces/interfaces'
+import { Word, SprintResultType, SprintSettings, statObj } from '../interfaces/interfaces'
 
 export class SprintResult {
   correct: Word[]
@@ -7,15 +7,20 @@ export class SprintResult {
   percent: number
   total: number
   points: number
-  streaks: number
+  streak: number
   message: string
+  settings: SprintSettings
+  stats: { streak: number; percent: number; newWords: number }
+  newWords: number
 
   constructor() {}
 
   private updateResult(results: SprintResultType, settings: SprintSettings) {
+    this.settings = settings
     settings.isRoundOver = true
+    this.newWords = results.newWords
     this.points = results.points
-    this.streaks = results.streaks
+    this.streak = results.bestStreak
     this.correct = results.answers.true
     this.wrong = results.answers.false
     this.total = this.correct.length + this.wrong.length
@@ -38,16 +43,45 @@ export class SprintResult {
     return message
   }
 
+  async updateStats() {
+    if (this.settings.id) {
+      this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords }
+      let audioStat: { streak: number; percent: number; newWords: number }
+      try {
+        const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
+        this.stats.streak =
+          tempStats.optional.sprintStat.streak < this.streak ? this.streak : tempStats.optional.sprintStat.streak
+
+        this.stats.percent = (tempStats.optional.sprintStat.percent + this.percent) / 2
+        this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
+        audioStat = tempStats.optional.audioStat
+      } catch (error) {
+        audioStat = { streak: 0, percent: 0, newWords: 0 }
+      }
+
+      await this.settings.service.requestUpdStatistics(this.settings.id, {
+        learnedWords: 0,
+        optional: {
+          sprintStat: this.stats,
+          audioStat: audioStat,
+        },
+      })
+    }
+  }
+
   public renderResult(results: SprintResultType, settings: SprintSettings) {
     this.updateResult(results, settings)
 
     const rightResults = this.wrong.map((word) => {
       return this.makeResultItem(word)
     })
+
     const wrongResults = this.correct.map((word) => {
       return this.makeResultItem(word)
     })
-    console.log(this)
+
+    this.updateStats()
+
     const button = settings.isFreeGame
       ? `<button class="new-round">new game</button>`
       : `<button class="back-study">back to study</button>`
@@ -56,7 +90,7 @@ export class SprintResult {
     
     <span>You earned - ${this.points} points</span>
     <span>${this.correct.length}/${this.total} </span>
-    <span>Your longest streak - ${this.streaks} correct answers</span>
+    <span>Your longest streak - ${this.streak} correct answers</span>
     <span>${this.percent}% correct answers</span>
     <span>${this.getMessage()}</span>
     <ul class="answer-list">
@@ -81,7 +115,7 @@ export class SprintResult {
   private makeResultItem(word: Word) {
     return `
 <li>
-  ${new Sound(word.audio).render()} 
+  ${new Sound(word.audio, this.settings).render()} 
   <span class="result_word">${word.word}</span>-<span class="result_translation">${word.wordTranslate}</span>
 </li>`
   }

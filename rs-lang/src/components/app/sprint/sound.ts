@@ -1,6 +1,10 @@
+import { SprintSettings } from '../interfaces/interfaces'
+
 export class Sound {
   url: string
-  constructor(url: string) {
+  settings: SprintSettings
+  constructor(url: string, settings: SprintSettings) {
+    this.settings = settings
     this.url = url
     this.initListener()
   }
@@ -17,7 +21,7 @@ export class Sound {
   render() {
     return `<button class="sprint__toggle-sound">
     <i class="fas fa-play-circle"></i>
-    <audio class="sprint__sound" src=https://react-learnwords-example.herokuapp.com/${this.url}></audio>
+    <audio class="sprint__sound" src=${this.settings.service.apiUrl}/${this.url}></audio>
     </button>`
   }
 }
