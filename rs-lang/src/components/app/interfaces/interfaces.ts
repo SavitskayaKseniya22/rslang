@@ -55,7 +55,9 @@ export interface SprintResultType {
   points: number
   multiplier: number
   streak: number
-  streaks: number
+  bestStreak: number
+  counter: number
+  newWords: number
 }
 
 export interface SprintSettings {
@@ -81,7 +83,7 @@ export interface ButtonProperties {
 export interface statObj {
   learnedWords: 0
   optional: {
-    sprintStat: Object
-    audioStat: Object
+    sprintStat: { streak: number; percent: number; newWords: number }
+    audioStat: { streak: number; percent: number; newWords: number }
   }
 }
