@@ -1,5 +1,5 @@
 import { Sound } from './sound'
-import { Word, SprintResultType, SprintSettings, statObj } from '../interfaces/interfaces'
+import { Word, SprintResultType, SprintSettings, statObj, statAudio } from '../interfaces/interfaces'
 
 export class SprintResult {
   correct: Word[]
@@ -46,7 +46,7 @@ export class SprintResult {
   async updateStats() {
     if (this.settings.id) {
       this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords }
-      let audioStat: { streak: number; percent: number; newWords: number }
+      let audioStat: statAudio
       try {
         const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
         this.stats.streak =
@@ -56,7 +56,7 @@ export class SprintResult {
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
-        audioStat = { streak: 0, percent: 0, newWords: 0 }
+        audioStat=  {countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
       }
 
       await this.settings.service.requestUpdStatistics(this.settings.id, {
