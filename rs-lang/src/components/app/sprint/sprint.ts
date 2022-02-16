@@ -148,10 +148,7 @@ export class Sprint {
         <button><i class="fas fa-arrow-circle-right"></i></button>
       </li>
     </ul>
-    <ul class="sprint__advices">
-      <li>Press the Space key to pause</li>
-      <li>Control the game using the arrows keys on your keyboard</li>
-    </ul>`
+    `
   }
 
   private toggleFullScreen() {

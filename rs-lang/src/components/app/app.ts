@@ -33,7 +33,6 @@ class App {
       <aside class="navbar"></aside>
       <div class="app">
       <header class="header">
-      
       <div class="header-log-in-status"><i class="fa-solid fa-arrow-right-to-bracket"></i></div>
       </header>
       <main class="main"></main>
@@ -48,7 +47,7 @@ class App {
            <a class="footer-git-link" href="https://github.com/Nikita1814" target="_blank"> Nikita Kravchenko </a>
            <a class="footer-git-link" href="https://github.com/Yauheny-Bychkou" target="_blank"> Yauheny Bychkou </a>
       </div>
-      <p class="footer-copyright"><i class="fa-solid fa-copyright"></i> 2022</p>
+      <p class="footer-copyright">&#169; 2022</p>
       </footer>
       </div>
       `

@@ -40,6 +40,10 @@ ins {
   color: white;
 }
 
+i {
+  font-size: 2rem;
+}
+
 button {
   cursor: pointer;
   border: none;
@@ -56,12 +60,13 @@ button {
 }
 
 html {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 h1 {
   font-size: 3rem;
   margin: 2rem;
+  text-align: center;
 }
 
 h2 {
@@ -103,12 +108,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .page-navigation {
   display: flex;
-  row-gap: 1rem;
-  column-gap: 1rem;
+  row-gap: 2rem;
+  column-gap: 2rem;
 }
 
 .hidden {
@@ -145,14 +151,19 @@ nav {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  row-gap: 1rem;
+  text-align: center;
 }
 
 .level-select-btns {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100px;
-  width: 900px;
+  row-gap: 1rem;
+  column-gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem;
 }
 
 .level-select {
@@ -160,6 +171,8 @@ nav {
   justify-content: center;
   align-items: center;
   font-size: 2em;
+  width: 100px;
+  height: 100px;
 }
 
 .footer {
@@ -193,9 +206,39 @@ nav {
   color: white;
 }
 
-@media (max-width: 767px) {
+button {
+  cursor: pointer;
+  user-select: none;
+  background: rgb(212, 75, 56);
+  padding: 1rem 1.5rem;
+  outline: none;
+}
+
+button:hover {
+  background: rgb(232, 95, 76);
+}
+
+button:active {
+  background: rgb(152, 15, 0);
+}
+
+.game-rules {
+  font-size: 1.5rem;
+}
+
+@media (max-width: 768px) {
   .footer {
     flex-direction: column;
+  }
+
+  i {
+    font-size: 3rem;
+  }
+
+  .level-select {
+    font-size: 3rem;
+    width: 150px;
+    height: 150px;
   }
 }
 
@@ -215,5 +258,9 @@ nav {
 
   .header-logged-in-status {
     flex-direction: column;
+  }
+
+  i {
+    font-size: 2.5rem;
   }
 }

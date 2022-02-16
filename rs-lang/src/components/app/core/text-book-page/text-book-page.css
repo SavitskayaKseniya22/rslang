@@ -6,10 +6,6 @@
     'pagination pagination'
     'words groups';
 }
-button {
-  outline: none;
-  background: transparent;
-}
 
 .tb-mini-game-select {
   grid-area: mini-games;
