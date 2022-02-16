@@ -7,40 +7,38 @@ ul {
   padding: 0;
 }
 
-li {
-  list-style: none;
-}
-
 button {
   cursor: pointer;
 }
 
 .sprint {
+  color: white;
   min-height: 100vh;
   font-size: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-
-  row-gap: 2rem;
 }
+
 .sprint button {
   min-width: 40px;
   min-height: 40px;
   padding: 0.5rem;
+  background-color: white;
+  color: black;
 }
 
 .sprint__container {
-  width: 50%;
-  background-color: #345383;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.8);
   margin: auto;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   column-gap: 2rem;
-  row-gap: 3rem;
+  row-gap: 2rem;
   flex-shrink: 0;
 }
 
@@ -69,6 +67,19 @@ button {
   justify-content: center;
 }
 
+.answer-list {
+  flex-wrap: wrap;
+}
+
+.answer-list ul {
+  display: flex;
+  row-gap: 1rem;
+}
+.answer-list > li {
+  min-width: 280px;
+  width: 50%;
+}
+
 .counter-full {
   border-radius: 50%;
   background-color: blueviolet;
@@ -91,4 +102,11 @@ button {
   right: 1rem;
   display: flex;
   column-gap: 1rem;
+}
+
+.new-round,
+.back-study {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
 }

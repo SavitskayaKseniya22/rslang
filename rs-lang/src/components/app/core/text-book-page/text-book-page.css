@@ -10,6 +10,7 @@ button {
   outline: none;
   background: transparent;
 }
+
 .tb-mini-game-select {
   grid-area: mini-games;
   width: 100%;
@@ -18,6 +19,7 @@ button {
   padding: 10px 20px;
   align-items: center;
 }
+
 .tb-minigame {
   height: 50px;
   width: 100px;
@@ -36,30 +38,36 @@ button {
   align-items: center;
   height: 50px;
 }
+
 .pagination-button {
   background-color: lightgray;
   color: black;
 }
+
 .tb-words {
   grid-area: words;
 }
+
 .tb-word {
   width: 100%;
-  /*height: 330px;*/
+
   padding: 25px;
   display: flex;
   justify-content: space-between;
 }
+
 .tb-word-info {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex: 1 1 auto;
 }
+
 .tb-group-select {
   grid-area: groups;
   width: 20%;
 }
+
 .group-select {
   display: flex;
   justify-content: center;
@@ -71,30 +79,36 @@ button {
   background-color: #345383;
   color: white;
 }
+
 .tb-word-title-translation-pronounciation {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .pronounce {
   height: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .tb-img {
   width: 50%;
   height: auto;
   margin-right: 5%;
 }
+
 .tb-user-functionality {
   display: flex;
   justify-content: space-between;
 }
+
 .tb-add-difficult-btn {
   background-color: orange;
   border: 5px solid #345383;
 }
+
 .tb-add-learned-btn {
   background-color: rgb(74, 193, 74);
   border: 5px solid #345383;
@@ -111,6 +125,7 @@ button {
 .tb-learned-word {
   background-color: rgb(74, 193, 74);
 }
+
 .tb-difficult-word {
   background-color: orange;
 }

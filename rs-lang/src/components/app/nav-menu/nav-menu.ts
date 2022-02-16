@@ -12,10 +12,10 @@ class NavMenu {
   render(): void {
     document.querySelector('.navbar').innerHTML = `
       <nav class="page-navigation">
-          <a href="#main" class="page-link active-link">Home</a>
-          <a href="#text-book" class="page-link">Study</a>
-          <a href="#sprint-choose" class="page-link ">Sprint</a>
-          <a href="#audio-challenge-choose" class="page-link">Audio</a>
+          <a href="#main" class="page-link active-link"><i class="fa-solid fa-house"></i></a>
+          <a href="#text-book" class="page-link"><i class="fa-solid fa-book"></i></a>
+          <a href="#sprint-choose" class="page-link "><i class="fa-solid fa-stopwatch"></i></a>
+          <a href="#audio-challenge-choose" class="page-link"><i class="fa-solid fa-music"></i></a>
       </nav>
       `
     this.addListeners()

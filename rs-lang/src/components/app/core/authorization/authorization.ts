@@ -18,13 +18,13 @@ class Authorization {
     const logged = document.createElement('div')
     logged.classList.add('header-logged-in-status')
     logged.innerHTML = `
-    <div>${name}</div>
+    <div>Hey, ${name}!</div>
     <div class="log-out">Log out?</div>
     `
     document.querySelector('.header').append(logged)
     document.querySelector(`.log-out`).addEventListener('click', () => {
       localStorage.removeItem('user')
-      this.apiService.user = null;
+      this.apiService.user = null
       window.location.reload()
     })
   }
@@ -34,7 +34,7 @@ class Authorization {
     form.classList.remove('hidden')
     form.innerHTML = `
  <div class="form-top">
- <h1>Sign-in</h1>
+ <h2>Sign-in</h2>
  <button class="close-form">X</button>
 </div>
 <div class="form">
@@ -53,7 +53,7 @@ class Authorization {
     form.classList.remove('hidden')
     form.innerHTML = `
  <div class="form-top">
- <h1>Register</h1>
+ <h2>Register</h2>
  <button class="close-form">X</button>
 </div>
 <div class="form">
