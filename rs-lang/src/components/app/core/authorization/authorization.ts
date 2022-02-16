@@ -34,14 +34,14 @@ class Authorization {
     form.classList.remove('hidden')
     form.innerHTML = `
  <div class="form-top">
- <h2>Sign-in</h2>
- <button class="close-form">X</button>
+ <h2>Sign in</h2>
+ <button class="close-form"><i class="fa-solid fa-circle-xmark"></i></button>
 </div>
 <div class="form">
  <input type="email" class="form-input email-input" name="e-mail" placeholder="E-mail"
      pattern="^[A-z0-9_\-^\s]{3,15}@[^.]+[A-Za-z0-9]{3,}\.\D{2,}" required="">
  <input type="password" placeholder="Password" minlength="8" class="form-input password-input" required> 
- <button class="sign-in-button submit-btn">Sign-in</button>
+ <button class="sign-in-button submit-btn">Sign in</button>
  <button class="open-registration-button switch-form-btn">Register</button>
 </div>
  `
@@ -54,7 +54,7 @@ class Authorization {
     form.innerHTML = `
  <div class="form-top">
  <h2>Register</h2>
- <button class="close-form">X</button>
+ <button class="close-form"><i class="fa-solid fa-circle-xmark"></i></button>
 </div>
 <div class="form">
  <input type="email" class="form-input email-input" name="e-mail" placeholder="E-mail"
@@ -62,7 +62,7 @@ class Authorization {
      <input type="password" placeholder="Password" minlength="8" class="form-input password-input" required> 
      <input type="text" placeholder="Name" minlength="1" class="form-input name-input" required> 
  <button class="register-button submit-btn">Register</button>
- <button class="open-sign-in-button switch-form-btn">Sign-in</button>
+ <button class="open-sign-in-button switch-form-btn">Sign in</button>
  <button class="open-sign-in-button ">DELETE USER</button>
 </div>
  `

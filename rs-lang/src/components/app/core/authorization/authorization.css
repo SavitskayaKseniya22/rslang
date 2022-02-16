@@ -33,11 +33,16 @@
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  row-gap: 1rem;
+}
+.form > * {
+  width: 100%;
 }
 
 .form-top {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .auth-form {
@@ -51,22 +56,20 @@
 .form-input {
   color: black;
   padding: 0;
-  margin: 0;
-  margin-bottom: 20px;
   height: 45px;
   box-sizing: border-box;
 }
 
 .form-input:invalid {
-  box-shadow: 0 0 5px 1px red;
+  box-shadow: 0 0 5px 1px rgb(232, 95, 76);
   text-indent: 43px;
 }
 
 .submit-btn {
-  background-color: green;
+  background-color: rgba(135, 182, 167);
   color: white;
 }
 .switch-form-btn {
-  background-color: blue;
+  background-color: rgba(91, 89, 65);
   color: white;
 }
