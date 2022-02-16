@@ -56,7 +56,7 @@ export class SprintResult {
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
-        audioStat=  {countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
+        audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
       }
 
       await this.settings.service.requestUpdStatistics(this.settings.id, {
@@ -116,7 +116,7 @@ export class SprintResult {
     return `
 <li>
   ${new Sound(word.audio, this.settings).render()} 
-  <span class="result_word">${word.word}</span>-<span class="result_translation">${word.wordTranslate}</span>
+  <p><span class="result_word">${word.word}</span> - <span class="result_translation">${word.wordTranslate}</span></p>
 </li>`
   }
 }

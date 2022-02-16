@@ -3,60 +3,95 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: gray;
+  background-color: white;
   width: 80px;
   height: 80px;
   border-radius: 50%;
 }
+
 .voice-icon-small {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: gray;
+  background-color: white;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  margin-right: 20px;
 }
+
 .voice-icon-result {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: gray;
+  background-color: white;
   width: 18px;
   height: 18px;
   border-radius: 50%;
   margin-right: 20px;
 }
-.question {
+main > .question,
+.result-wrapper {
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 2rem;
+}
+
+.question,
+.result-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: auto;
+  row-gap: 1rem;
+  column-gap: 1rem;
+  flex-wrap: wrap;
 }
+
+.result-wrapper {
+  row-gap: 2rem;
+  column-gap: 2rem;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+.result-wrapper > div {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  column-gap: 1rem;
+}
+
 .answer-content {
   display: flex;
   align-items: center;
 }
+
 .wrapper-answer {
   display: none;
 }
+
 .button-next {
   display: none;
 }
+
 .none {
   display: none !important;
 }
+
 .flex {
   display: flex !important;
 }
+
 .initial {
   display: initial !important;
 }
+
 .container-answer {
   position: relative;
 }
+
 .button-answer {
   padding: 10px 20px 10px 30px;
   text-align: right;
@@ -65,10 +100,31 @@
   cursor: pointer;
   border: 5px solid transparent;
 }
+
 .number-span {
   z-index: -1;
   position: absolute;
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+.wrapper-answer > img {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .answer-content {
+    flex-direction: column;
+  }
+  .result-wrapper .answer-content {
+    flex-direction: row;
+  }
+  .result-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (max-width: 767px) {
 }

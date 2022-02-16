@@ -106,7 +106,6 @@ export class Sprint {
     <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
     <audio class="sprint__answer_correct" src="./sounds/correctAnswer.mp3"></audio>
     <audio class="sprint__answer_wrong" src="./sounds/wrongAnswer.mp3"></audio>
-    <h2>Sprint</h2>
     <ul class="sprint__settings">
       <li>
         <button class="sprint__fullscreen_toggle">${fullScreenIcon}</i></button>
