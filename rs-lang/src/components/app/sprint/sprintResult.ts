@@ -13,7 +13,7 @@ export class SprintResult {
   stats: { streak: number; percent: number; newWords: number }
   newWords: number
 
-  constructor() {}
+  constructor() { }
 
   private updateResult(results: SprintResultType, settings: SprintSettings) {
     this.settings = settings
@@ -56,7 +56,7 @@ export class SprintResult {
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
-        audioStat=  {countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
+        audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
       }
 
       await this.settings.service.requestUpdStatistics(this.settings.id, {
@@ -64,6 +64,7 @@ export class SprintResult {
         optional: {
           sprintStat: this.stats,
           audioStat: audioStat,
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
         },
       })
     }

@@ -2,6 +2,9 @@ import ApiService from '../api-service/api-service'
 import DifficultySelect from '../core/difficulty-select/difficulty-select'
 import MainPage from '../core/main-page/main-page'
 import TextBookPage from '../core/text-book-page/text-book-page'
+import Statistics from '../statistics/statistics'
+
+
 
 class NavMenu {
   constructor(public service: ApiService, public mainPage: MainPage, public textBook: TextBookPage) {
@@ -16,6 +19,7 @@ class NavMenu {
           <a href="#text-book" class="page-link">Study</a>
           <a href="#sprint-choose" class="page-link ">Sprint</a>
           <a href="#audio-challenge-choose" class="page-link">Audio</a>
+          <a href="#statistics" class="page-link">Statistics</a>
       </nav>
       `
     this.addListeners()
@@ -47,6 +51,9 @@ class NavMenu {
       case 'audio-challenge-choose':
         page = new DifficultySelect('audio-challenge', this.service)
         page.render()
+        break
+      case 'statistics':
+        new Statistics();
         break
     }
   }

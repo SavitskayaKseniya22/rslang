@@ -32,7 +32,7 @@ class ResultRaund {
   }
   async createStatistic(arrayCountInRow: number[]) {
     arrayCountInRow.sort((a, b) => a - b);
-    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord !== undefined).length;
+    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined).length;
     let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100;
     let inRow = arrayCountInRow[arrayCountInRow.length - 1];
     try {
@@ -57,7 +57,8 @@ class ResultRaund {
             countNewWord: countNewWord,
             percentTrueAnswer: percentTrueAnswer,
             inRow: inRow,
-          }
+          },
+          dateStr: this.dateStr
         }
       }
     );

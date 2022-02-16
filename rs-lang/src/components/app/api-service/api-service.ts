@@ -6,7 +6,6 @@ class ApiService {
   constructor(public user: UserTemplate | null) {
     this.user = user
     this.apiUrl = `http://localhost:3000`
-
   }
 
   async requestWords(grp: number, page: number) {
@@ -162,7 +161,6 @@ class ApiService {
     })
     if (res.ok) {
       const content = await res.json()
-      // console.log(content[0].paginatedResults)
       return content[0].paginatedResults
     } else {
       throw new Error(`error: ${res.status}, check your connection or repeat the log-in procedure`)
@@ -252,7 +250,7 @@ class ApiService {
       },
       body: JSON.stringify(statistics),
     })
-    console.log(res);
+    // console.log(res);
   }
   async getUserStatistics(userId: string) {
     const rawResponse = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
