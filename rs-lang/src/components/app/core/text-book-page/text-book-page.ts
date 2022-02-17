@@ -134,7 +134,7 @@ class TextBookPage {
     })
     document.querySelector('.page-num').addEventListener('input', async (e) => {
       const target = e.target as HTMLInputElement
-      this.curPage = Number(target.value)
+      this.curPage = Number(target.value) -1
       await this.getWords()
       this.addControls()
     })

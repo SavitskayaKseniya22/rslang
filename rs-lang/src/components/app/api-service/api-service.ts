@@ -217,6 +217,22 @@ class ApiService {
       }
     }
   }
+  async getUser(){
+    const res = await fetch(`${this.apiUrl}/users/${this.user.userId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    if (res.ok) {
+      const user = await res.json()
+      return user
+    } else {
+      throw new Error(`${res.status}`)
+    }
+  }
 
   async getWords(lvl: number, pageNum: number) {
     const rawResponse = await fetch(`${this.apiUrl}/words?group=${lvl}&page=${pageNum}`, {
