@@ -1,0 +1,7 @@
+.stat-wrapper__today-minigames{
+  display: flex;
+  justify-content: space-between;
+}
+.stat-wrapper__today-title{
+  margin-bottom: 0;
+}

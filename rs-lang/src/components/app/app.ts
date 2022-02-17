@@ -16,13 +16,45 @@ class App {
     this.user = null
     if (localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
-      console.log(this.user)
+
     }
     this.apiService = new ApiService(this.user)
     this.authorization = new Authorization(this.apiService)
     this.mainPage = new MainPage()
     this.textBook = new TextBookPage(this.apiService)
     this.navMenu = new NavMenu(this.apiService, this.mainPage, this.textBook)
+    if (this.user !== null) {
+      this.resetStat();
+    }
+  }
+  async resetStat() {
+    try {
+      const userStatistics = await this.apiService.getUserStatistics(this.apiService.user.userId);
+      if (userStatistics.optional.dateStr !== `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`) this.requestResetStat();
+    } catch (error) {
+      this.requestResetStat();
+    }
+  }
+  requestResetStat() {
+    this.apiService.requestUpdStatistics(
+      this.apiService.user.userId,
+      {
+        learnedWords: 0,
+        optional: {
+          sprintStat: {
+            streak: 0,
+            percent: 0,
+            newWords: 0,
+          },
+          audioStat: {
+            countNewWord: 0,
+            percentTrueAnswer: 0,
+            inRow: 0,
+          },
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+        }
+      }
+    );
   }
   async run(): Promise<void>{
     document.querySelector('.body').innerHTML = `
