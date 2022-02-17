@@ -6,7 +6,6 @@ class ApiService {
   constructor(public user: UserTemplate | null) {
     this.user = user
     this.apiUrl = `http://localhost:3000`
-
   }
 
   async requestWords(grp: number, page: number) {
@@ -162,7 +161,6 @@ class ApiService {
     })
     if (res.ok) {
       const content = await res.json()
-      // console.log(content[0].paginatedResults)
       return content[0].paginatedResults
     } else {
       throw new Error(`error: ${res.status}, check your connection or repeat the log-in procedure`)
@@ -217,6 +215,22 @@ class ApiService {
       }
     }
   }
+  async getUser(){
+    const res = await fetch(`${this.apiUrl}/users/${this.user.userId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${this.user.token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+    if (res.ok) {
+      const user = await res.json()
+      return user
+    } else {
+      throw new Error(`${res.status}`)
+    }
+  }
 
   async getWords(lvl: number, pageNum: number) {
     const rawResponse = await fetch(`${this.apiUrl}/words?group=${lvl}&page=${pageNum}`, {
@@ -252,7 +266,7 @@ class ApiService {
       },
       body: JSON.stringify(statistics),
     })
-    console.log(res);
+    // console.log(res);
   }
   async getUserStatistics(userId: string) {
     const rawResponse = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
