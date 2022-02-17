@@ -24,7 +24,7 @@ class App {
     this.textBook = new TextBookPage(this.apiService)
     this.navMenu = new NavMenu(this.apiService, this.mainPage, this.textBook)
   }
-  run(): void {
+  async run(): Promise<void>{
     document.querySelector('.body').innerHTML = `
       <div class="auth-overlay hidden">
       <div class="auth-form auth-log-in-form hidden"></div>
@@ -52,7 +52,18 @@ class App {
     this.mainPage.render()
     window.location.hash = 'main'
     if (this.user) {
+      try{
+      await this.apiService.getUser()
       this.authorization.renderLoggedIn(this.user.name)
+      } catch(err){
+        const error = err as Error
+        if (error.message.includes('401')){
+          await this.apiService.updateToken()
+        } else{
+          alert(err)
+        }
+      }
+      
     } else {
       this.authorization.addListener()
     }
