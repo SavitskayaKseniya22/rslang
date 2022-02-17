@@ -106,7 +106,6 @@ export class Sprint {
     <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
     <audio class="sprint__answer_correct" src="./sounds/correctAnswer.mp3"></audio>
     <audio class="sprint__answer_wrong" src="./sounds/wrongAnswer.mp3"></audio>
-    <h2>Sprint</h2>
     <ul class="sprint__settings">
       <li>
         <button class="sprint__fullscreen_toggle">${fullScreenIcon}</i></button>
@@ -148,10 +147,7 @@ export class Sprint {
         <button><i class="fas fa-arrow-circle-right"></i></button>
       </li>
     </ul>
-    <ul class="sprint__advices">
-      <li>Press the Space key to pause</li>
-      <li>Control the game using the arrows keys on your keyboard</li>
-    </ul>`
+    `
   }
 
   private toggleFullScreen() {

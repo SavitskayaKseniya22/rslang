@@ -1,47 +1,28 @@
-* {
-  box-sizing: border-box;
-}
-
-ul {
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  list-style: none;
-}
-
-button {
-  cursor: pointer;
-}
-
 .sprint {
-  min-height: 100vh;
-  font-size: 2rem;
+  width: 80%;
+  margin: 0 auto;
+  color: black;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
 
-  row-gap: 2rem;
-}
-.sprint button {
-  min-width: 40px;
-  min-height: 40px;
-  padding: 0.5rem;
+  row-gap: 1rem;
 }
 
 .sprint__container {
-  width: 50%;
-  background-color: #345383;
+  width: 100%;
+  position: relative;
+  background-color: white;
   margin: auto;
   padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   column-gap: 2rem;
-  row-gap: 3rem;
+  row-gap: 2rem;
   flex-shrink: 0;
+  text-align: center;
 }
 
 .sprint__container > * {
@@ -52,6 +33,15 @@ button {
 }
 .sprint__words {
   flex-direction: column;
+  font-size: 2rem;
+}
+
+.sprint__score {
+  font-size: 3rem;
+}
+
+.sprint__points {
+  font-size: 2.5rem;
 }
 
 .sprint__timer {
@@ -63,10 +53,19 @@ button {
   font-size: 2rem;
 }
 
-.result {
+.answer-list {
   flex-direction: row;
-  align-items: flex-start;
-  justify-content: center;
+  text-align: center;
+}
+
+.answer-list ul {
+  display: flex;
+  row-gap: 1rem;
+}
+
+.answer-list > li {
+  min-width: 280px;
+  width: 50%;
 }
 
 .counter-full {
@@ -85,10 +84,57 @@ button {
   row-gap: 1rem;
 }
 
+.result_wrong li,
+.result_right li {
+  display: flex;
+  column-gap: 0.5rem;
+  row-gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .sprint__settings {
-  position: absolute;
   top: 1rem;
   right: 1rem;
   display: flex;
   column-gap: 1rem;
+}
+
+.sprint__points {
+  font-size: 2rem;
+}
+
+.sprint__message {
+  font-size: 3rem;
+}
+
+@media (max-width: 767px) {
+  .sprint {
+    width: 100%;
+  }
+
+  .sprint__container {
+    padding: 1rem;
+  }
+
+  .answer-list {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .answer-list li {
+    width: 100%;
+  }
+
+  .result_wrong,
+  .result_right {
+    width: 100%;
+  }
+
+  .sprint__points {
+    font-size: 1.5rem;
+  }
+
+  .sprint__message {
+    font-size: 2rem;
+  }
 }
