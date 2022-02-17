@@ -7,7 +7,6 @@ class MainPage {
         <section class="main-section">
         <div class="app-logo"></div>
         <h1>Awesome language learning app</h1>
-        <a href="#text-book" class="button-yellow">Open textbook</a>
     </section>
     <section class="main-section">
         <h2>Features</h2>
@@ -34,7 +33,7 @@ class MainPage {
             </div>
             <div class="main-feature">
                 <div class="feature-symbol"><i class="fa-solid fa-table"></i></div>
-                <a href="#" class="page-link"><h3>Statistics</h3></a>
+                <a href="#statistics" class="page-link"><h3>Statistics</h3></a>
                 <p> your progress is monitored and logged. Be sure to take a look at it once in a while to make sure you
                     are on track!</p>
             </div>

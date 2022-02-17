@@ -1,8 +1,8 @@
 .sprint {
   width: 80%;
   margin: 0 auto;
-  color: white;
-  min-height: 100vh;
+  color: black;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,7 +13,7 @@
 .sprint__container {
   width: 100%;
   position: relative;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: white;
   margin: auto;
   padding: 2rem;
   display: flex;
@@ -22,6 +22,7 @@
   column-gap: 2rem;
   row-gap: 2rem;
   flex-shrink: 0;
+  text-align: center;
 }
 
 .sprint__container > * {
@@ -32,6 +33,15 @@
 }
 .sprint__words {
   flex-direction: column;
+  font-size: 2rem;
+}
+
+.sprint__score {
+  font-size: 3rem;
+}
+
+.sprint__points {
+  font-size: 2.5rem;
 }
 
 .sprint__timer {
@@ -40,7 +50,7 @@
   left: 1rem;
   width: 3rem;
   height: 3rem;
-  font-size: 3rem;
+  font-size: 2rem;
 }
 
 .answer-list {
@@ -89,7 +99,12 @@
   column-gap: 1rem;
 }
 
-@media (max-width: 1024px) {
+.sprint__points {
+  font-size: 2rem;
+}
+
+.sprint__message {
+  font-size: 3rem;
 }
 
 @media (max-width: 767px) {
@@ -113,5 +128,13 @@
   .result_wrong,
   .result_right {
     width: 100%;
+  }
+
+  .sprint__points {
+    font-size: 1.5rem;
+  }
+
+  .sprint__message {
+    font-size: 2rem;
   }
 }

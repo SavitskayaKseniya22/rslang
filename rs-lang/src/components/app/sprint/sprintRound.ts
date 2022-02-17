@@ -133,7 +133,7 @@ export class SprintRound {
   }
 
   private updatePointsPreview() {
-    document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
+    document.querySelector('.sprint__points').innerHTML = `+${this.getPoints()}`
     document.querySelector('.sprint__score').innerHTML = String(this.results.points)
   }
 

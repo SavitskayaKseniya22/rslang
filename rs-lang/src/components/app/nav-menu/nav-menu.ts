@@ -16,6 +16,7 @@ class NavMenu {
           <a href="#text-book" class="page-link"><i class="fa-solid fa-book"></i></a>
           <a href="#sprint-choose" class="page-link "><i class="fa-solid fa-stopwatch"></i></a>
           <a href="#audio-challenge-choose" class="page-link"><i class="fa-solid fa-music"></i></a>
+          <a href="#statistics" class="page-link"><i class="fa-solid fa-table"></i></a>
       </nav>
       `
     this.addListeners()

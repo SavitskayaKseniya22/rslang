@@ -61,15 +61,18 @@
 }
 
 .form-input:invalid {
-  box-shadow: 0 0 5px 1px rgb(232, 95, 76);
   text-indent: 43px;
 }
 
 .submit-btn {
-  background-color: rgba(135, 182, 167);
+  background-color: rgba(42, 157, 143);
   color: white;
 }
 .switch-form-btn {
-  background-color: rgba(91, 89, 65);
+  background-color: rgba(38, 70, 83);
   color: white;
+}
+
+.salutations {
+  font-size: 2rem;
 }

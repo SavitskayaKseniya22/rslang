@@ -18,7 +18,7 @@ class Authorization {
     const logged = document.createElement('div')
     logged.classList.add('header-logged-in-status')
     logged.innerHTML = `
-    <div>Hey, ${name}!</div>
+    <div class="salutations">Hey, ${name}!</div>
     <div class="log-out">Log out?</div>
     `
     document.querySelector('.header').append(logged)

@@ -45,7 +45,7 @@
 
 .main-page-container {
   width: 100%;
-  padding: 2rem;
+
   display: flex;
   align-items: center;
   flex-grow: 1;
@@ -56,9 +56,6 @@
 @media (max-width: 768px) {
   .main-feature-list > * {
     width: 50%;
-  }
-  .main-page-container {
-    padding: 1rem;
   }
 }
 @media (max-width: 550px) {
