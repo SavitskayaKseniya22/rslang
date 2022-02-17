@@ -16,7 +16,7 @@ class App {
     this.user = null
     if (localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
-      // console.log(this.user)
+
     }
     this.apiService = new ApiService(this.user)
     this.authorization = new Authorization(this.apiService)

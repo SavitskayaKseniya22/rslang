@@ -14,7 +14,8 @@ class Statistics {
   }
   async getStatGames() {
     const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId);
-    const learnedWords = await this.apiServiceUser.requestGetAggregatedFIlter(this.apiServiceUser.user.userId, `{"$and":[{"userWord.difficulty":"learned"}]}`);
+    const learnedWords = await this.apiServiceUser.requestGetAggregatedFIlter(this.apiServiceUser.user.userId,
+      `{"$and":[{"userWord.difficulty":"learned"}, {"userWord.optional.dateEncountered":"${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}"}]}`);
     this.renderUser(userStatistics, learnedWords.length);
   }
   renderWithoutUser() {

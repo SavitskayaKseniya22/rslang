@@ -79,7 +79,6 @@ class ConrolGame {
     const falseSecondPartWords = await this.apiService.getAudioWords(this.groupSecondPartFalse, this.pageSecondPartFalse)
     const falseThirdPartWords = await this.apiService.getAudioWords(this.groupThirdPartFalse, this.pageThirdPartFalse)
     const falseFourthPartWords = await this.apiService.getAudioWords(this.groupFourthPartFalse, this.pageFourthPartFalse)
-
     const { arrayQuestions, arrayTrueWords } = this.createQuestions(
       trueWords,
       falseFirstPartWords,
@@ -99,13 +98,10 @@ class ConrolGame {
   getParamsForRequest() {
     this.groupFirstPartFalse = this.getGroup(this.groupTrue);
     this.pageFirstPartFalse = this.getPage(this.pageTrue);
-
     this.groupSecondPartFalse = this.getGroup(this.groupFirstPartFalse);
     this.pageSecondPartFalse = this.getPage(this.pageFirstPartFalse);
-
     this.groupThirdPartFalse = this.getGroup(this.groupSecondPartFalse);
     this.pageThirdPartFalse = this.getPageThirdFalse(this.pageSecondPartFalse);
-
     this.groupFourthPartFalse = this.getGroup(this.groupThirdPartFalse);
     this.pageFourthPartFalse = this.getPageFourthFalse(this.pageThirdPartFalse);
   }
