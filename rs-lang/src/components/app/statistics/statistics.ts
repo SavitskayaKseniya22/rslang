@@ -44,6 +44,8 @@ class Statistics {
     const percentSprint = arr.length !== 0 ? percent : 0;
     const inRowSprint = arr.length !== 0 ? streak : 0;
     const learnWords = arr.length !== 0 ? learnedWords : 0;
+    const percentGames = Math.floor((Number(percentAudio) / count + Number(percentSprint) / count))
+
     if (percentAudio !== 0 && percentSprint !== 0) {
       count = 2;
     }
@@ -68,7 +70,7 @@ class Statistics {
             <h3 class="stat-wrapper__today-name">Statistics by words</h3>
             <h4><span>${Number(newWordAudio) + Number(newWordSprint)} </span> new words</h4>
             <h4><span>${learnWords} </span> learned words</h4>
-            <h4><span>${Math.floor((Number(percentAudio) + Number(percentSprint)) / count)}% </span> accuracy</h4>
+            <h4><span>${percentGames}% </span> accuracy</h4>
           </div>
         </div>    
       </div>
