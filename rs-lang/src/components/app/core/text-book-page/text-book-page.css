@@ -1,65 +1,84 @@
 .textbook-container {
+  width: 100%;
   max-width: 1024px;
-  display: grid;
-  grid-template-areas:
-    'mini-games mini-games'
-    'pagination pagination'
-    'words groups';
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 1rem;
 }
-button {
-  outline: none;
-  background: transparent;
-}
+
 .tb-mini-game-select {
-  grid-area: mini-games;
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 10px 20px;
   align-items: center;
+  column-gap: 0.5rem;
 }
+
 .tb-minigame {
-  height: 50px;
-  width: 100px;
-  background-color: lightgray;
-  color: black;
+  width: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  column-gap: 0.5rem;
 }
 
 .tb-pagination {
-  width: 100%;
-  grid-area: pagination;
+  width: 50%;
+  min-width: 460px;
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
   height: 50px;
 }
-.pagination-button {
-  background-color: lightgray;
-  color: black;
+
+.tb-pagination button,
+.tb-group-select button {
+  width: 45px;
+  height: 45px;
+  padding: 0;
 }
+
 .tb-words {
-  grid-area: words;
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  row-gap: 1rem;
 }
+
 .tb-word {
   width: 100%;
-  /*height: 330px;*/
   padding: 25px;
   display: flex;
   justify-content: space-between;
+  background-color: white;
+  column-gap: 1rem;
 }
+
+input[name='description'] {
+  display: none;
+}
+
+.tb-wrd-desc {
+  display: none;
+}
+
 .tb-word-info {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   flex: 1 1 auto;
+  row-gap: 1rem;
 }
+
 .tb-group-select {
-  grid-area: groups;
-  width: 20%;
+  width: 50%;
+  min-width: 460px;
+  display: flex;
+  column-gap: 0.5rem;
+  align-items: center;
 }
+
 .group-select {
   display: flex;
   justify-content: center;
@@ -68,36 +87,55 @@ button {
 }
 
 .tb-group-selected {
-  background-color: #345383;
+  background-color: rgba(38, 70, 83);
   color: white;
 }
+
 .tb-word-title-translation-pronounciation {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
-.pronounce {
-  height: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+
+.page-num {
+  border: none;
+  background-color: transparent;
+  color: white;
+  appearance: none;
+  text-align: center;
+  font-size: 2rem;
+  width: 3rem;
 }
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+
 .tb-img {
-  width: 50%;
-  height: auto;
-  margin-right: 5%;
+  width: 40%;
+  height: fit-content;
+  flex-shrink: 0;
 }
+
 .tb-user-functionality {
   display: flex;
   justify-content: space-between;
 }
+
 .tb-add-difficult-btn {
   background-color: orange;
-  border: 5px solid #345383;
 }
+
 .tb-add-learned-btn {
   background-color: rgb(74, 193, 74);
-  border: 5px solid #345383;
 }
 
 .tb-learning-progress {
@@ -109,8 +147,79 @@ button {
 }
 
 .tb-learned-word {
-  background-color: rgb(74, 193, 74);
+  opacity: 0.5;
+  transition: 0.5s;
+  border: 5px solid rgb(74, 193, 74);
 }
+
+.tb-learned-word:hover {
+  opacity: 1;
+}
+
 .tb-difficult-word {
-  background-color: orange;
+  border: 5px solid orange;
+}
+
+@media (max-width: 767px) {
+  .tb-word {
+    padding: 1rem;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    align-items: center;
+    text-align: center;
+  }
+
+  .tb-word-info {
+    width: 100%;
+    flex-grow: 0;
+  }
+
+  .tb-user-functionality {
+    flex-direction: column;
+    row-gap: 1rem;
+  }
+
+  .tb-learning-progress {
+    font-size: 1.5rem;
+    align-self: center;
+  }
+
+  .tb-wrd-desc {
+    display: block;
+  }
+
+  .tb-word-definition,
+  .tb-word-sentence {
+    display: none;
+  }
+
+  input[name='description']:checked ~ .tb-word-definition {
+    display: block;
+  }
+
+  input[name='description']:checked ~ .tb-word-sentence {
+    display: block;
+  }
+
+  .tb-group-select,
+  .tb-pagination {
+    justify-content: flex-start;
+    width: 100%;
+    min-width: unset;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 550px) {
+  .tb-word-title-translation-pronounciation {
+    flex-direction: column;
+  }
+  .tb-mini-game-select {
+    flex-direction: column;
+    row-gap: 1rem;
+  }
+  .tb-minigame {
+    width: 100%;
+  }
 }
