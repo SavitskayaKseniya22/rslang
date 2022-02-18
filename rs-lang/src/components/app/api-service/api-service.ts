@@ -215,7 +215,7 @@ class ApiService {
       }
     }
   }
-  async getUser(){
+  async getUser() {
     const res = await fetch(`${this.apiUrl}/users/${this.user.userId}`, {
       method: 'GET',
       headers: {
@@ -278,10 +278,8 @@ class ApiService {
       },
     })
     const content = await rawResponse.json()
-    return content;
+    return content
   }
-
-
 }
 
 export default ApiService

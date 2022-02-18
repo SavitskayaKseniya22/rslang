@@ -107,8 +107,8 @@ input[name='description'] {
 }
 
 .page-num {
+  background-color: rgb(212, 75, 56);
   border: none;
-  background-color: transparent;
   color: white;
   appearance: none;
   text-align: center;
@@ -165,6 +165,17 @@ input[type='number'] {
 
 .tb-difficult-word {
   border: 5px solid orange;
+}
+.tb-disabled-minigame-btn {
+  opacity: 0.5 !important;
+}
+.tb-page-warn {
+  width: 100%;
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
 }
 
 .tb-word-definition,
