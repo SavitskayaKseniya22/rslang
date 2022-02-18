@@ -90,6 +90,7 @@ class AudioGame {
     const wrapperForAnswers = document.querySelector('.wrapper-answers')
     wrapperForAnswers.addEventListener('click', (event) => {
       if ((<HTMLElement>event.target).innerText === this.trueAnswer) {
+        console.log("test1");
         this.countInRow++
         this.arrayCountInRow.push(this.countInRow)
         this.addSoundAnswer(`images/true-call.mp3`)
@@ -97,7 +98,7 @@ class AudioGame {
         this.addMarkTrueAnswer(<HTMLElement>event.target)
         this.addAnswer()
         this.addAtributeDisabled()
-      } else if ((<HTMLElement>event.target).innerText !== this.trueAnswer) {
+      } else if ((<HTMLElement>event.target).innerText !== this.trueAnswer && (<HTMLElement>event.target).classList[0] === "answer") {
         this.countInRow = 0
         this.addSoundAnswer(`images/false-call.mp3`)
         this.arrayNumberFalseAnswers.push(this.count)
