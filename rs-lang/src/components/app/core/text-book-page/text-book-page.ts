@@ -254,7 +254,7 @@ class TextBookPage {
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
         this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: dateStr, dateLearned: dateStr },
+          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: '0', dateLearned: dateStr },
         })
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
       }
@@ -286,7 +286,7 @@ class TextBookPage {
       } else {
         await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: dateStr, dateLearned: '0' },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: '0', dateLearned: '0' },
         })
       }
       wordDiv.classList.remove('tb-learned-word')
