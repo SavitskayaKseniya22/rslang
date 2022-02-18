@@ -61,6 +61,7 @@ class AudioGame {
     this.addEventListenerForSmallIconSound(`http://localhost:3000/${data.truthyAnswer.audio}`)
   }
   addAnswerFromKeyboard(count: number) {
+
     const answers = document.querySelectorAll('.answer')
     if (this.countKey === 0) {
       this.countSpace++
@@ -71,10 +72,12 @@ class AudioGame {
         this.addMarkFalseAnswer(<HTMLElement>document.querySelectorAll('.answer')[count])
         this.arrayNumberFalseAnswers.push(this.count)
         this.addSoundAnswer(`images/false-call.mp3`)
+        this.showTrueAnswer()
       } else {
         this.addMarkTrueAnswer(<HTMLElement>answers[count])
         this.arrayNumberTrueAnswers.push(this.count)
         this.addSoundAnswer(`images/true-call.mp3`)
+
       }
       this.addAtributeDisabled()
       this.addAnswer()
@@ -90,7 +93,7 @@ class AudioGame {
     const wrapperForAnswers = document.querySelector('.wrapper-answers')
     wrapperForAnswers.addEventListener('click', (event) => {
       if ((<HTMLElement>event.target).innerText === this.trueAnswer) {
-        console.log("test1");
+        this.countSpace++
         this.countInRow++
         this.arrayCountInRow.push(this.countInRow)
         this.addSoundAnswer(`images/true-call.mp3`)
@@ -99,12 +102,14 @@ class AudioGame {
         this.addAnswer()
         this.addAtributeDisabled()
       } else if ((<HTMLElement>event.target).innerText !== this.trueAnswer && (<HTMLElement>event.target).classList[0] === "answer") {
+        this.countSpace++
         this.countInRow = 0
         this.addSoundAnswer(`images/false-call.mp3`)
         this.arrayNumberFalseAnswers.push(this.count)
         this.addMarkFalseAnswer(<HTMLElement>event.target)
         this.addAnswer()
         this.addAtributeDisabled()
+        this.showTrueAnswer()
       }
     })
   }
@@ -145,6 +150,13 @@ class AudioGame {
       }
     })
   }
+  showTrueAnswer() {
+    document.querySelectorAll(".button-answer").forEach((word) => {
+      if (word.innerHTML === this.arrayQuestions[this.count].truthyAnswer.wordTranslate) {
+        this.addMarkTrueAnswer((<HTMLElement>word))
+      }
+    });
+  }
   changeQuestion() {
     this.countSpace = 0
     this.countKey = 0
@@ -166,7 +178,6 @@ class AudioGame {
     const buttonActive = document.querySelector('.button-active')
     buttonActive.addEventListener('click', () => {
       this.countSpace++
-      console.log('this.countSpace: ', this.countSpace);
       this.showAnswer()
     })
   }
