@@ -100,8 +100,8 @@ input[name='description'] {
 
 
 .page-num {
-  border: none;
-  background-color: transparent;
+  background-color:  rgb(212, 75, 56);
+  border:none;
   color: white;
   appearance: none;
   text-align: center;
@@ -162,6 +162,14 @@ input[type='number'] {
 .tb-disabled-minigame-btn{
   opacity: 0.5 !important;
 }
+.tb-page-warn{
+  width: 100%;
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
 
 @media (max-width: 767px) {
   .tb-word {
@@ -213,6 +221,7 @@ input[type='number'] {
     flex-wrap: wrap;
   }
 }
+
 
 @media (max-width: 550px) {
   .tb-word-title-translation-pronounciation {

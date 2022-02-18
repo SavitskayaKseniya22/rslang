@@ -59,6 +59,9 @@ class TextBookPage {
     }
     this.addListeners()
     this.addControls()
+    if(this.showDifficult){
+      this.curPage=0
+  }
   }
   async getWords() {
     try {
@@ -96,6 +99,7 @@ class TextBookPage {
       const error = err as Error
       await this.handleUserError(error)
     }
+  
   }
   drawWord(word: Word) {
     try {
@@ -139,9 +143,27 @@ class TextBookPage {
     })
     document.querySelector('.page-num').addEventListener('input', async (e) => {
       const target = e.target as HTMLInputElement
+      if (Number(target.value) > 30){
+        target.value="30"
+      }
+      if(Number(target.value) < 0){
+        target.value="1"
+      }
       this.curPage = Number(target.value) -1
+      if( this.curPage > 29 || this.curPage < 0){
+        console.log('I happened')
+        document.querySelector('.tb-words').innerHTML = `
+        <div class="tb-page-warn"><h2>Please make sure to enter page numbers between 1-30</h2><div>
+        `
+        document.querySelectorAll('.tb-minigame').forEach((btn) => {
+          const button = btn as HTMLButtonElement
+          button.disabled = true
+          button.classList.add('tb-disabled-minigame-btn')
+        })
+      } else {
       await this.getWords()
       this.addControls()
+      }
     })
     document.querySelectorAll('.group-select').forEach((div) => {
       div.addEventListener('click', async (e) => {
@@ -373,13 +395,13 @@ class TextBookPage {
       button.classList.remove('tb-disabled-minigame-btn')
       document.querySelector('.page-num').classList.remove('tb-finished-page')
       ;(document.querySelector('.page-num') as HTMLInputElement).disabled = false
-      if ( this.showDifficult) {
+      if (this.showDifficult) {
         button.disabled = true
         button.classList.add('tb-disabled-minigame-btn')
         ;(document.querySelector('.page-num') as HTMLInputElement).disabled = true
         document.querySelector('.page-num').classList.add('tb-finished-page')
       }
-      if(this.pageWordsArr.length === 20 ){
+      if(this.pageWordsArr.length === 20 || this.curPage > 29 || this.curPage < 1){
         button.disabled = true
         button.classList.add('tb-disabled-minigame-btn')
       }
