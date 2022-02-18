@@ -39,7 +39,6 @@
 main > .question,
 .result-wrapper {
   width: 80%;
-
   padding: 2rem;
 }
 
@@ -60,6 +59,8 @@ main > .question,
   flex-direction: row;
   align-items: flex-start;
   flex-wrap: nowrap;
+  justify-content: space-around;
+  color: white;
 }
 
 .result-wrapper > div {
@@ -71,7 +72,7 @@ main > .question,
 
 .answer-content {
   display: flex;
-  align-items: stretch;
+  align-items: center;
 }
 
 .wrapper-answer {
@@ -109,7 +110,11 @@ main > .question,
 }
 
 .number-span {
-  display: none;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .wrapper-answer > img {
