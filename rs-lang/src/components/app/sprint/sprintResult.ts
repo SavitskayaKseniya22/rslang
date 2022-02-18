@@ -13,7 +13,7 @@ export class SprintResult {
   stats: { streak: number; percent: number; newWords: number }
   newWords: number
 
-  constructor() { }
+  constructor() {}
 
   private updateResult(results: SprintResultType, settings: SprintSettings) {
     this.settings = settings
@@ -64,7 +64,7 @@ export class SprintResult {
         optional: {
           sprintStat: this.stats,
           audioStat: audioStat,
-          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
         },
       })
     }
