@@ -35,7 +35,7 @@ class ResultRaund {
   }
   async createStatistic(arrayCountInRow: number[]) {
     arrayCountInRow.sort((a, b) => a - b);
-    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined).length;
+    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined || word.userWord.optional.dateEncountered === "0").length;
     let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100;
     let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0;
     try {
@@ -93,7 +93,7 @@ class ResultRaund {
     if (trueAnswer.difficulty === 'normal') {
       const timesMax = trueAnswer.optional.timesMax
       let timesGuessed = trueAnswer.optional.timesGuessed
-      const date = trueAnswer.optional.dateEncountered
+      const date = trueAnswer.optional.dateEncountered === "0" ? this.dateStr : trueAnswer.optional.dateEncountered
       const difficulty = trueAnswer.optional.difficulty
       timesGuessed++
       if (timesGuessed >= timesMax) {
@@ -104,13 +104,13 @@ class ResultRaund {
       } else if (timesGuessed < timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: difficulty,
-          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: this.dateStr },
+          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: "0" },
         })
       }
     } else if (trueAnswer.difficulty === 'difficult') {
       const timesMax = trueAnswer.optional.timesMax
       let timesGuessed = trueAnswer.optional.timesGuessed
-      const date = trueAnswer.optional.dateEncountered
+      const date = trueAnswer.optional.dateEncountered === "0" ? this.dateStr : trueAnswer.optional.dateEncountered
       const difficulty = trueAnswer.optional.difficulty
       timesGuessed++
       if (timesGuessed >= timesMax) {
@@ -121,7 +121,7 @@ class ResultRaund {
       } else if (timesGuessed < timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: difficulty,
-          optional: { timesGuessed: timesGuessed, timesMax: 5, dateEncountered: date, dateLearned: this.dateStr },
+          optional: { timesGuessed: timesGuessed, timesMax: 5, dateEncountered: date, dateLearned: "0" },
         })
       }
     } else if (trueAnswer.difficulty === 'learned') {
@@ -141,14 +141,14 @@ class ResultRaund {
 
     if (falseAnswer.difficulty === 'normal') {
       const difficulty = falseAnswer.difficulty
-      const date = falseAnswer.optional.dateEncountered
+      const date = falseAnswer.optional.dateEncountered === "0" ? this.dateStr : falseAnswer.optional.dateEncountered
       this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
         difficulty: difficulty,
         optional: { timesGuessed: 0, timesMax: 3, dateEncountered: date, dateLearned: '0' },
       })
     } if (falseAnswer.difficulty === 'difficult') {
       const difficulty = falseAnswer.difficulty
-      const date = falseAnswer.optional.dateEncountered
+      const date = falseAnswer.optional.dateEncountered === "0" ? this.dateStr : falseAnswer.optional.dateEncountered
       this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
         difficulty: difficulty,
         optional: { timesGuessed: 0, timesMax: 5, dateEncountered: date, dateLearned: '0' },

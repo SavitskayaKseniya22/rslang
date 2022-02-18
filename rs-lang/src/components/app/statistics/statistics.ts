@@ -37,18 +37,19 @@ class Statistics {
   getLayoutStatistics(arr: string[]) {
     const [countNewWord, percentTrueAnswer, inRow, newWords, percent, streak, learnedWords] = arr
     let count = 1;
-    const newWordAudio = arr.length !== 0 ? countNewWord : 0;
-    const percentAudio = arr.length !== 0 ? percentTrueAnswer : 0;
+    const newWordAudio = arr.length !== 0 ? Number(countNewWord) : 0;
+    const percentAudio = arr.length !== 0 ? Number(percentTrueAnswer) : 0;
     const inRowAudio = arr.length !== 0 ? inRow : 0;
-    const newWordSprint = arr.length !== 0 ? newWords : 0;
-    const percentSprint = arr.length !== 0 ? percent : 0;
+    const newWordSprint = arr.length !== 0 ? Number(newWords) : 0;
+    const percentSprint = arr.length !== 0 ? Number(percent) : 0;
     const inRowSprint = arr.length !== 0 ? streak : 0;
     const learnWords = arr.length !== 0 ? learnedWords : 0;
-    const percentGames = Math.floor((Number(percentAudio) / count + Number(percentSprint) / count))
 
-    if (percentAudio !== 0 && percentSprint !== 0) {
+    if (newWordAudio !== 0 && newWordSprint !== 0) {
       count = 2;
-    }
+    } else count = 1
+    const percentGames = Math.floor((percentAudio / count + percentSprint / count))
+
     return `<div class="stat-wrapper">
       <h1 class="stat-wrapper__title">Statistics</h1>
       <div class="stat-wrapper__today">
