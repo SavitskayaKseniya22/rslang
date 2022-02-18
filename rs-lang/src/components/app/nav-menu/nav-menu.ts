@@ -4,8 +4,6 @@ import MainPage from '../core/main-page/main-page'
 import TextBookPage from '../core/text-book-page/text-book-page'
 import Statistics from '../statistics/statistics'
 
-
-
 class NavMenu {
   constructor(public service: ApiService, public mainPage: MainPage, public textBook: TextBookPage) {
     this.service = service
@@ -53,7 +51,7 @@ class NavMenu {
         page.render()
         break
       case 'statistics':
-        new Statistics();
+        new Statistics()
         break
     }
   }

@@ -1,5 +1,5 @@
-import ApiService from "../api-service/api-service";
-import { statObj, UserTemplate } from "../interfaces/interfaces";
+import ApiService from '../api-service/api-service'
+import { statObj, UserTemplate } from '../interfaces/interfaces'
 import './statistics.css'
 
 class Statistics {
@@ -7,47 +7,54 @@ class Statistics {
   apiServiceUser: ApiService
   constructor() {
     this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
-    this.apiServiceUser = new ApiService(this.user);
+    this.apiServiceUser = new ApiService(this.user)
     if (this.user !== null) {
-      this.getStatGames();
-    } else this.renderWithoutUser();
+      this.getStatGames()
+    } else this.renderWithoutUser()
   }
   async getStatGames() {
-    const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId);
-    const learnedWords = await this.apiServiceUser.requestGetAggregatedFIlter(this.apiServiceUser.user.userId,
-      `{"$and":[{"userWord.difficulty":"learned"}, {"userWord.optional.dateEncountered":"${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}"}]}`);
-    this.renderUser(userStatistics, learnedWords.length);
+    const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId)
+    const learnedWords = await this.apiServiceUser.requestGetAggregatedFIlter(
+      this.apiServiceUser.user.userId,
+      `{"$and":[{"userWord.difficulty":"learned"}, {"userWord.optional.dateEncountered":"${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}"}]}`
+    )
+    this.renderUser(userStatistics, learnedWords.length)
   }
   renderWithoutUser() {
-    document.querySelector('.main').innerHTML = '';
-    document.querySelector('.main').insertAdjacentHTML('afterbegin', this.getLayoutStatistics([]));
+    document.querySelector('.main').innerHTML = ''
+    document.querySelector('.main').insertAdjacentHTML('afterbegin', this.getLayoutStatistics([]))
   }
   renderUser(userStatistics: statObj, learnedWords: number) {
-    document.querySelector('.main').innerHTML = '';
-    document.querySelector('.main').insertAdjacentHTML('afterbegin', this.getLayoutStatistics([
-      userStatistics.optional.audioStat.countNewWord.toString(),
-      userStatistics.optional.audioStat.percentTrueAnswer.toString(),
-      userStatistics.optional.audioStat.inRow.toString(),
-      userStatistics.optional.sprintStat.newWords.toString(),
-      userStatistics.optional.sprintStat.percent.toString(),
-      userStatistics.optional.sprintStat.streak.toString(),
-      learnedWords.toString()
-    ]));
+    document.querySelector('.main').innerHTML = ''
+    document
+      .querySelector('.main')
+      .insertAdjacentHTML(
+        'afterbegin',
+        this.getLayoutStatistics([
+          userStatistics.optional.audioStat.countNewWord.toString(),
+          userStatistics.optional.audioStat.percentTrueAnswer.toString(),
+          userStatistics.optional.audioStat.inRow.toString(),
+          userStatistics.optional.sprintStat.newWords.toString(),
+          userStatistics.optional.sprintStat.percent.toString(),
+          userStatistics.optional.sprintStat.streak.toString(),
+          learnedWords.toString(),
+        ])
+      )
   }
   getLayoutStatistics(arr: string[]) {
     const [countNewWord, percentTrueAnswer, inRow, newWords, percent, streak, learnedWords] = arr
-    let count = 1;
-    const newWordAudio = arr.length !== 0 ? countNewWord : 0;
-    const percentAudio = arr.length !== 0 ? percentTrueAnswer : 0;
-    const inRowAudio = arr.length !== 0 ? inRow : 0;
-    const newWordSprint = arr.length !== 0 ? newWords : 0;
-    const percentSprint = arr.length !== 0 ? percent : 0;
-    const inRowSprint = arr.length !== 0 ? streak : 0;
-    const learnWords = arr.length !== 0 ? learnedWords : 0;
-    const percentGames = Math.floor((Number(percentAudio) / count + Number(percentSprint) / count))
+    let count = 1
+    const newWordAudio = arr.length !== 0 ? countNewWord : 0
+    const percentAudio = arr.length !== 0 ? percentTrueAnswer : 0
+    const inRowAudio = arr.length !== 0 ? inRow : 0
+    const newWordSprint = arr.length !== 0 ? newWords : 0
+    const percentSprint = arr.length !== 0 ? percent : 0
+    const inRowSprint = arr.length !== 0 ? streak : 0
+    const learnWords = arr.length !== 0 ? learnedWords : 0
+    const percentGames = Math.floor(Number(percentAudio) / count + Number(percentSprint) / count)
 
     if (percentAudio !== 0 && percentSprint !== 0) {
-      count = 2;
+      count = 2
     }
     return `<div class="stat-wrapper">
       <h1 class="stat-wrapper__title">Statistics</h1>
@@ -74,8 +81,7 @@ class Statistics {
           </div>
         </div>    
       </div>
-    </div>`;
-
+    </div>`
   }
 }
-export default Statistics;
+export default Statistics

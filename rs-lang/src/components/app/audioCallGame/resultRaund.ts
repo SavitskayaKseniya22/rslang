@@ -29,41 +29,41 @@ class ResultRaund {
     document.querySelector('.main').append(this.addWrapperResult(arrayNumberTrueAnswers, arrayNumberFalseAnswers))
     if (this.user !== null) {
       this.requestResultRaund()
-      this.createStatistic(arrayCountInRow);
+      this.createStatistic(arrayCountInRow)
     }
   }
   async createStatistic(arrayCountInRow: number[]) {
-    arrayCountInRow.sort((a, b) => a - b);
-    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined).length;
-    let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100;
-    let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0;
+    arrayCountInRow.sort((a, b) => a - b)
+    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined).length
+    let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100
+    let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0
     try {
-      const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId);
-      const sprintStat = userStatistics.optional.sprintStat !== undefined ? userStatistics.optional.sprintStat : {};
-      countNewWord = userStatistics.optional.audioStat.countNewWord + countNewWord;
-      percentTrueAnswer = userStatistics.optional.audioStat.countNewWord === 0 ? percentTrueAnswer : Math.floor((userStatistics.optional.audioStat.countNewWord + percentTrueAnswer) / 2);
-      inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow;
-      this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow);
+      const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId)
+      const sprintStat = userStatistics.optional.sprintStat !== undefined ? userStatistics.optional.sprintStat : {}
+      countNewWord = userStatistics.optional.audioStat.countNewWord + countNewWord
+      percentTrueAnswer =
+        userStatistics.optional.audioStat.countNewWord === 0
+          ? percentTrueAnswer
+          : Math.floor((userStatistics.optional.audioStat.countNewWord + percentTrueAnswer) / 2)
+      inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow
+      this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow)
     } catch (error) {
-      this.requestStatistics({ streak: 0, percent: 0, newWords: 0 }, countNewWord, percentTrueAnswer, inRow);
+      this.requestStatistics({ streak: 0, percent: 0, newWords: 0 }, countNewWord, percentTrueAnswer, inRow)
     }
   }
   requestStatistics(sprintStat: statSprint, countNewWord: number, percentTrueAnswer: number, inRow: number) {
-    this.apiServiceUser.requestUpdStatistics(
-      this.apiServiceUser.user.userId,
-      {
-        learnedWords: 0,
-        optional: {
-          sprintStat: sprintStat,
-          audioStat: {
-            countNewWord: countNewWord,
-            percentTrueAnswer: percentTrueAnswer,
-            inRow: inRow,
-          },
-          dateStr: this.dateStr
-        }
-      }
-    );
+    this.apiServiceUser.requestUpdStatistics(this.apiServiceUser.user.userId, {
+      learnedWords: 0,
+      optional: {
+        sprintStat: sprintStat,
+        audioStat: {
+          countNewWord: countNewWord,
+          percentTrueAnswer: percentTrueAnswer,
+          inRow: inRow,
+        },
+        dateStr: this.dateStr,
+      },
+    })
   }
   requestResultRaund() {
     this.arrayTrueWords.forEach((word, i, words) => {
