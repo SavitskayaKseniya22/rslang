@@ -240,6 +240,7 @@ class TextBookPage {
   }
   async MarkAsLearned(id: string, date: string, dateStr: string) {
     const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+    const wordProgress = wordDiv.querySelector(`.tb-learning-progress`)
     try {
       if (
         wordDiv.classList.contains('tb-difficult-word') ||
@@ -261,6 +262,7 @@ class TextBookPage {
       wordDiv.classList.add('tb-learned-word')
       wordDiv.classList.remove('tb-normal-word')
       wordDiv.classList.remove('tb-difficult-word')
+      wordProgress.textContent ="3/3"
       if (this.showDifficult === true) {
         //checking if the difficult words only page shloulld be rendered
         wordDiv.remove()
@@ -274,6 +276,7 @@ class TextBookPage {
   async MarkAsDIfficult(id: string, date: string, dateStr: string) {
     try {
       const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+      const wordProgress = wordDiv.querySelector(`.tb-learning-progress`)
       if (
         wordDiv.classList.contains('tb-difficult-word') ||
         wordDiv.classList.contains('tb-learned-word') ||
@@ -292,6 +295,7 @@ class TextBookPage {
       wordDiv.classList.remove('tb-learned-word')
       wordDiv.classList.remove('tb-normal-word')
       wordDiv.classList.add('tb-difficult-word')
+      wordProgress.textContent = `0/5`
       if (this.showDifficult === true) {
         //checking if the difficult words only page shloulld be rendered
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
@@ -323,7 +327,7 @@ class TextBookPage {
       document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
     <div data-tb-useid="${id}" class="tb-user-functionality">
     <button data-tb-diffid="${id}" data-date="${date}" class="tb-add-difficult-btn">${markStr}</button>
-     <div class="tb-learning-progress">${progress}/${max}</div>
+     <div class="tb-learning-progress data-tb-progressId = "${id}">${progress}/${max}</div>
     <button data-tb-learnid="${id}" data-date="${date}" class="tb-add-learned-btn">Mark as Learned</button>
 </div>
     `
@@ -366,15 +370,18 @@ class TextBookPage {
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
       let button = btn as HTMLButtonElement
       button.disabled = false
+      button.classList.remove('tb-disabled-minigame-btn')
       document.querySelector('.page-num').classList.remove('tb-finished-page')
       ;(document.querySelector('.page-num') as HTMLInputElement).disabled = false
       if ( this.showDifficult) {
         button.disabled = true
+        button.classList.add('tb-disabled-minigame-btn')
         ;(document.querySelector('.page-num') as HTMLInputElement).disabled = true
         document.querySelector('.page-num').classList.add('tb-finished-page')
       }
       if(this.pageWordsArr.length === 20 ){
         button.disabled = true
+        button.classList.add('tb-disabled-minigame-btn')
       }
     })
   }

@@ -159,6 +159,9 @@ input[type='number'] {
 .tb-difficult-word {
   border: 5px solid orange;
 }
+.tb-disabled-minigame-btn{
+  opacity: 0.5 !important;
+}
 
 @media (max-width: 767px) {
   .tb-word {
