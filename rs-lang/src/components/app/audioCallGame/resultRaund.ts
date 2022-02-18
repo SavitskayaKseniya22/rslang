@@ -1,5 +1,5 @@
 import ApiService from '../api-service/api-service'
-import { UserTemplate, Word } from '../interfaces/interfaces'
+import { statSprint, UserTemplate, Word } from '../interfaces/interfaces'
 import Button from './button'
 import WordResult from './wordResult'
 
@@ -22,31 +22,33 @@ class ResultRaund {
     this.arrayTrueWords = arrayTrueWords
     this.arrayNumberTrueAnswers = arrayNumberTrueAnswers
     this.arrayNumberFalseAnswers = arrayNumberFalseAnswers
-    this.dateObj= new Date()
+    this.dateObj = new Date()
     this.dateStr = `${this.dateObj.getDate()}/${this.dateObj.getMonth()}/${this.dateObj.getFullYear()}`
 
     document.querySelector('.main').innerHTML = ''
     document.querySelector('.main').append(this.addWrapperResult(arrayNumberTrueAnswers, arrayNumberFalseAnswers))
-    if (this.user !== null) this.requestResultRaund()
-    this.createStatistic(arrayCountInRow);
+    if (this.user !== null) {
+      this.requestResultRaund()
+      this.createStatistic(arrayCountInRow);
+    }
   }
   async createStatistic(arrayCountInRow: number[]) {
     arrayCountInRow.sort((a, b) => a - b);
-    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord !== undefined).length;
+    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined).length;
     let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100;
-    let inRow = arrayCountInRow[arrayCountInRow.length - 1];
+    let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0;
     try {
       const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId);
       const sprintStat = userStatistics.optional.sprintStat !== undefined ? userStatistics.optional.sprintStat : {};
       countNewWord = userStatistics.optional.audioStat.countNewWord + countNewWord;
-      percentTrueAnswer = userStatistics.optional.audioStat.countNewWord < percentTrueAnswer ? percentTrueAnswer : userStatistics.optional.audioStat.countNewWord;
+      percentTrueAnswer = userStatistics.optional.audioStat.countNewWord === 0 ? percentTrueAnswer : Math.floor((userStatistics.optional.audioStat.countNewWord + percentTrueAnswer) / 2);
       inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow;
       this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow);
     } catch (error) {
-      this.requestStatistics({}, countNewWord, percentTrueAnswer, inRow);
+      this.requestStatistics({ streak: 0, percent: 0, newWords: 0 }, countNewWord, percentTrueAnswer, inRow);
     }
   }
-  requestStatistics(sprintStat: any, countNewWord: number, percentTrueAnswer: number, inRow: number) {
+  requestStatistics(sprintStat: statSprint, countNewWord: number, percentTrueAnswer: number, inRow: number) {
     this.apiServiceUser.requestUpdStatistics(
       this.apiServiceUser.user.userId,
       {
@@ -57,19 +59,25 @@ class ResultRaund {
             countNewWord: countNewWord,
             percentTrueAnswer: percentTrueAnswer,
             inRow: inRow,
-          }
+          },
+          dateStr: this.dateStr
         }
       }
     );
   }
   requestResultRaund() {
     this.arrayTrueWords.forEach((word, i, words) => {
-      if (word.userWord === undefined) {
+      if (word.userWord === undefined && this.arrayNumberTrueAnswers.includes(i)) {
         this.apiServiceUser.requestAddUserWord(this.apiServiceUser.user.userId, word._id, {
           difficulty: 'normal',
           optional: { timesGuessed: 1, timesMax: 3, dateEncountered: this.dateStr, dateLearned: '0' },
         })
-      } else {
+      } else if (word.userWord === undefined && this.arrayNumberFalseAnswers.includes(i)) {
+        this.apiServiceUser.requestAddUserWord(this.apiServiceUser.user.userId, word._id, {
+          difficulty: 'normal',
+          optional: { timesGuessed: 0, timesMax: 3, dateEncountered: this.dateStr, dateLearned: '0' },
+        })
+      } else if (word.userWord !== undefined) {
         if (this.arrayNumberTrueAnswers.includes(i)) {
           this.requestUpdateUserWordForTrueAnswer(words, i)
         } else if (this.arrayNumberFalseAnswers.includes(i)) {
@@ -81,13 +89,19 @@ class ResultRaund {
   async requestUpdateUserWordForTrueAnswer(words: Word[], i: number) {
     const trueAnswer = await this.apiServiceUser.requestGetUserWord(this.apiServiceUser.user.userId, words[i]._id)
     if (trueAnswer.difficulty === 'difficult' || trueAnswer.difficulty === 'normal') {
-      const timesMax = trueAnswer.optional.timesGuessed
+      const timesMax = trueAnswer.optional.timesMax
       let timesGuessed = trueAnswer.optional.timesGuessed
       const date = trueAnswer.optional.dateEncountered
+      const difficulty = trueAnswer.optional.difficulty
       timesGuessed++
       if (timesGuessed >= timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: 'learned',
+          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: this.dateStr },
+        })
+      } else if (timesGuessed < timesMax) {
+        this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
+          difficulty: difficulty,
           optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: this.dateStr },
         })
       }

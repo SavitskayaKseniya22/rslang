@@ -13,7 +13,7 @@ export class SprintResult {
   stats: { streak: number; percent: number; newWords: number }
   newWords: number
 
-  constructor() {}
+  constructor() { }
 
   private updateResult(results: SprintResultType, settings: SprintSettings) {
     this.settings = settings
@@ -30,9 +30,9 @@ export class SprintResult {
   private getMessage() {
     let message: string
     if (this.percent <= 30) {
-      message = 'Try another game. You useless!'
+      message = 'Next time will be better!'
     } else if (this.percent <= 50) {
-      message = 'You can do better. Maybe.'
+      message = 'You can do better!'
     } else if (this.percent <= 75) {
       message = 'Nice! You start learning!'
     } else if (this.percent < 100) {
@@ -56,7 +56,7 @@ export class SprintResult {
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
-        audioStat=  {countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
+        audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
       }
 
       await this.settings.service.requestUpdStatistics(this.settings.id, {
@@ -64,6 +64,7 @@ export class SprintResult {
         optional: {
           sprintStat: this.stats,
           audioStat: audioStat,
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
         },
       })
     }
@@ -88,11 +89,11 @@ export class SprintResult {
 
     return (document.querySelector('.sprint__container').innerHTML = `
     
-    <span>You earned - ${this.points} points</span>
+    <span class="sprint__points">You earned - ${this.points} points</span>
     <span>${this.correct.length}/${this.total} </span>
     <span>Your longest streak - ${this.streak} correct answers</span>
     <span>${this.percent}% correct answers</span>
-    <span>${this.getMessage()}</span>
+    <span class="sprint__message">${this.getMessage()}</span>
     <ul class="answer-list">
       <li>
         <h3>Wrong (${this.wrong.length})</h3>
@@ -116,7 +117,7 @@ export class SprintResult {
     return `
 <li>
   ${new Sound(word.audio, this.settings).render()} 
-  <span class="result_word">${word.word}</span>-<span class="result_translation">${word.wordTranslate}</span>
+  <p><span class="result_word">${word.word}</span> - <span class="result_translation">${word.wordTranslate}</span></p>
 </li>`
   }
 }

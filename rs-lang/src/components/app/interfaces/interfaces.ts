@@ -85,10 +85,16 @@ export interface statObj {
   optional: {
     sprintStat: { streak: number; percent: number; newWords: number }
     audioStat: statAudio
+    dateStr: string
   }
 }
 export interface statAudio {
   countNewWord: number,
   percentTrueAnswer: number,
   inRow: number,
+}
+export interface statSprint {
+  streak: number,
+  percent: number,
+  newWords: number,
 }
