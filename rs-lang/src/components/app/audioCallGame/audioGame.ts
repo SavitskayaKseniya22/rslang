@@ -14,6 +14,7 @@ class AudioGame {
   pageAgain: number
   countSpace: number
   countInRow: number
+  countKey: number
   arrayCountInRow: number[] = []
   player = document.createElement('audio')
   constructor(data: Question[], arrayTrueWords: Word[], group: number, page: number) {
@@ -24,6 +25,7 @@ class AudioGame {
     this.arrayTrueWords = arrayTrueWords
     this.count = 0
     this.countSpace = 0
+    this.countKey = 0
     this.countInRow = 0
     this.arrayQuestions = data
     this.startGame(this.arrayQuestions[0])
@@ -45,7 +47,6 @@ class AudioGame {
           this.showAnswer()
         } else if (this.countSpace === 2) {
           this.changeQuestion()
-          this.countSpace = 0
         }
       }
     })
@@ -61,18 +62,25 @@ class AudioGame {
   }
   addAnswerFromKeyboard(count: number) {
     const answers = document.querySelectorAll('.answer')
-    this.countSpace++
-    if (this.arrayQuestions[this.count].truthyAnswer.wordTranslate !== answers[count].innerHTML) {
-      this.addMarkFalseAnswer(<HTMLElement>document.querySelectorAll('.answer')[count])
-      this.arrayNumberFalseAnswers.push(this.count)
-      this.addSoundAnswer(`images/false-call.mp3`)
-    } else {
-      this.addMarkTrueAnswer(<HTMLElement>answers[count])
-      this.arrayNumberTrueAnswers.push(this.count)
-      this.addSoundAnswer(`images/true-call.mp3`)
+    if (this.countKey === 0) {
+      this.countSpace++
+      if (this.countSpace === 2) {
+        this.countSpace = 1
+      }
+      if (this.arrayQuestions[this.count].truthyAnswer.wordTranslate !== answers[count].innerHTML) {
+        this.addMarkFalseAnswer(<HTMLElement>document.querySelectorAll('.answer')[count])
+        this.arrayNumberFalseAnswers.push(this.count)
+        this.addSoundAnswer(`images/false-call.mp3`)
+      } else {
+        this.addMarkTrueAnswer(<HTMLElement>answers[count])
+        this.arrayNumberTrueAnswers.push(this.count)
+        this.addSoundAnswer(`images/true-call.mp3`)
+      }
+      this.addAtributeDisabled()
+      this.addAnswer()
+      this.countKey++
     }
-    this.addAtributeDisabled()
-    this.addAnswer()
+
   }
   addSoundAnswer(src: string) {
     this.player.setAttribute('src', src)
@@ -123,9 +131,9 @@ class AudioGame {
     element.style.border = '5px solid green'
   }
   showAnswer() {
+    this.countKey++
     const answers = document.querySelectorAll('.answer')
     this.countInRow = 0
-
     this.addSoundAnswer(`images/false-call.mp3`)
     this.addAtributeDisabled()
     this.addAnswer()
@@ -137,6 +145,8 @@ class AudioGame {
     })
   }
   changeQuestion() {
+    this.countSpace = 0
+    this.countKey = 0
     this.count++
     if (this.count < this.arrayQuestions.length) {
       this.startGame(this.arrayQuestions[this.count])
@@ -154,6 +164,8 @@ class AudioGame {
   addEventListenerForButtonAction() {
     const buttonActive = document.querySelector('.button-active')
     buttonActive.addEventListener('click', () => {
+      this.countSpace++
+      console.log('this.countSpace: ', this.countSpace);
       this.showAnswer()
     })
   }
