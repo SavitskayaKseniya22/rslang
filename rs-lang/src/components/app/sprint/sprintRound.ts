@@ -40,13 +40,21 @@ export class SprintRound {
             word.userWord.optional.dateLearned = dateStr
           }
         }
+
+        if (word.userWord.optional.dateEncountered === '0') {
+          word.userWord.optional.dateEncountered = dateStr
+          this.results.newWords++
+        }
+
         if (!isTrue) {
           word.userWord.optional.timesGuessed = 0
         }
+
         if (!isTrue && word.userWord.difficulty === 'learned') {
           word.userWord.difficulty = 'normal'
           word.userWord.optional.dateLearned = '0'
         }
+
         await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
       }
     }
