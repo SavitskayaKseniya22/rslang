@@ -368,10 +368,13 @@ class TextBookPage {
       button.disabled = false
       document.querySelector('.page-num').classList.remove('tb-finished-page')
       ;(document.querySelector('.page-num') as HTMLInputElement).disabled = false
-      if (this.pageWordsArr.length === 20 || this.showDifficult) {
+      if ( this.showDifficult) {
         button.disabled = true
         ;(document.querySelector('.page-num') as HTMLInputElement).disabled = true
         document.querySelector('.page-num').classList.add('tb-finished-page')
+      }
+      if(this.pageWordsArr.length === 20 ){
+        button.disabled = true
       }
     })
   }
