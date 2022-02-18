@@ -10,7 +10,7 @@ export class SprintResult {
   streak: number
   message: string
   settings: SprintSettings
-  stats: { streak: number; percent: number; newWords: number }
+  stats: { streak: number; percent: number; newWords: number; played: boolean }
   newWords: number
 
   constructor() { }
@@ -45,7 +45,7 @@ export class SprintResult {
 
   async updateStats() {
     if (this.settings.id) {
-      this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords }
+      this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords, played: true }
       let audioStat: statAudio
       try {
         const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
@@ -56,7 +56,7 @@ export class SprintResult {
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
-        audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
+        audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0, played: false }
       }
 
       await this.settings.service.requestUpdStatistics(this.settings.id, {
@@ -64,7 +64,7 @@ export class SprintResult {
         optional: {
           sprintStat: this.stats,
           audioStat: audioStat,
-          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
         },
       })
     }

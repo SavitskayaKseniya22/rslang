@@ -45,18 +45,20 @@ class App {
             streak: 0,
             percent: 0,
             newWords: 0,
+            played: false,
           },
           audioStat: {
             countNewWord: 0,
             percentTrueAnswer: 0,
             inRow: 0,
+            played: false,
           },
           dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
         }
       }
     );
   }
-  async run(): Promise<void>{
+  async run(): Promise<void> {
     document.querySelector('.body').innerHTML = `
       <div class="auth-overlay hidden">
       <div class="auth-form auth-log-in-form hidden"></div>
@@ -87,18 +89,18 @@ class App {
     this.mainPage.render()
     window.location.hash = 'main'
     if (this.user) {
-      try{
-      await this.apiService.getUser()
-      this.authorization.renderLoggedIn(this.user.name)
-      } catch(err){
+      try {
+        await this.apiService.getUser()
+        this.authorization.renderLoggedIn(this.user.name)
+      } catch (err) {
         const error = err as Error
-        if (error.message.includes('401')){
+        if (error.message.includes('401')) {
           await this.apiService.updateToken()
-        } else{
+        } else {
           alert(err)
         }
       }
-      
+
     } else {
       this.authorization.addListener()
     }

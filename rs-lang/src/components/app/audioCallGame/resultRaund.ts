@@ -47,7 +47,7 @@ class ResultRaund {
       inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow;
       this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow);
     } catch (error) {
-      this.requestStatistics({ streak: 0, percent: 0, newWords: 0 }, countNewWord, percentTrueAnswer, inRow);
+      this.requestStatistics({ streak: 0, percent: 0, newWords: 0, played: false }, countNewWord, percentTrueAnswer, inRow);
     }
   }
   requestStatistics(sprintStat: statSprint, countNewWord: number, percentTrueAnswer: number, inRow: number) {
@@ -61,6 +61,7 @@ class ResultRaund {
             countNewWord: countNewWord,
             percentTrueAnswer: percentTrueAnswer,
             inRow: inRow,
+            played: true
           },
           dateStr: this.dateStr
         }
