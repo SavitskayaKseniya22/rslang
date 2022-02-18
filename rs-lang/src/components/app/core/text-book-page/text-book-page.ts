@@ -109,8 +109,11 @@ class TextBookPage {
     <div data-tb-wrd-info=${id} class="tb-word-info">
     <input type="checkbox" id="tb-wrd-desc-${id}" name="description">
     <div class="tb-word-title-translation-pronounciation">
-        <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
-        <h3 class="tb-word-translation">${word.wordTranslate}</h3>
+    <div class="tb-word-title-translation-info">
+      <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
+      <h3 class="tb-word-translation">${word.wordTranslate}</h3>
+    </div>
+        
         <button class="pronounce" data-tb-audio-btn-id=${id} data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${id} class="fas fa-volume-up"></i></button>
     </div>
     <div class="tb-word-definition">
@@ -163,6 +166,7 @@ class TextBookPage {
         await this.getWords()
         this.addControls()
       }
+
     })
     document.querySelectorAll('.group-select').forEach((div) => {
       div.addEventListener('click', async (e) => {

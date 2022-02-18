@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Shizuru&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
 
 body,
 div,
@@ -39,6 +39,11 @@ a,
 ins {
   text-decoration: none;
   color: white;
+  transition: 0.2s;
+}
+
+a:hover {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 i {
@@ -78,7 +83,7 @@ button:active {
 
 html {
   font-size: 20px;
-  font-family: 'Neucha', cursive;
+  font-family: 'Lato', sans-serif;
 }
 
 h1 {

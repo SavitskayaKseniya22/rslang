@@ -152,8 +152,8 @@ class ResultRaund {
     const wrapperTrueResult = document.createElement('div')
     const titleWrapperTrueResult = document.createElement('h3')
     const spanWrapperTrueResult = document.createElement('span')
-    titleWrapperTrueResult.innerHTML = 'Correct Answers'
-    spanWrapperTrueResult.innerHTML = ` ${arrayNumberTrueAnswers.length.toString()}`
+    titleWrapperTrueResult.innerHTML = 'Correct'
+    spanWrapperTrueResult.innerHTML = ` (${arrayNumberTrueAnswers.length.toString()})`
     titleWrapperTrueResult.append(spanWrapperTrueResult)
     wrapperTrueResult.prepend(titleWrapperTrueResult)
     arrayNumberTrueAnswers.forEach((item) =>
@@ -165,8 +165,8 @@ class ResultRaund {
     const wrapperFalseResult = document.createElement('div')
     const titleWrapperFalseResult = document.createElement('h3')
     const spanWrapperFalseResult = document.createElement('span')
-    titleWrapperFalseResult.innerHTML = 'Mistakes'
-    spanWrapperFalseResult.innerHTML = ` ${arrayNumberFalseAnswers.length.toString()}`
+    titleWrapperFalseResult.innerHTML = 'Wrong'
+    spanWrapperFalseResult.innerHTML = ` (${arrayNumberFalseAnswers.length.toString()})`
     titleWrapperFalseResult.append(spanWrapperFalseResult)
     wrapperFalseResult.prepend(titleWrapperFalseResult)
     arrayNumberFalseAnswers.forEach((item) =>

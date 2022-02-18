@@ -63,21 +63,30 @@ class Statistics {
         <div class="stat-wrapper__today-minigames">
           <div class="stat-wrapper__today-game">
             <h3 class="stat-wrapper__today-name">Audio</h3>
-            <h4><span>${newWordAudio}</span> new words</h4>
-            <h4><span>${percentAudio}%</span> accuracy</h4>
-            <h4><span>${inRowAudio}</span> in a row</h4>
+            <div class="stat-list">
+            <p><span>new words: </span><span>${newWordAudio}</span></p>
+            <p><span>accuracy: </span><span>${percentAudio}%</span></p>
+            <p><span>in a row: </span><span>${inRowAudio}</span></p>
+            </div>
+            
           </div>
           <div class="stat-wrapper__today-game">
             <h3 class="stat-wrapper__today-name">Sprint</h3>
-            <h4><span>${newWordSprint}</span> new words</h4>
-            <h4><span>${percentSprint}%</span> accuracy</h4>
-            <h4><span>${inRowSprint}</span> in a row</h4>
+            <div class="stat-list">
+            <p><span>new words: </span><span>${newWordSprint}</span></p>
+            <p><span>accuracy: </span><span>${percentSprint}%</span></p>
+            <p><span>in a row: </span><span>${inRowSprint}</span></p>
+            </div>
+            
           </div>
-           <div class="stat-wrapper__today-game">
-            <h3 class="stat-wrapper__today-name">Statistics by words</h3>
-            <h4><span>${Number(newWordAudio) + Number(newWordSprint)} </span> new words</h4>
-            <h4><span>${learnWords} </span> learned words</h4>
-            <h4><span>${percentGames}% </span> accuracy</h4>
+           <div class="stat-wrapper__today-game total-stat">
+            <h3 class="stat-wrapper__today-name">Total</h3>
+            <div class="stat-list">
+            <p><span>new words: </span><span>${Number(newWordAudio) + Number(newWordSprint)} </span></p>
+            <p><span>learned words: </span><span>${learnWords} </span></p>
+            <p><span>accuracy: </span><span>${percentGames}% </span></p>
+            </div>
+            
           </div>
         </div>    
       </div>
