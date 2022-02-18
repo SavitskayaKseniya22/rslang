@@ -13,7 +13,7 @@ export class SprintResult {
   stats: { streak: number; percent: number; newWords: number }
   newWords: number
 
-  constructor() { }
+  constructor() {}
 
   private updateResult(results: SprintResultType, settings: SprintSettings) {
     this.settings = settings
@@ -52,7 +52,7 @@ export class SprintResult {
         this.stats.streak =
           tempStats.optional.sprintStat.streak < this.streak ? this.streak : tempStats.optional.sprintStat.streak
 
-        this.stats.percent = (tempStats.optional.sprintStat.percent + this.percent) / 2
+        this.stats.percent = Math.round((tempStats.optional.sprintStat.percent + this.percent) / 2)
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
@@ -64,7 +64,7 @@ export class SprintResult {
         optional: {
           sprintStat: this.stats,
           audioStat: audioStat,
-          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
         },
       })
     }
@@ -86,13 +86,14 @@ export class SprintResult {
     const button = settings.isFreeGame
       ? `<button class="new-round">new game</button>`
       : `<button class="back-study">back to study</button>`
-
+    const newWords = settings.id && this.newWords ? `<span>${this.newWords} new words</span>` : ''
     return (document.querySelector('.sprint__container').innerHTML = `
     
     <span class="sprint__points">You earned - ${this.points} points</span>
     <span>${this.correct.length}/${this.total} </span>
     <span>Your longest streak - ${this.streak} correct answers</span>
     <span>${this.percent}% correct answers</span>
+    ${newWords}
     <span class="sprint__message">${this.getMessage()}</span>
     <ul class="answer-list">
       <li>

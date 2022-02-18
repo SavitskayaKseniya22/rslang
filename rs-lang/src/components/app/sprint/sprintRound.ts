@@ -27,11 +27,11 @@ export class SprintRound {
     const dateStr = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`
     if (this.settings.id) {
       if (!word.userWord) {
+        this.results.newWords++
         await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
           difficulty: 'normal',
           optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: dateStr, dateLearned: '0' },
         })
-        this.results.newWords++
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
