@@ -5,6 +5,7 @@
   display: flex;
   flex-wrap: wrap;
   row-gap: 1rem;
+  align-items: center;
 }
 
 .tb-mini-game-select {
@@ -96,8 +97,8 @@ input[name='description'] {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
+  color: rgba(38, 70, 83);
 }
-
 
 .page-num {
   border: none;
@@ -160,12 +161,30 @@ input[type='number'] {
   border: 5px solid orange;
 }
 
+.tb-word-definition,
+.tb-word-sentence {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+  column-gap: 0.5rem;
+}
+
+.tb-definition-english i {
+  font-size: 1.5rem;
+  font-style: normal;
+  color: rgba(42, 157, 143);
+}
+
+.tb-sentence-english b {
+  color: rgba(42, 157, 143);
+}
+
 @media (max-width: 767px) {
   .tb-word {
     padding: 1rem;
     flex-direction: column;
     justify-content: space-between;
-    position: relative;
+
     align-items: center;
     text-align: center;
   }
@@ -195,11 +214,11 @@ input[type='number'] {
   }
 
   input[name='description']:checked ~ .tb-word-definition {
-    display: block;
+    display: flex;
   }
 
   input[name='description']:checked ~ .tb-word-sentence {
-    display: block;
+    display: flex;
   }
 
   .tb-group-select,

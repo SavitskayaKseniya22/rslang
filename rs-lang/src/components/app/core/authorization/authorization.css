@@ -51,6 +51,8 @@
   max-width: 600px;
   padding: 2%;
   color: #345383;
+  position: relative;
+  z-index: 99999999999;
 }
 
 .form-input {
