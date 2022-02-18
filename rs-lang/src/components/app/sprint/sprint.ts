@@ -122,11 +122,11 @@ export class Sprint {
     return `
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <span class="sprint__score">0</span>
-    <span class="sprint__points">0</span>
+    <span class="sprint__points">+0</span>
     <ul class="sprint__counter-preview">
-      <li><i class="far fa-circle streak1"></i></li>
-      <li><i class="far fa-circle streak2"></i></li>
-      <li><i class="far fa-circle streak3"></i></li>
+      <li class="streak1"></li>
+      <li class="streak2"></li>
+      <li class="streak3"></li>
     </ul>
     <ul class="sprint__words">
       ${this.round.makeRound()}
