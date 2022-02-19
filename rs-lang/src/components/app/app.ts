@@ -39,22 +39,27 @@ class App {
     }
   }
   requestResetStat() {
-    this.apiService.requestUpdStatistics(this.apiService.user.userId, {
-      learnedWords: 0,
-      optional: {
-        sprintStat: {
-          streak: 0,
-          percent: 0,
-          newWords: 0,
-        },
-        audioStat: {
-          countNewWord: 0,
-          percentTrueAnswer: 0,
-          inRow: 0,
-        },
-        dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
-      },
-    })
+  this.apiService.requestUpdStatistics(
+      this.apiService.user.userId,
+      {
+        learnedWords: 0,
+        optional: {
+          sprintStat: {
+            streak: 0,
+            percent: 0,
+            newWords: 0,
+            played: false,
+          },
+          audioStat: {
+            countNewWord: 0,
+            percentTrueAnswer: 0,
+            inRow: 0,
+            played: false,
+          },
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+        }
+      }
+    );
   }
   async run(): Promise<void> {
     document.querySelector('.body').innerHTML = `

@@ -83,18 +83,21 @@ export interface ButtonProperties {
 export interface statObj {
   learnedWords: 0
   optional: {
-    sprintStat: { streak: number; percent: number; newWords: number }
+    sprintStat: statSprint
     audioStat: statAudio
     dateStr: string
   }
 }
 export interface statAudio {
-  countNewWord: number
-  percentTrueAnswer: number
-  inRow: number
+  countNewWord: number,
+  percentTrueAnswer: number,
+  inRow: number,
+  played: boolean
 }
 export interface statSprint {
-  streak: number
-  percent: number
-  newWords: number
+  streak: number,
+  percent: number,
+  newWords: number,
+  played: boolean
 }
+
