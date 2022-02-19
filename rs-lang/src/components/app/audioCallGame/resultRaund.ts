@@ -30,11 +30,11 @@ class ResultRaund {
     document.querySelector('.main').append(this.addWrapperResult(arrayNumberTrueAnswers, arrayNumberFalseAnswers))
     if (this.user !== null) {
       this.requestResultRaund()
-      this.createStatistic(arrayCountInRow);
+      this.createStatistic(arrayCountInRow)
     }
   }
   async createStatistic(arrayCountInRow: number[]) {
-    arrayCountInRow.sort((a, b) => a - b);
+      arrayCountInRow.sort((a, b) => a - b);
     let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined || word.userWord.optional.dateEncountered === "0").length;
     let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100;
     let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0;
@@ -181,8 +181,8 @@ class ResultRaund {
     const wrapperTrueResult = document.createElement('div')
     const titleWrapperTrueResult = document.createElement('h3')
     const spanWrapperTrueResult = document.createElement('span')
-    titleWrapperTrueResult.innerHTML = 'Correct Answers'
-    spanWrapperTrueResult.innerHTML = ` ${arrayNumberTrueAnswers.length.toString()}`
+    titleWrapperTrueResult.innerHTML = 'Correct'
+    spanWrapperTrueResult.innerHTML = ` (${arrayNumberTrueAnswers.length.toString()})`
     titleWrapperTrueResult.append(spanWrapperTrueResult)
     wrapperTrueResult.prepend(titleWrapperTrueResult)
     arrayNumberTrueAnswers.forEach((item) =>
@@ -194,8 +194,8 @@ class ResultRaund {
     const wrapperFalseResult = document.createElement('div')
     const titleWrapperFalseResult = document.createElement('h3')
     const spanWrapperFalseResult = document.createElement('span')
-    titleWrapperFalseResult.innerHTML = 'Mistakes'
-    spanWrapperFalseResult.innerHTML = ` ${arrayNumberFalseAnswers.length.toString()}`
+    titleWrapperFalseResult.innerHTML = 'Wrong'
+    spanWrapperFalseResult.innerHTML = ` (${arrayNumberFalseAnswers.length.toString()})`
     titleWrapperFalseResult.append(spanWrapperFalseResult)
     wrapperFalseResult.prepend(titleWrapperFalseResult)
     arrayNumberFalseAnswers.forEach((item) =>

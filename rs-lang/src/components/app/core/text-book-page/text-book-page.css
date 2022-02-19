@@ -5,6 +5,7 @@
   display: flex;
   flex-wrap: wrap;
   row-gap: 1rem;
+  align-items: center;
 }
 
 .tb-mini-game-select {
@@ -94,14 +95,20 @@ input[name='description'] {
 .tb-word-title-translation-pronounciation {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+
+  color: rgba(38, 70, 83);
+}
+.tb-word-title-translation-info {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
 }
 
-
 .page-num {
+  background-color: rgb(212, 75, 56);
   border: none;
-  background-color: transparent;
   color: white;
   appearance: none;
   text-align: center;
@@ -159,13 +166,42 @@ input[type='number'] {
 .tb-difficult-word {
   border: 5px solid orange;
 }
+.tb-disabled-minigame-btn {
+  opacity: 0.5 !important;
+}
+.tb-page-warn {
+  width: 100%;
+  padding: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+
+.tb-word-definition,
+.tb-word-sentence {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
+  column-gap: 0.5rem;
+}
+
+.tb-definition-english i {
+  font-size: 1.5rem;
+  font-style: normal;
+  color: rgba(42, 157, 143);
+}
+
+.tb-sentence-english b {
+  color: rgba(42, 157, 143);
+}
 
 @media (max-width: 767px) {
   .tb-word {
     padding: 1rem;
     flex-direction: column;
     justify-content: space-between;
-    position: relative;
+
     align-items: center;
     text-align: center;
   }
@@ -195,11 +231,11 @@ input[type='number'] {
   }
 
   input[name='description']:checked ~ .tb-word-definition {
-    display: block;
+    display: flex;
   }
 
   input[name='description']:checked ~ .tb-word-sentence {
-    display: block;
+    display: flex;
   }
 
   .tb-group-select,
@@ -214,7 +250,14 @@ input[type='number'] {
 @media (max-width: 550px) {
   .tb-word-title-translation-pronounciation {
     flex-direction: column;
+    align-items: center;
   }
+
+  .tb-word-title-translation-info {
+    flex-direction: column;
+    align-items: center;
+  }
+
   .tb-mini-game-select {
     flex-direction: column;
     row-gap: 1rem;

@@ -16,7 +16,6 @@ class App {
     this.user = null
     if (localStorage.getItem('user')) {
       this.user = JSON.parse(localStorage.getItem('user'))
-
     }
     this.apiService = new ApiService(this.user)
     this.authorization = new Authorization(this.apiService)
@@ -24,19 +23,23 @@ class App {
     this.textBook = new TextBookPage(this.apiService)
     this.navMenu = new NavMenu(this.apiService, this.mainPage, this.textBook)
     if (this.user !== null) {
-      this.resetStat();
+      this.resetStat()
     }
   }
   async resetStat() {
     try {
-      const userStatistics = await this.apiService.getUserStatistics(this.apiService.user.userId);
-      if (userStatistics.optional.dateStr !== `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`) this.requestResetStat();
+      const userStatistics = await this.apiService.getUserStatistics(this.apiService.user.userId)
+      if (
+        userStatistics.optional.dateStr !==
+        `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+      )
+        this.requestResetStat()
     } catch (error) {
-      this.requestResetStat();
+      this.requestResetStat()
     }
   }
   requestResetStat() {
-    this.apiService.requestUpdStatistics(
+  this.apiService.requestUpdStatistics(
       this.apiService.user.userId,
       {
         learnedWords: 0,
@@ -100,7 +103,6 @@ class App {
           alert(err)
         }
       }
-
     } else {
       this.authorization.addListener()
     }

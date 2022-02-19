@@ -32,6 +32,7 @@ class BasicQuestion {
     wrapperForAnswersSmall.classList.add('voice-icon-small')
     wrapperForAnswersSmall.append(new ImageIconVoice().addIconVoice('images/iconVoiceSmall.svg'))
     wrapperForAnswerContent.classList.add('answer-content')
+    wrapperForAnswerContent.classList.add('wrap-cont')
     wrapperForAnswerContent.append(wrapperForAnswersSmall, wordAnswer)
     wrapperForAnswer.classList.add('question', 'wrapper-answer')
     wrapperForAnswer.append(

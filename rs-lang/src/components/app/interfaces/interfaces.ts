@@ -100,3 +100,4 @@ export interface statSprint {
   newWords: number,
   played: boolean
 }
+
