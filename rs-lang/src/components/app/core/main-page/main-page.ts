@@ -42,37 +42,31 @@ class MainPage {
     <section class="main-section">
         <h2> Meet the team</h2>
         <div class="main-team-list">
-            <div class="main-team-membrer">
-                <div class="team-member-image"></div>
                 <div class="team-member-info">
                     <h3>Kseniya Savitskaya</h3>
+                    <img class="team-member-image" src="./images/ava-2.jpg" alt="avatar">
                     <ul>
                     <li>"Sprint" game</li>
                     <li>Page design and layout</li>
                     </ul>
                 </div>
-            </div>
-            <div class="main-team-membrer">
-                <div class="team-member-image"></div>
                 <div class="team-member-info">
                     <h3>Nikita Kravchenko</h3>
+                    <img class="team-member-image" src="./images/The_Almighty_Loaf.jpg" alt="avatar">
                     <ul>
                     <li>Basic page layout</li>
                     <li>Authorization</li>
                     <li>Server and database</li>
                     </ul>
                 </div>
-            </div>
-            <div class="main-team-membrer">
-                <div class="team-member-image"></div>
                 <div class="team-member-info">
                     <h3>Yauheny Bychkou</h3>
+                    <img class="team-member-image" src="./images/ava.jpg" alt="avatar">
                     <ul>
                     <li>"Audiocall" game</li>
                     <li>Statistics</li>
                     </ul>
                 </div>
-            </div>
         </div>
     </section>
     </div>
