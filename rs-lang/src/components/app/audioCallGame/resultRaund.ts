@@ -20,7 +20,6 @@ class ResultRaund {
     this.user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
     this.apiServiceUser = new ApiService(this.user)
     this.arrayTrueWords = arrayTrueWords
-    console.log('this.arrayTrueWords: ', this.arrayTrueWords);
     this.arrayNumberTrueAnswers = arrayNumberTrueAnswers
     this.arrayNumberFalseAnswers = arrayNumberFalseAnswers
     this.dateObj = new Date()
@@ -34,16 +33,15 @@ class ResultRaund {
     }
   }
   async createStatistic(arrayCountInRow: number[]) {
-      arrayCountInRow.sort((a, b) => a - b);
+    arrayCountInRow.sort((a, b) => a - b);
     let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined || word.userWord.optional.dateEncountered === "0").length;
     let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100;
     let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0;
     try {
       const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId);
-
       const sprintStat = userStatistics.optional.sprintStat !== undefined ? userStatistics.optional.sprintStat : {};
       countNewWord = userStatistics.optional.audioStat.countNewWord + countNewWord;
-      percentTrueAnswer = userStatistics.optional.audioStat.countNewWord === 0 ? percentTrueAnswer : Math.floor((userStatistics.optional.audioStat.countNewWord + percentTrueAnswer) / 2);
+      percentTrueAnswer = userStatistics.optional.audioStat.percentTrueAnswer === 0 ? percentTrueAnswer : Math.floor((userStatistics.optional.audioStat.percentTrueAnswer + percentTrueAnswer) / 2);
       inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow;
       this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow);
     } catch (error) {
