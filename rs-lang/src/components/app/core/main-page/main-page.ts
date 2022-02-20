@@ -54,9 +54,9 @@ class MainPage {
                     <h3>Nikita Kravchenko</h3>
                     <img class="team-member-image" src="./images/The_Almighty_Loaf.jpg" alt="avatar">
                     <ul>
-                    <li>Basic page layout</li>
+                    <li><b>Team lead</b></li>
                     <li>Authorization</li>
-                    <li>Server and database</li>
+                    <li>Textbook</li>
                     </ul>
                 </div>
                 <div class="team-member-info">
