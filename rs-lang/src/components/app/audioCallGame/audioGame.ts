@@ -30,17 +30,18 @@ class AudioGame {
     this.arrayQuestions = data
     this.startGame(this.arrayQuestions[0])
     document.addEventListener('keydown', (event) => {
-      if (event.code === 'Digit1' && this.count < this.arrayQuestions.length) {
+      console.log(event.key);
+      if (event.key === '1' && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(0)
-      } else if (event.code === 'Digit2' && this.count < this.arrayQuestions.length) {
+      } else if (event.key === '2' && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(1)
-      } else if (event.code === 'Digit3' && this.count < this.arrayQuestions.length) {
+      } else if (event.key === '3' && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(2)
-      } else if (event.code === 'Digit4' && this.count < this.arrayQuestions.length) {
+      } else if (event.key === '4' && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(3)
-      } else if (event.code === 'Digit5' && this.count < this.arrayQuestions.length) {
+      } else if (event.key === '5' && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(4)
-      } else if (event.code === 'Space' && this.count < this.arrayQuestions.length) {
+      } else if (event.key === ' ' && this.count < this.arrayQuestions.length) {
         event.preventDefault()
         this.countSpace++
         if (this.countSpace === 1) {
