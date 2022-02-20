@@ -63,6 +63,14 @@
   box-sizing: border-box;
 }
 
+input:invalid {
+  border: 2px solid rgba(231, 111, 81);
+}
+
+input:valid {
+  border: 2px solid rgba(42, 157, 143);
+}
+
 .form-input:invalid {
   text-indent: 43px;
 }
