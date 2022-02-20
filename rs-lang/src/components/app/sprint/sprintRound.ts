@@ -27,11 +27,11 @@ export class SprintRound {
     const dateStr = `${dateObj.getDate()}/${dateObj.getMonth()}/${dateObj.getFullYear()}`
     if (this.settings.id) {
       if (!word.userWord) {
+        this.results.newWords++
         await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
           difficulty: 'normal',
           optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: dateStr, dateLearned: '0' },
         })
-        this.results.newWords++
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
@@ -40,13 +40,21 @@ export class SprintRound {
             word.userWord.optional.dateLearned = dateStr
           }
         }
+
+        if (word.userWord.optional.dateEncountered === '0') {
+          word.userWord.optional.dateEncountered = dateStr
+          this.results.newWords++
+        }
+
         if (!isTrue) {
           word.userWord.optional.timesGuessed = 0
         }
+
         if (!isTrue && word.userWord.difficulty === 'learned') {
           word.userWord.difficulty = 'normal'
           word.userWord.optional.dateLearned = '0'
         }
+
         await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
       }
     }
@@ -61,7 +69,7 @@ export class SprintRound {
 
     this.words.splice(randomIndex, 1)
     this.sound = new Sound(this.sugestedWord.audio, this.settings)
-    return `<li><span class="sprint__words_suggested">${this.sugestedWord.word}</span> ${this.sound.render()}</li>
+    return `<li>${this.sound.render()} <span class="sprint__words_suggested">${this.sugestedWord.word}</span></li>
     <li><span class="sprint__words_translation">${this.sugestedAnswer.wordTranslate}</span></li>`
   }
 
@@ -133,7 +141,7 @@ export class SprintRound {
   }
 
   private updatePointsPreview() {
-    document.querySelector('.sprint__points').innerHTML = String(this.getPoints())
+    document.querySelector('.sprint__points').innerHTML = `+${this.getPoints()}`
     document.querySelector('.sprint__score').innerHTML = String(this.results.points)
   }
 

@@ -106,7 +106,6 @@ export class Sprint {
     <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
     <audio class="sprint__answer_correct" src="./sounds/correctAnswer.mp3"></audio>
     <audio class="sprint__answer_wrong" src="./sounds/wrongAnswer.mp3"></audio>
-    <h2>Sprint</h2>
     <ul class="sprint__settings">
       <li>
         <button class="sprint__fullscreen_toggle">${fullScreenIcon}</i></button>
@@ -123,11 +122,11 @@ export class Sprint {
     return `
     <div class="sprint__timer">${this.settings.timerValue}</div>
     <span class="sprint__score">0</span>
-    <span class="sprint__points">0</span>
+    <span class="sprint__points">+0</span>
     <ul class="sprint__counter-preview">
-      <li><i class="far fa-circle streak1"></i></li>
-      <li><i class="far fa-circle streak2"></i></li>
-      <li><i class="far fa-circle streak3"></i></li>
+      <li class="streak1"></li>
+      <li class="streak2"></li>
+      <li class="streak3"></li>
     </ul>
     <ul class="sprint__words">
       ${this.round.makeRound()}
@@ -148,10 +147,7 @@ export class Sprint {
         <button><i class="fas fa-arrow-circle-right"></i></button>
       </li>
     </ul>
-    <ul class="sprint__advices">
-      <li>Press the Space key to pause</li>
-      <li>Control the game using the arrows keys on your keyboard</li>
-    </ul>`
+    `
   }
 
   private toggleFullScreen() {

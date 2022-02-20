@@ -10,7 +10,7 @@ export class SprintResult {
   streak: number
   message: string
   settings: SprintSettings
-  stats: { streak: number; percent: number; newWords: number }
+  stats: { streak: number; percent: number; newWords: number; played: boolean }
   newWords: number
 
   constructor() {}
@@ -30,9 +30,9 @@ export class SprintResult {
   private getMessage() {
     let message: string
     if (this.percent <= 30) {
-      message = 'Try another game. You useless!'
+      message = 'Next time will be better!'
     } else if (this.percent <= 50) {
-      message = 'You can do better. Maybe.'
+      message = 'You can do better!'
     } else if (this.percent <= 75) {
       message = 'Nice! You start learning!'
     } else if (this.percent < 100) {
@@ -45,18 +45,18 @@ export class SprintResult {
 
   async updateStats() {
     if (this.settings.id) {
-      this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords }
+      this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords, played: true }
       let audioStat: statAudio
       try {
         const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
         this.stats.streak =
           tempStats.optional.sprintStat.streak < this.streak ? this.streak : tempStats.optional.sprintStat.streak
 
-        this.stats.percent = (tempStats.optional.sprintStat.percent + this.percent) / 2
+        this.stats.percent = Math.round((tempStats.optional.sprintStat.percent + this.percent) / 2)
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
-        audioStat=  {countNewWord: 0, percentTrueAnswer: 0, inRow: 0 }
+        audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0, played: false }
       }
 
       await this.settings.service.requestUpdStatistics(this.settings.id, {
@@ -64,6 +64,7 @@ export class SprintResult {
         optional: {
           sprintStat: this.stats,
           audioStat: audioStat,
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
         },
       })
     }
@@ -85,14 +86,15 @@ export class SprintResult {
     const button = settings.isFreeGame
       ? `<button class="new-round">new game</button>`
       : `<button class="back-study">back to study</button>`
-
+    const newWords = settings.id && this.newWords ? `<span>${this.newWords} new words</span>` : ''
     return (document.querySelector('.sprint__container').innerHTML = `
     
-    <span>You earned - ${this.points} points</span>
+    <span class="sprint__points">You earned - ${this.points} points</span>
     <span>${this.correct.length}/${this.total} </span>
     <span>Your longest streak - ${this.streak} correct answers</span>
     <span>${this.percent}% correct answers</span>
-    <span>${this.getMessage()}</span>
+    ${newWords}
+    <span class="sprint__message">${this.getMessage()}</span>
     <ul class="answer-list">
       <li>
         <h3>Wrong (${this.wrong.length})</h3>
@@ -116,7 +118,7 @@ export class SprintResult {
     return `
 <li>
   ${new Sound(word.audio, this.settings).render()} 
-  <span class="result_word">${word.word}</span>-<span class="result_translation">${word.wordTranslate}</span>
+  <p><span class="result_word">${word.word}</span> - <span class="result_translation">${word.wordTranslate}</span></p>
 </li>`
   }
 }

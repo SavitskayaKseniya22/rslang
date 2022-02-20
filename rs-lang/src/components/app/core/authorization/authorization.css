@@ -1,12 +1,7 @@
 .header-log-in-status {
-  height: 20%;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2%;
-  background-color: white;
-  color: #345383;
-  font-size: medium;
   cursor: pointer;
 }
 
@@ -14,20 +9,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2%;
-  width: 20%;
-  color: #345383;
-  font-size: medium;
+  column-gap: 3rem;
 }
-.header-logged-in-status div {
-  background-color: white;
-  width: 40%;
-  height: 50%;
+
+.log-out {
   cursor: pointer;
 }
-.lock-icon {
-  font-size: medium;
-}
+
 .auth-overlay {
   position: fixed;
   top: 0;
@@ -39,47 +27,54 @@
   justify-content: center;
   align-items: center;
 }
+
 .form {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+  row-gap: 1rem;
 }
+.form > * {
+  width: 100%;
+}
+
 .form-top {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
-.form-top h1 {
-  text-align: center;
-}
+
 .auth-form {
   background-color: white;
   min-width: 300px;
   max-width: 600px;
-  background-color: white;
   padding: 2%;
   color: #345383;
+  position: relative;
+  z-index: 99999999999;
 }
 
 .form-input {
-  font-size: 18px;
   color: black;
   padding: 0;
-  margin: 0;
-  margin-bottom: 20px;
   height: 45px;
   box-sizing: border-box;
 }
+
 .form-input:invalid {
-  box-shadow: 0 0 5px 1px red;
   text-indent: 43px;
 }
 
 .submit-btn {
-  background-color: green;
+  background-color: rgba(42, 157, 143);
   color: white;
 }
 .switch-form-btn {
-  background-color: blue;
+  background-color: rgba(38, 70, 83);
   color: white;
+}
+
+.salutations {
+  font-size: 2rem;
 }

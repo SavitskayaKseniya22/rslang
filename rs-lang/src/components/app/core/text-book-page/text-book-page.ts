@@ -21,25 +21,28 @@ class TextBookPage {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
         <audio src='' class="tb-tts"></audio>
         <div class="tb-mini-game-select">
-            <button class="tb-minigame" data-game-name="sprint"><i class="fas fa-running"></i> sprint</button>
-            <button class="tb-minigame" data-game-name="audio-challenge"><i class="fas fa-volume-up"></i> audio-challenge</button>
+            <button class="tb-minigame" data-game-name="sprint"><i class="fa-solid fa-stopwatch"></i> sprint</button>
+            <button class="tb-minigame" data-game-name="audio-challenge"><i class="fa-solid fa-music"></i> audio-challenge</button>
         </div>
         <div class="tb-pagination">
-            <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
+        <h3>Pages</h3>
+        <div>
+        <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
             <input type="number" min="1" max="30" value="${this.curPage + 1}" class="page-num">
             <button data-direction="right" class="pagination-button"><i data-direction="right" class="fas fa-caret-right"></i></button>
         </div>
+            
+        </div>
         <div class="tb-group-select">
-        <p>groups</p>
-            <div class="group-select" data-grp="0">1</div>
-            <div class="group-select" data-grp="1">2</div>
-            <div class="group-select" data-grp="2">3</div>
-            <div class="group-select" data-grp="3">4</div>
-            <div class="group-select" data-grp="4">5</div>
-            <div class="group-select" data-grp="5">6</div>
+        <h3>Levels</h3>
+            <button class="group-select" data-grp="0">1</button>
+            <button class="group-select" data-grp="1">2</button>
+            <button class="group-select" data-grp="2">3</button>
+            <button class="group-select" data-grp="3">4</button>
+            <button class="group-select" data-grp="4">5</button>
+            <button class="group-select" data-grp="5">6</button>
         </div>
         <div class="tb-words">
-            
         </div>
     </div>`
     if (!this.showDifficult) {
@@ -47,7 +50,7 @@ class TextBookPage {
     }
     await this.getWords()
     if (this.apiService.user !== null && this.apiService.user !== undefined) {
-      document.querySelector('.tb-group-select').innerHTML += '<div class="group-select difficult-select">D</div>'
+      document.querySelector('.tb-group-select').innerHTML += '<button class="group-select difficult-select">D</button>'
 
       if (this.showDifficult) {
         document.querySelector('.difficult-select').classList.add('tb-group-selected')
@@ -56,6 +59,9 @@ class TextBookPage {
     }
     this.addListeners()
     this.addControls()
+    if (this.showDifficult) {
+      this.curPage = 0
+    }
   }
   async getWords() {
     try {
@@ -101,9 +107,13 @@ class TextBookPage {
     <div class="tb-word" data-tb-wrd-id=${id}>
     <img class="tb-img" src=${this.apiService.apiUrl}/${word.image}>
     <div data-tb-wrd-info=${id} class="tb-word-info">
+    <input type="checkbox" id="tb-wrd-desc-${id}" name="description">
     <div class="tb-word-title-translation-pronounciation">
-        <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
-        <h3 class="tb-word-translation">${word.wordTranslate}</h3>
+    <div class="tb-word-title-translation-info">
+      <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
+      <h3 class="tb-word-translation">${word.wordTranslate}</h3>
+    </div>
+        
         <button class="pronounce" data-tb-audio-btn-id=${id} data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${id} class="fas fa-volume-up"></i></button>
     </div>
     <div class="tb-word-definition">
@@ -114,6 +124,7 @@ class TextBookPage {
         <p class="tb-sentence-english">${word.textExample}</p>
         <p class="tb-sentence-translation">${word.textExampleTranslate}</p>
     </div>
+    <label for="tb-wrd-desc-${id}" class="tb-wrd-desc button">description</label>
     </div>
 <audio src=${this.apiService.apiUrl}/${word.audio} data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}" data-tb-p-audio-id=${id} data-tb-audio-id=${id}></audio>
 </div>
@@ -134,9 +145,28 @@ class TextBookPage {
     })
     document.querySelector('.page-num').addEventListener('input', async (e) => {
       const target = e.target as HTMLInputElement
-      this.curPage = Number(target.value)
-      await this.getWords()
-      this.addControls()
+      if (Number(target.value) > 30) {
+        target.value = '30'
+      }
+      if (Number(target.value) < 0) {
+        target.value = '1'
+      }
+      this.curPage = Number(target.value) - 1
+      if (this.curPage > 29 || this.curPage < 0) {
+        console.log('I happened')
+        document.querySelector('.tb-words').innerHTML = `
+        <div class="tb-page-warn"><h2>Please make sure to enter page numbers between 1-30</h2><div>
+        `
+        document.querySelectorAll('.tb-minigame').forEach((btn) => {
+          const button = btn as HTMLButtonElement
+          button.disabled = true
+          button.classList.add('tb-disabled-minigame-btn')
+        })
+      } else {
+        await this.getWords()
+        this.addControls()
+      }
+
     })
     document.querySelectorAll('.group-select').forEach((div) => {
       div.addEventListener('click', async (e) => {
@@ -168,15 +198,14 @@ class TextBookPage {
       btn.addEventListener('click', async (e) => {
         const target = e.target as HTMLButtonElement
         const gameArr = await this.composeGameArr()
-        if ( target.dataset.gameName === 'sprint'){
-           const page =  new Sprint(1, this.apiService, gameArr)
-            window.location.hash = `#${target.dataset.gameName}`
-            page.render()
-        } else if( target.dataset.gameName === 'audio-challenge') {
-         new ConrolGame(-1, -1, gameArr); 
-         window.location.hash = 'audio-challenge';
+        if (target.dataset.gameName === 'sprint') {
+          const page = new Sprint(1, this.apiService, gameArr)
+          window.location.hash = `#${target.dataset.gameName}`
+          page.render()
+        } else if (target.dataset.gameName === 'audio-challenge') {
+          new ConrolGame(-1, -1, gameArr)
+          window.location.hash = 'audio-challenge'
         }
-      
       })
     })
   }
@@ -200,7 +229,7 @@ class TextBookPage {
           }
           if (target.classList.contains('tb-add-learned-btn')) {
             const id = target.dataset.tbLearnid
-            await this.MarkAsLearned(id, date ,dateStr)
+            await this.MarkAsLearned(id, date, dateStr)
           }
         })
       })
@@ -236,6 +265,7 @@ class TextBookPage {
   }
   async MarkAsLearned(id: string, date: string, dateStr: string) {
     const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+    const wordProgress = wordDiv.querySelector(`.tb-learning-progress`)
     try {
       if (
         wordDiv.classList.contains('tb-difficult-word') ||
@@ -250,13 +280,14 @@ class TextBookPage {
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
         this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
-          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: dateStr, dateLearned: dateStr },
+          optional: { timesGuessed: 3, timesMax: 3, dateEncountered: '0', dateLearned: dateStr },
         })
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
       }
       wordDiv.classList.add('tb-learned-word')
       wordDiv.classList.remove('tb-normal-word')
       wordDiv.classList.remove('tb-difficult-word')
+      wordProgress.textContent = '3/3'
       if (this.showDifficult === true) {
         //checking if the difficult words only page shloulld be rendered
         wordDiv.remove()
@@ -270,6 +301,7 @@ class TextBookPage {
   async MarkAsDIfficult(id: string, date: string, dateStr: string) {
     try {
       const wordDiv = document.querySelector(`[data-tb-wrd-id="${id}"]`)
+      const wordProgress = wordDiv.querySelector(`.tb-learning-progress`)
       if (
         wordDiv.classList.contains('tb-difficult-word') ||
         wordDiv.classList.contains('tb-learned-word') ||
@@ -282,12 +314,13 @@ class TextBookPage {
       } else {
         await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'difficult',
-          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: dateStr, dateLearned: '0' },
+          optional: { timesGuessed: 0, timesMax: 5, dateEncountered: '0', dateLearned: '0' },
         })
       }
       wordDiv.classList.remove('tb-learned-word')
       wordDiv.classList.remove('tb-normal-word')
       wordDiv.classList.add('tb-difficult-word')
+      wordProgress.textContent = `0/5`
       if (this.showDifficult === true) {
         //checking if the difficult words only page shloulld be rendered
         await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
@@ -319,7 +352,7 @@ class TextBookPage {
       document.querySelector(`[data-tb-wrd-info="${id}"]`).innerHTML += `
     <div data-tb-useid="${id}" class="tb-user-functionality">
     <button data-tb-diffid="${id}" data-date="${date}" class="tb-add-difficult-btn">${markStr}</button>
-     <div class="tb-learning-progress">${progress}/${max}</div>
+     <div class="tb-learning-progress data-tb-progressId = "${id}">${progress}/${max}</div>
     <button data-tb-learnid="${id}" data-date="${date}" class="tb-add-learned-btn">Mark as Learned</button>
 </div>
     `
@@ -332,27 +365,27 @@ class TextBookPage {
   }
   async composeGameArr() {
     let gameArr
-    if (this.apiService.user!== null && this.apiService.user!== undefined){
-    gameArr = await this.apiService.requestGetAggregatedFIlter(
-      this.apiService.user.userId,
-      `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
-    )
-    if (gameArr.length < 20) {
-      const supplementaryWrds = await this.apiService.requestGetAggregatedFIlter(
+    if (this.apiService.user !== null && this.apiService.user !== undefined) {
+      gameArr = await this.apiService.requestGetAggregatedFIlter(
         this.apiService.user.userId,
-        `{"$and":[{"page":{"$lt": ${this.curPage}}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
+        `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
       )
-      const slice =
-        supplementaryWrds.length > 20 - gameArr.length
-          ? supplementaryWrds.slice(0, 20 - gameArr.length)
-          : supplementaryWrds
-      gameArr = gameArr.concat(slice);
+      if (gameArr.length < 20) {
+        const supplementaryWrds = await this.apiService.requestGetAggregatedFIlter(
+          this.apiService.user.userId,
+          `{"$and":[{"page":{"$lt": ${this.curPage}}}, {"group":${this.curGrp}}, {"$or":[{"userWord.difficulty":"difficult"}, {"userWord.difficulty":"normal"}, {"userWord": null}]}]}`
+        )
+        const slice =
+          supplementaryWrds.length > 20 - gameArr.length
+            ? supplementaryWrds.slice(0, 20 - gameArr.length)
+            : supplementaryWrds
+        gameArr = gameArr.concat(slice)
+      }
+      return gameArr
+    } else {
+      gameArr = await this.apiService.requestWords(this.curGrp, this.curPage)
     }
     return gameArr
-  } else {
-     gameArr = await this.apiService.requestWords(this.curGrp, this.curPage)
-  }
-  return gameArr
   }
   async checkWords() {
     this.pageWordsArr = await this.apiService.requestGetAggregatedFIlter(
@@ -360,17 +393,22 @@ class TextBookPage {
       `{"$and":[{"page":${this.curPage}}, {"group":${this.curGrp}}, {"userWord.difficulty":"learned"}]}`
     )
     document.querySelectorAll('.tb-minigame').forEach((btn) => {
-      let button = btn as HTMLButtonElement
+      const button = btn as HTMLButtonElement
       button.disabled = false
+      button.classList.remove('tb-disabled-minigame-btn')
       document.querySelector('.page-num').classList.remove('tb-finished-page')
       ;(document.querySelector('.page-num') as HTMLInputElement).disabled = false
-      if (this.pageWordsArr.length === 20 || this.showDifficult) {
+      if (this.showDifficult) {
         button.disabled = true
+        button.classList.add('tb-disabled-minigame-btn')
         ;(document.querySelector('.page-num') as HTMLInputElement).disabled = true
         document.querySelector('.page-num').classList.add('tb-finished-page')
       }
+      if (this.pageWordsArr.length === 20 || this.curPage > 29 || this.curPage < 1) {
+        button.disabled = true
+        button.classList.add('tb-disabled-minigame-btn')
+      }
     })
-
   }
 }
 
