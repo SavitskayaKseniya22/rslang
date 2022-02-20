@@ -63,7 +63,6 @@ class Authorization {
      <input type="text" placeholder="Name" minlength="1" class="form-input name-input" required> 
  <button class="register-button submit-btn">Register</button>
  <button class="open-sign-in-button switch-form-btn">Sign in</button>
- <button class="open-sign-in-button ">DELETE USER</button>
 </div>
  `
     this.addRegisterListeners()
