@@ -196,6 +196,10 @@ input[type='number'] {
   color: rgba(42, 157, 143);
 }
 
+.tb-finished-page{
+  background-color:rgb(74, 193, 74)!important;
+}
+
 @media (max-width: 767px) {
   .tb-word {
     padding: 1rem;
