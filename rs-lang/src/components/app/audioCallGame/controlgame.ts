@@ -18,6 +18,7 @@ class ConrolGame {
   apiServiceUser: ApiService
   user: UserTemplate
   wordsPerPage: number
+  apiUrl: string
   bookQuestions: Word[]
   constructor(group = -1, page = -1, bookQuestions = [] as Word[]) {
     this.bookQuestions = bookQuestions
@@ -27,6 +28,7 @@ class ConrolGame {
       page !== -1 ? page : page === -1 && group !== -1 ? this.randomInteger(0, 29) : this.bookQuestions[0].page
     this.wordsPerPage = 20
     this.apiService = new ApiService(this.user)
+    this.apiUrl = this.apiService.apiUrl
     this.getParamsForRequest()
     if (this.user === null) {
       this.getQuestions()
@@ -39,11 +41,11 @@ class ConrolGame {
       this.bookQuestions.length !== 0
         ? this.bookQuestions
         : await this.apiService.requestGetUserAgregatedPageGrp(
-            this.apiService.user.userId,
-            this.groupTrue.toString(),
-            this.pageTrue.toString(),
-            this.wordsPerPage.toString()
-          )
+          this.apiService.user.userId,
+          this.groupTrue.toString(),
+          this.pageTrue.toString(),
+          this.wordsPerPage.toString()
+        )
     const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
       this.apiService.user.userId,
       this.groupFirstPartFalse.toString(),
@@ -75,7 +77,7 @@ class ConrolGame {
       falseThirdPartWords,
       falseFourthPartWords
     )
-    new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue)
+    new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue, this.apiUrl)
   }
   async getQuestions() {
     const trueWords = await this.apiService.getAudioWords(this.groupTrue, this.pageTrue)
@@ -96,7 +98,7 @@ class ConrolGame {
       falseThirdPartWords,
       falseFourthPartWords
     )
-    new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue)
+    new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue, this.apiUrl)
   }
   createQuestions(
     arrayTrueWords: Word[],

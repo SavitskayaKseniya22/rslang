@@ -272,13 +272,13 @@ class TextBookPage {
         wordDiv.classList.contains('tb-learned-word') ||
         wordDiv.classList.contains('tb-normal-word')
       ) {
-        this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
+      await  this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
           optional: { timesGuessed: 3, timesMax: 3, dateEncountered: date, dateLearned: dateStr },
         })
       } else {
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
-        this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
+       await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
           optional: { timesGuessed: 3, timesMax: 3, dateEncountered: '0', dateLearned: dateStr },
         })
@@ -404,9 +404,10 @@ class TextBookPage {
         ;(document.querySelector('.page-num') as HTMLInputElement).disabled = true
         document.querySelector('.page-num').classList.add('tb-finished-page')
       }
-      if (this.pageWordsArr.length === 20 || this.curPage > 29 || this.curPage < 1) {
+      if (this.pageWordsArr.length === 20 || this.curPage > 29 || this.curPage < 0) {
         button.disabled = true
         button.classList.add('tb-disabled-minigame-btn')
+        document.querySelector('.page-num').classList.add('tb-finished-page')
       }
     })
   }
