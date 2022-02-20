@@ -18,12 +18,16 @@
 
 .main-feature-list {
   flex-wrap: wrap;
+  column-gap: 1rem;
+  row-gap: 1rem;
 }
 
 .main-feature-list > * {
-  width: 25%;
   min-width: 160px;
+  width: 25%;
   padding: 1rem;
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
 .main-team-list {
@@ -63,16 +67,13 @@
   justify-content: space-between;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .main-feature-list > * {
-    width: 50%;
+    min-width: 50%;
   }
 }
-@media (max-width: 550px) {
-  .main-feature-list > * {
-    width: 100%;
-  }
 
+@media (max-width: 550px) {
   .main-team-list > * {
     width: 100%;
   }
