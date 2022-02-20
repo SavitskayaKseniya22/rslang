@@ -16,8 +16,10 @@ class AudioGame {
   countInRow: number
   countKey: number
   arrayCountInRow: number[] = []
+  apiUrl: string
   player = document.createElement('audio')
-  constructor(data: Question[], arrayTrueWords: Word[], group: number, page: number) {
+  constructor(data: Question[], arrayTrueWords: Word[], group: number, page: number, apiUrl: string) {
+    this.apiUrl = apiUrl
     this.groupAgain = group
     this.pageAgain = page
     this.arrayNumberTrueAnswers = []
@@ -28,9 +30,8 @@ class AudioGame {
     this.countKey = 0
     this.countInRow = 0
     this.arrayQuestions = data
-    this.startGame(this.arrayQuestions[0])
+    this.startGame(this.arrayQuestions[0], this.apiUrl)
     document.addEventListener('keydown', (event) => {
-      console.log(event.key);
       if (event.key === '1' && this.count < this.arrayQuestions.length) {
         this.addAnswerFromKeyboard(0)
       } else if (event.key === '2' && this.count < this.arrayQuestions.length) {
@@ -52,14 +53,14 @@ class AudioGame {
       }
     })
   }
-  startGame(data: Question) {
-    new BasicQuestion().renderQuestion(data)
+  startGame(data: Question, apiUrl: string) {
+    new BasicQuestion().renderQuestion(data, apiUrl)
     this.addEventListenerForButtonAction()
     this.addEventListenerForWrapperAnswers()
     this.trueAnswer = data.truthyAnswer.wordTranslate
-    this.addSoundAnswer(`http://localhost:3000/${data.truthyAnswer.audio}`)
-    this.addEventListenerForBigIconSound(`http://localhost:3000/${data.truthyAnswer.audio}`)
-    this.addEventListenerForSmallIconSound(`http://localhost:3000/${data.truthyAnswer.audio}`)
+    this.addSoundAnswer(`${apiUrl}/${data.truthyAnswer.audio}`)
+    this.addEventListenerForBigIconSound(`${apiUrl}/${data.truthyAnswer.audio}`)
+    this.addEventListenerForSmallIconSound(`${apiUrl}/${data.truthyAnswer.audio}`)
   }
   addAnswerFromKeyboard(count: number) {
 
@@ -163,7 +164,7 @@ class AudioGame {
     this.countKey = 0
     this.count++
     if (this.count < this.arrayQuestions.length) {
-      this.startGame(this.arrayQuestions[this.count])
+      this.startGame(this.arrayQuestions[this.count], this.apiUrl)
     } else {
       new ResultRaund(
         this.arrayTrueWords,
@@ -204,7 +205,7 @@ class AudioGame {
     const resultWrapper = document.querySelectorAll('.voice-icon-result')
     resultWrapper.forEach((item) => {
       item.addEventListener('click', () => {
-        this.addSoundAnswer(`http://localhost:3000/${item.id}`)
+        this.addSoundAnswer(`${this.apiUrl}/${item.id}`)
       })
     })
   }

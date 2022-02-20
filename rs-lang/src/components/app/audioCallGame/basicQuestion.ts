@@ -4,14 +4,14 @@ import Answer from './answer'
 import { Question, Word } from '../interfaces/interfaces'
 
 class BasicQuestion {
-  renderQuestion(question: Question) {
+  renderQuestion(question: Question, apiUrl: string) {
     const mainWrapper = document.createElement('div')
     const arrayAnswers = [question.truthyAnswer].concat(question.falsyAnswers)
     document.querySelector('.main').innerHTML = ''
     mainWrapper.classList.add('question')
     mainWrapper.append(
       this.addIconVoice(),
-      this.addWrapperForAnswer(question.truthyAnswer.image, question.truthyAnswer.word),
+      this.addWrapperForAnswer(question.truthyAnswer.image, question.truthyAnswer.word, apiUrl),
       this.addAnswers(arrayAnswers),
       this.addButtonAction()
     )
@@ -23,7 +23,7 @@ class BasicQuestion {
     wrapperForIconVoice.classList.add('voice-icon')
     return wrapperForIconVoice
   }
-  addWrapperForAnswer(pathToImage: string, word: string) {
+  addWrapperForAnswer(pathToImage: string, word: string, apiUrl: string) {
     const wrapperForAnswersSmall = document.createElement('button')
     const wrapperForAnswer = document.createElement('div')
     const wrapperForAnswerContent = document.createElement('div')
@@ -36,7 +36,7 @@ class BasicQuestion {
     wrapperForAnswerContent.append(wrapperForAnswersSmall, wordAnswer)
     wrapperForAnswer.classList.add('question', 'wrapper-answer')
     wrapperForAnswer.append(
-      new ImageIconVoice().addIconVoice(`http://localhost:3000/${pathToImage}`),
+      new ImageIconVoice().addIconVoice(`${apiUrl}/${pathToImage}`),
       wrapperForAnswerContent
     )
     return wrapperForAnswer
