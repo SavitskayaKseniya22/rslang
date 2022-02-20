@@ -49,10 +49,14 @@ export class SprintResult {
       let audioStat: statAudio
       try {
         const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
+
         this.stats.streak =
           tempStats.optional.sprintStat.streak < this.streak ? this.streak : tempStats.optional.sprintStat.streak
 
-        this.stats.percent = Math.round((tempStats.optional.sprintStat.percent + this.percent) / 2)
+        this.stats.percent = tempStats.optional.sprintStat.played
+          ? Math.round((tempStats.optional.sprintStat.percent + this.percent) / 2)
+          : this.percent
+
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
