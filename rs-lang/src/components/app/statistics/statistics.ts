@@ -28,7 +28,6 @@ class Statistics {
     <div class="stat-wrapper">
       <h1 class="stat-wrapper__title">Statistics</h1>
       <p class="stat-wrapper__today-title">Log in to get statistics</p>
-      
     </div>`
     )
   }

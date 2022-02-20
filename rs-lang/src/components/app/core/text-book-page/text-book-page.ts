@@ -166,7 +166,6 @@ class TextBookPage {
         await this.getWords()
         this.addControls()
       }
-
     })
     document.querySelectorAll('.group-select').forEach((div) => {
       div.addEventListener('click', async (e) => {
@@ -272,13 +271,13 @@ class TextBookPage {
         wordDiv.classList.contains('tb-learned-word') ||
         wordDiv.classList.contains('tb-normal-word')
       ) {
-      await  this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
+        await this.apiService.requestUpdateUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
           optional: { timesGuessed: 3, timesMax: 3, dateEncountered: date, dateLearned: dateStr },
         })
       } else {
         // console.log({ timesGuessed: 3, timesMax: 3, dateEncountered: Date.now(), dateLearned: Date.now() })
-       await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
+        await this.apiService.requestAddUserWord(this.apiService.user.userId, id, {
           difficulty: 'learned',
           optional: { timesGuessed: 3, timesMax: 3, dateEncountered: '0', dateLearned: dateStr },
         })

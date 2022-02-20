@@ -89,15 +89,14 @@ export interface statObj {
   }
 }
 export interface statAudio {
-  countNewWord: number,
-  percentTrueAnswer: number,
-  inRow: number,
+  countNewWord: number
+  percentTrueAnswer: number
+  inRow: number
   played: boolean
 }
 export interface statSprint {
-  streak: number,
-  percent: number,
-  newWords: number,
+  streak: number
+  percent: number
+  newWords: number
   played: boolean
 }
-

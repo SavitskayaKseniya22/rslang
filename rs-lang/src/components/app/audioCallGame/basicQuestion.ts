@@ -35,10 +35,7 @@ class BasicQuestion {
     wrapperForAnswerContent.classList.add('wrap-cont')
     wrapperForAnswerContent.append(wrapperForAnswersSmall, wordAnswer)
     wrapperForAnswer.classList.add('question', 'wrapper-answer')
-    wrapperForAnswer.append(
-      new ImageIconVoice().addIconVoice(`${apiUrl}/${pathToImage}`),
-      wrapperForAnswerContent
-    )
+    wrapperForAnswer.append(new ImageIconVoice().addIconVoice(`${apiUrl}/${pathToImage}`), wrapperForAnswerContent)
     return wrapperForAnswer
   }
   addAnswers(arrayAnswers: Word[]) {

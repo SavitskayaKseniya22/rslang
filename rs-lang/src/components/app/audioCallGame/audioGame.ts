@@ -82,13 +82,11 @@ class AudioGame {
         this.addMarkTrueAnswer(<HTMLElement>answers[count])
         this.arrayNumberTrueAnswers.push(this.count)
         this.addSoundAnswer(`images/true-call.mp3`)
-
       }
       this.addAtributeDisabled()
       this.addAnswer()
       this.countKey++
     }
-
   }
   addSoundAnswer(src: string) {
     this.player.setAttribute('src', src)
@@ -106,7 +104,10 @@ class AudioGame {
         this.addMarkTrueAnswer(<HTMLElement>event.target)
         this.addAnswer()
         this.addAtributeDisabled()
-      } else if ((<HTMLElement>event.target).innerText !== this.trueAnswer && (<HTMLElement>event.target).classList[0] === "answer") {
+      } else if (
+        (<HTMLElement>event.target).innerText !== this.trueAnswer &&
+        (<HTMLElement>event.target).classList[0] === 'answer'
+      ) {
         this.countSpace++
         this.countInRow = 0
         this.addSoundAnswer(`images/false-call.mp3`)
@@ -156,11 +157,11 @@ class AudioGame {
     })
   }
   showTrueAnswer() {
-    document.querySelectorAll(".button-answer").forEach((word) => {
+    document.querySelectorAll('.button-answer').forEach((word) => {
       if (word.innerHTML === this.arrayQuestions[this.count].truthyAnswer.wordTranslate) {
-        this.addMarkTrueAnswer((<HTMLElement>word))
+        this.addMarkTrueAnswer(<HTMLElement>word)
       }
-    });
+    })
   }
   changeQuestion() {
     this.countSpace = 0
