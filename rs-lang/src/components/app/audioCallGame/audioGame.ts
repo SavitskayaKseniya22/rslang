@@ -46,6 +46,7 @@ class AudioGame {
         event.preventDefault()
         this.countSpace++
         if (this.countSpace === 1) {
+          this.countInRow = 0
           this.showAnswer()
         } else if (this.countSpace === 2) {
           this.changeQuestion()
@@ -63,7 +64,6 @@ class AudioGame {
     this.addEventListenerForSmallIconSound(`${apiUrl}/${data.truthyAnswer.audio}`)
   }
   addAnswerFromKeyboard(count: number) {
-
     const answers = document.querySelectorAll('.answer')
     if (this.countKey === 0) {
       this.countSpace++
@@ -71,11 +71,14 @@ class AudioGame {
         this.countSpace = 1
       }
       if (this.arrayQuestions[this.count].truthyAnswer.wordTranslate !== answers[count].innerHTML) {
+        this.countInRow = 0
         this.addMarkFalseAnswer(<HTMLElement>document.querySelectorAll('.answer')[count])
         this.arrayNumberFalseAnswers.push(this.count)
         this.addSoundAnswer(`images/false-call.mp3`)
         this.showTrueAnswer()
       } else {
+        this.countInRow++
+        this.arrayCountInRow.push(this.countInRow)
         this.addMarkTrueAnswer(<HTMLElement>answers[count])
         this.arrayNumberTrueAnswers.push(this.count)
         this.addSoundAnswer(`images/true-call.mp3`)
