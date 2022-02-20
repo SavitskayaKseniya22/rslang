@@ -26,6 +26,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999999;
 }
 
 .form {
@@ -60,6 +61,14 @@
   padding: 0;
   height: 45px;
   box-sizing: border-box;
+}
+
+input:invalid {
+  border: 2px solid rgba(231, 111, 81);
+}
+
+input:valid {
+  border: 2px solid rgba(42, 157, 143);
 }
 
 .form-input:invalid {

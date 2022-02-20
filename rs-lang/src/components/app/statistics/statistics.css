@@ -1,7 +1,7 @@
 .stat-wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   text-align: center;
   flex-grow: 1;
