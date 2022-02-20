@@ -92,9 +92,23 @@ class Authorization {
     })
     document.querySelector('.email-input').addEventListener('input', (e) => {
       this.formData.email = (e.target as HTMLInputElement).value
+      const target = e.target as HTMLInputElement
+      if (target.validity.typeMismatch) {
+        target.setCustomValidity('Please enter your email adress')
+        target.reportValidity()
+      } else {
+        target.setCustomValidity('')
+      }
     })
     document.querySelector('.password-input').addEventListener('input', (e) => {
       this.formData.password = (e.target as HTMLInputElement).value
+      const target = e.target as HTMLInputElement
+      if (target.validity.typeMismatch) {
+        target.setCustomValidity('Please enter your email adress')
+        target.reportValidity()
+      } else {
+        target.setCustomValidity('')
+      }
     })
     document.querySelector('.submit-btn').addEventListener('click', async () => {
       if (eMail.validity.valid && pWord.validity.valid) {
@@ -114,6 +128,10 @@ class Authorization {
         } catch (err) {
           alert(err)
         }
+      } else {
+        alert(
+          'please make sure you have entered your email correctly and your password is composed of 8 or more characters'
+        )
       }
     })
   }
@@ -134,9 +152,26 @@ class Authorization {
     })
     document.querySelector('.email-input').addEventListener('input', (e) => {
       this.formData.email = (e.target as HTMLInputElement).value
+      const target = e.target as HTMLInputElement
+
+      if (target.validity.typeMismatch) {
+        target.setCustomValidity('Please enter your email adress')
+        target.reportValidity()
+      } else {
+        target.setCustomValidity('')
+      }
     })
     document.querySelector('.password-input').addEventListener('input', (e) => {
       this.formData.password = (e.target as HTMLInputElement).value
+      const target = e.target as HTMLInputElement
+
+      if (target.validity.tooShort) {
+        target.setCustomValidity('your password must contain 8 characters or more')
+        target.reportValidity()
+        console.log('it is invalid')
+      } else {
+        target.setCustomValidity('')
+      }
     })
     document.querySelector('.name-input').addEventListener('input', (e) => {
       this.formData.name = (e.target as HTMLInputElement).value
@@ -155,6 +190,10 @@ class Authorization {
         } catch (err) {
           alert(err)
         }
+      } else {
+        alert(
+          'please make sure you have entered your email correctly and your password is composed of 8 or more characters'
+        )
       }
     })
   }

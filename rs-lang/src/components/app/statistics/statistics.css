@@ -1,4 +1,3 @@
-
 .stat-wrapper {
   display: flex;
   flex-direction: column;
@@ -7,7 +6,6 @@
   text-align: center;
   flex-grow: 1;
 }
-
 
 .stat-wrapper__today-minigames {
   display: flex;
@@ -61,4 +59,3 @@
 .total-stat p span:last-child {
   background-color: rgba(231, 111, 81);
 }
-

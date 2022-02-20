@@ -33,7 +33,7 @@ class ApiService {
     } else if (res.status === 417) {
       throw new Error(` error: ${res.status}, user with this adress already exists`)
     } else {
-      throw res
+      throw new Error(`${res.statusText}`)
     }
   }
 
@@ -49,10 +49,12 @@ class ApiService {
     if (res.ok) {
       const content = await res.json()
       return content
-    } else if (res.status === 422) {
+    } else if (res.status === 403) {
       throw new Error('incorrect email or password')
+    } else if (res.status === 404) {
+      throw new Error('Such user does not exist')
     } else {
-      throw res
+      throw new Error(`${res.statusText}`)
     }
   }
 
