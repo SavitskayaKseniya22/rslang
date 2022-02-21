@@ -5,7 +5,7 @@ class ApiService {
   apiUrl: string
   constructor(public user: UserTemplate | null) {
     this.user = user
-    this.apiUrl = `http://localhost:3000`
+    this.apiUrl = `https://nikita1814-react-learnwords.herokuapp.com`
   }
 
   async requestWords(grp: number, page: number) {
@@ -205,18 +205,31 @@ class ApiService {
 
   async updateToken() {
     try {
-      const updatedUser = await this.requestUpdateToken(this.user.userId)
-      this.user = updatedUser
-      localStorage.setItem('user', JSON.stringify(updatedUser))
+      const tokens = await this.requestUpdateToken(this.user.userId)
+      this.user.token = tokens.token
+      this.user.refreshToken = tokens.refreshToken
+      localStorage.setItem('user', JSON.stringify(this.user))
       window.location.reload()
     } catch (err) {
-      const error = err as Error
-      if (error.message.includes('no longer exists')) {
-        localStorage.removeItem('user')
-        window.location.reload()
-      }
+      this.user = null
+      localStorage.removeItem('user')
+      window.location.reload()
     }
   }
+
+  async pageLoadTokenUpdate() {
+    try {
+      const tokens = await this.requestUpdateToken(this.user.userId)
+      this.user.token = tokens.token
+      this.user.refreshToken = tokens.refreshToken
+      localStorage.setItem('user', JSON.stringify(this.user))
+    } catch (err) {
+      this.user = null
+      localStorage.removeItem('user')
+      window.location.reload()
+    }
+  }
+
   async getUser() {
     const res = await fetch(`${this.apiUrl}/users/${this.user.userId}`, {
       method: 'GET',
@@ -247,9 +260,12 @@ class ApiService {
     const rawResponse = await fetch(`${this.apiUrl}/users/${id}/aggregatedWords?group=${lvl}&page=${pageNum}`, {
       method: 'GET',
     })
-    const content = await rawResponse.json()
-
-    return content
+    if (!rawResponse.ok) {
+      throw new Error(`${rawResponse.status}`)
+    } else {
+      const content = await rawResponse.json()
+      return content
+    }
   }
 
   async getAudioWords(group: number, page: number) {
@@ -268,7 +284,9 @@ class ApiService {
       },
       body: JSON.stringify(statistics),
     })
-    // console.log(res);
+    if (!res.ok) {
+      throw new Error(`${res.status} Can not update statistics`)
+    }
   }
   async getUserStatistics(userId: string) {
     const rawResponse = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
@@ -279,8 +297,12 @@ class ApiService {
         'Content-Type': 'application/json',
       },
     })
-    const content = await rawResponse.json()
-    return content
+    if (!rawResponse.ok) {
+      throw new Error(`${rawResponse.status}`)
+    } else {
+      const content = await rawResponse.json()
+      return content
+    }
   }
 }
 
