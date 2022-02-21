@@ -205,16 +205,15 @@ class ApiService {
 
   async updateToken() {
     try {
-      const updatedUser = await this.requestUpdateToken(this.user.userId)
-      this.user = updatedUser
-      localStorage.setItem('user', JSON.stringify(updatedUser))
+      const tokens = await this.requestUpdateToken(this.user.userId)
+      this.user.token = tokens.token
+      this.user.refreshToken = tokens.refreshToken 
+      localStorage.setItem('user', JSON.stringify(this.user))
       window.location.reload()
     } catch (err) {
-      const error = err as Error
-      if (error.message.includes('no longer exists')) {
+        this.user = null;
         localStorage.removeItem('user')
         window.location.reload()
-      }
     }
   }
   async getUser() {
@@ -267,8 +266,10 @@ class ApiService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(statistics),
-    })
-    // console.log(res);
+    }) 
+    if (!res.ok){
+      throw new Error('Can not update statistics')
+    }
   }
   async getUserStatistics(userId: string) {
     const rawResponse = await fetch(`${this.apiUrl}/users/${userId}/statistics`, {
