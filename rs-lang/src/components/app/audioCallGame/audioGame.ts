@@ -38,9 +38,9 @@ class AudioGame {
         this.gameFromKeyboard(event)
       }
     })
-    window.addEventListener("hashchange", () => {
+    window.addEventListener('hashchange', () => {
       this.countChange++
-    });
+    })
   }
   startGame(data: Question, apiUrl: string) {
     new BasicQuestion().renderQuestion(data, apiUrl)
@@ -52,7 +52,6 @@ class AudioGame {
     this.addEventListenerForSmallIconSound(`${apiUrl}/${data.truthyAnswer.audio}`)
   }
   gameFromKeyboard(event: KeyboardEvent) {
-    console.log(this.count);
     if (event.key === '1' && this.count < this.arrayQuestions.length) {
       this.addAnswerFromKeyboard(0)
     } else if (event.key === '2' && this.count < this.arrayQuestions.length) {
@@ -149,9 +148,11 @@ class AudioGame {
   }
   addMarkFalseAnswer(element: HTMLElement) {
     element.style.border = '5px solid red'
+    element.style.opacity = '0.8'
   }
   addMarkTrueAnswer(element: HTMLElement) {
     element.style.border = '5px solid green'
+    element.style.opacity = '1'
   }
   showAnswer() {
     this.countKey++
@@ -185,7 +186,7 @@ class AudioGame {
       this.startGame(this.arrayQuestions[this.count], this.apiUrl)
     } else {
       this.countChange++
-      this.removeKeyboardListeners();
+      this.removeKeyboardListeners()
       new ResultRaund(
         this.arrayTrueWords,
         this.arrayNumberTrueAnswers,

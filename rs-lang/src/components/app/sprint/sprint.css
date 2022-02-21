@@ -145,6 +145,11 @@
   font-size: 3rem;
 }
 
+.block-button,
+button:disabled {
+  opacity: 0.3;
+}
+
 @media (max-width: 1024px) {
   .sprint {
     width: 80%;
