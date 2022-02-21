@@ -23,9 +23,9 @@ class App {
     this.mainPage = new MainPage()
     this.textBook = new TextBookPage(this.apiService)
     this.navMenu = new NavMenu(this.apiService, this.mainPage, this.textBook)
-    if (this.user !== null) {
+    /*if (this.user !== null) {
       this.resetStat()
-    }
+    }*/
   }
   async resetStat() {
     try {
@@ -97,11 +97,11 @@ class App {
       try {
         await this.apiService.getUser()
         this.authorization.renderLoggedIn(this.user.name)
+        await this.apiService.pageLoadTokenUpdate()
+        this.user = this.apiService.user
       } catch (err) {
         const error = err as Error
-        if (error.message.includes('401')) {
-          await this.apiService.updateToken()
-        } else if (error.message.includes('404')) {
+        if (error.message.includes('404')) {
           console.log('sorry such user no longer exists')
           this.user = null
           localStorage.removeItem('user')
@@ -110,6 +110,7 @@ class App {
           await this.apiService.updateToken()
         }
       }
+      await this.resetStat()
     } else {
       this.authorization.addListener()
     }

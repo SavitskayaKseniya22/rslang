@@ -216,6 +216,20 @@ class ApiService {
       window.location.reload()
     }
   }
+
+  async pageLoadTokenUpdate() {
+    try {
+      const tokens = await this.requestUpdateToken(this.user.userId)
+      this.user.token = tokens.token
+      this.user.refreshToken = tokens.refreshToken
+      localStorage.setItem('user', JSON.stringify(this.user))
+    } catch (err) {
+      this.user = null
+      localStorage.removeItem('user')
+      window.location.reload()
+    }
+  }
+
   async getUser() {
     const res = await fetch(`${this.apiUrl}/users/${this.user.userId}`, {
       method: 'GET',
