@@ -37,47 +37,54 @@ class ConrolGame {
     }
   }
   async getQuestionsUser() {
-    const trueWords =
-      this.bookQuestions.length !== 0
-        ? this.bookQuestions
-        : await this.apiService.requestGetUserAgregatedPageGrp(
+    try {
+      const trueWords =
+        this.bookQuestions.length !== 0
+          ? this.bookQuestions
+          : await this.apiService.requestGetUserAgregatedPageGrp(
             this.apiService.user.userId,
             this.groupTrue.toString(),
             this.pageTrue.toString(),
             this.wordsPerPage.toString()
           )
-    const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
-      this.apiService.user.userId,
-      this.groupFirstPartFalse.toString(),
-      this.pageFirstPartFalse.toString(),
-      this.wordsPerPage.toString()
-    )
-    const falseSecondPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
-      this.apiService.user.userId,
-      this.groupSecondPartFalse.toString(),
-      this.pageSecondPartFalse.toString(),
-      this.wordsPerPage.toString()
-    )
-    const falseThirdPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
-      this.apiService.user.userId,
-      this.groupThirdPartFalse.toString(),
-      this.pageThirdPartFalse.toString(),
-      this.wordsPerPage.toString()
-    )
-    const falseFourthPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
-      this.apiService.user.userId,
-      this.groupFourthPartFalse.toString(),
-      this.pageFourthPartFalse.toString(),
-      this.wordsPerPage.toString()
-    )
-    const { arrayQuestions, arrayTrueWords } = this.createQuestions(
-      trueWords,
-      falseFirstPartWords,
-      falseSecondPartWords,
-      falseThirdPartWords,
-      falseFourthPartWords
-    )
-    new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue, this.apiUrl)
+      const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+        this.apiService.user.userId,
+        this.groupFirstPartFalse.toString(),
+        this.pageFirstPartFalse.toString(),
+        this.wordsPerPage.toString()
+      )
+      const falseSecondPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+        this.apiService.user.userId,
+        this.groupSecondPartFalse.toString(),
+        this.pageSecondPartFalse.toString(),
+        this.wordsPerPage.toString()
+      )
+      const falseThirdPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+        this.apiService.user.userId,
+        this.groupThirdPartFalse.toString(),
+        this.pageThirdPartFalse.toString(),
+        this.wordsPerPage.toString()
+      )
+      const falseFourthPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
+        this.apiService.user.userId,
+        this.groupFourthPartFalse.toString(),
+        this.pageFourthPartFalse.toString(),
+        this.wordsPerPage.toString()
+      )
+      const { arrayQuestions, arrayTrueWords } = this.createQuestions(
+        trueWords,
+        falseFirstPartWords,
+        falseSecondPartWords,
+        falseThirdPartWords,
+        falseFourthPartWords
+      )
+      new AudioGame(arrayQuestions, arrayTrueWords, this.groupTrue, this.pageTrue, this.apiUrl)
+    } catch (error) {
+      if ((<Error>error).message.includes('401') || (<Error>error).message.includes('403')) {
+        await this.apiService.updateToken()
+      }
+    }
+
   }
   async getQuestions() {
     const trueWords = await this.apiService.getAudioWords(this.groupTrue, this.pageTrue)
