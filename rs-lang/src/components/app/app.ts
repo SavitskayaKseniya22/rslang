@@ -15,7 +15,8 @@ class App {
   constructor() {
     this.user = null
     if (localStorage.getItem('user')) {
-      this.user = JSON.parse(localStorage.getItem('user'))
+      const usr = JSON.parse(localStorage.getItem('user'))
+      this.user = usr === undefined ? null : usr
     }
     this.apiService = new ApiService(this.user)
     this.authorization = new Authorization(this.apiService)
@@ -39,6 +40,7 @@ class App {
     }
   }
   requestResetStat() {
+    try{
     this.apiService.requestUpdStatistics(this.apiService.user.userId, {
       learnedWords: 0,
       optional: {
@@ -57,7 +59,10 @@ class App {
         dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
       },
     })
+  } catch(err){
+  this.apiService.updateToken()
   }
+}
   async run(): Promise<void> {
     document.querySelector('.body').innerHTML = `
       <div class="auth-overlay hidden">
@@ -96,8 +101,13 @@ class App {
         const error = err as Error
         if (error.message.includes('401')) {
           await this.apiService.updateToken()
-        } else {
-          alert(err)
+        } else if (error.message.includes('404')) {
+          console.log('sorry such user no longer exists')
+          this.user = null;
+          localStorage.removeItem('user')
+          window.location.reload()
+        } else{
+          await this.apiService.updateToken()
         }
       }
     } else {
