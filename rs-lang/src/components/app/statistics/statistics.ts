@@ -21,42 +21,51 @@ class Statistics {
     this.renderUser(userStatistics, learnedWords.length)
   }
   renderWithoutUser() {
-   document.querySelector('.main').innerHTML = '';
-    document.querySelector('.main').insertAdjacentHTML('afterbegin', `
+    document.querySelector('.main').innerHTML = ''
+    document.querySelector('.main').insertAdjacentHTML(
+      'afterbegin',
+      `
     <div class="stat-wrapper">
       <h1 class="stat-wrapper__title">Statistics</h1>
-      <h2 class="stat-wrapper__today-title">Log in to get statistics</h2>
-    </div>`);
+      <p class="stat-wrapper__today-title">Log in to get statistics</p>
+    </div>`
+    )
   }
   renderUser(userStatistics: statObj, learnedWords: number) {
-    document.querySelector('.main').innerHTML = '';
-    document.querySelector('.main').insertAdjacentHTML('afterbegin', this.getLayoutStatistics([
-      userStatistics.optional.audioStat.countNewWord.toString(),
-      userStatistics.optional.audioStat.percentTrueAnswer.toString(),
-      userStatistics.optional.audioStat.inRow.toString(),
-      userStatistics.optional.sprintStat.newWords.toString(),
-      userStatistics.optional.sprintStat.percent.toString(),
-      userStatistics.optional.sprintStat.streak.toString(),
-      learnedWords.toString(),
-      userStatistics.optional.sprintStat.played.toString(),
-      userStatistics.optional.audioStat.played.toString(),
-    ]));
+    document.querySelector('.main').innerHTML = ''
+    document
+      .querySelector('.main')
+      .insertAdjacentHTML(
+        'afterbegin',
+        this.getLayoutStatistics([
+          userStatistics.optional.audioStat.countNewWord.toString(),
+          userStatistics.optional.audioStat.percentTrueAnswer.toString(),
+          userStatistics.optional.audioStat.inRow.toString(),
+          userStatistics.optional.sprintStat.newWords.toString(),
+          userStatistics.optional.sprintStat.percent.toString(),
+          userStatistics.optional.sprintStat.streak.toString(),
+          learnedWords.toString(),
+          userStatistics.optional.sprintStat.played.toString(),
+          userStatistics.optional.audioStat.played.toString(),
+        ])
+      )
   }
   getLayoutStatistics(arr: string[]) {
-    const [countNewWord, percentTrueAnswer, inRow, newWords, percent, streak, learnedWords, playedAudio, playedSprint] = arr
-    let count = 1;
-    const newWordAudio = arr.length !== 0 ? Number(countNewWord) : 0;
-    const percentAudio = arr.length !== 0 ? Number(percentTrueAnswer) : 0;
-    const inRowAudio = arr.length !== 0 ? inRow : 0;
-    const newWordSprint = arr.length !== 0 ? Number(newWords) : 0;
-    const percentSprint = arr.length !== 0 ? Number(percent) : 0;
-    const inRowSprint = arr.length !== 0 ? streak : 0;
-    const learnWords = arr.length !== 0 ? learnedWords : 0;
+    const [countNewWord, percentTrueAnswer, inRow, newWords, percent, streak, learnedWords, playedAudio, playedSprint] =
+      arr
+    let count = 1
+    const newWordAudio = arr.length !== 0 ? Number(countNewWord) : 0
+    const percentAudio = arr.length !== 0 ? Number(percentTrueAnswer) : 0
+    const inRowAudio = arr.length !== 0 ? inRow : 0
+    const newWordSprint = arr.length !== 0 ? Number(newWords) : 0
+    const percentSprint = arr.length !== 0 ? Number(percent) : 0
+    const inRowSprint = arr.length !== 0 ? streak : 0
+    const learnWords = arr.length !== 0 ? learnedWords : 0
 
-    if (playedAudio !== "false" && playedSprint !== "false") {
-      count = 2;
+    if (playedAudio !== 'false' && playedSprint !== 'false') {
+      count = 2
     } else count = 1
-    const percentGames = Math.floor((percentAudio / count + percentSprint / count))
+    const percentGames = Math.floor(percentAudio / count + percentSprint / count)
 
     return `<div class="stat-wrapper">
       <h1 class="stat-wrapper__title">Statistics</h1>

@@ -41,11 +41,11 @@ class ConrolGame {
       this.bookQuestions.length !== 0
         ? this.bookQuestions
         : await this.apiService.requestGetUserAgregatedPageGrp(
-          this.apiService.user.userId,
-          this.groupTrue.toString(),
-          this.pageTrue.toString(),
-          this.wordsPerPage.toString()
-        )
+            this.apiService.user.userId,
+            this.groupTrue.toString(),
+            this.pageTrue.toString(),
+            this.wordsPerPage.toString()
+          )
     const falseFirstPartWords = await this.apiService.requestGetUserAgregatedPageGrp(
       this.apiService.user.userId,
       this.groupFirstPartFalse.toString(),

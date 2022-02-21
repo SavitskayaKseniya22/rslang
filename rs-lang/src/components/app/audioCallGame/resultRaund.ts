@@ -33,38 +33,45 @@ class ResultRaund {
     }
   }
   async createStatistic(arrayCountInRow: number[]) {
-    arrayCountInRow.sort((a, b) => a - b);
-    let countNewWord = this.arrayTrueWords.filter((word) => word.userWord === undefined || word.userWord.optional.dateEncountered === "0").length;
-    let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100;
-    let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0;
+    arrayCountInRow.sort((a, b) => a - b)
+    let countNewWord = this.arrayTrueWords.filter(
+      (word) => word.userWord === undefined || word.userWord.optional.dateEncountered === '0'
+    ).length
+    let percentTrueAnswer = (this.arrayNumberTrueAnswers.length / this.arrayTrueWords.length) * 100
+    let inRow = arrayCountInRow.length !== 0 ? arrayCountInRow[arrayCountInRow.length - 1] : 0
     try {
-      const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId);
-      const sprintStat = userStatistics.optional.sprintStat !== undefined ? userStatistics.optional.sprintStat : {};
-      countNewWord = userStatistics.optional.audioStat.countNewWord + countNewWord;
-      percentTrueAnswer = userStatistics.optional.audioStat.percentTrueAnswer === 0 ? percentTrueAnswer : Math.floor((userStatistics.optional.audioStat.percentTrueAnswer + percentTrueAnswer) / 2);
-      inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow;
-      this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow);
+      const userStatistics = await this.apiServiceUser.getUserStatistics(this.apiServiceUser.user.userId)
+      const sprintStat = userStatistics.optional.sprintStat !== undefined ? userStatistics.optional.sprintStat : {}
+      countNewWord = userStatistics.optional.audioStat.countNewWord + countNewWord
+      percentTrueAnswer =
+        userStatistics.optional.audioStat.percentTrueAnswer === 0
+          ? percentTrueAnswer
+          : Math.floor((userStatistics.optional.audioStat.percentTrueAnswer + percentTrueAnswer) / 2)
+      inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow
+      this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow)
     } catch (error) {
-      this.requestStatistics({ streak: 0, percent: 0, newWords: 0, played: false }, countNewWord, percentTrueAnswer, inRow);
+      this.requestStatistics(
+        { streak: 0, percent: 0, newWords: 0, played: false },
+        countNewWord,
+        percentTrueAnswer,
+        inRow
+      )
     }
   }
   requestStatistics(sprintStat: statSprint, countNewWord: number, percentTrueAnswer: number, inRow: number) {
-    this.apiServiceUser.requestUpdStatistics(
-      this.apiServiceUser.user.userId,
-      {
-        learnedWords: 0,
-        optional: {
-          sprintStat: sprintStat,
-          audioStat: {
-            countNewWord: countNewWord,
-            percentTrueAnswer: percentTrueAnswer,
-            inRow: inRow,
-            played: true
-          },
-          dateStr: this.dateStr
-        }
-      }
-    );
+    this.apiServiceUser.requestUpdStatistics(this.apiServiceUser.user.userId, {
+      learnedWords: 0,
+      optional: {
+        sprintStat: sprintStat,
+        audioStat: {
+          countNewWord: countNewWord,
+          percentTrueAnswer: percentTrueAnswer,
+          inRow: inRow,
+          played: true,
+        },
+        dateStr: this.dateStr,
+      },
+    })
   }
   requestResultRaund() {
     this.arrayTrueWords.forEach((word, i, words) => {
@@ -92,7 +99,7 @@ class ResultRaund {
     if (trueAnswer.difficulty === 'normal') {
       const timesMax = trueAnswer.optional.timesMax
       let timesGuessed = trueAnswer.optional.timesGuessed
-      const date = trueAnswer.optional.dateEncountered === "0" ? this.dateStr : trueAnswer.optional.dateEncountered
+      const date = trueAnswer.optional.dateEncountered === '0' ? this.dateStr : trueAnswer.optional.dateEncountered
       const difficulty = trueAnswer.optional.difficulty
       timesGuessed++
       if (timesGuessed >= timesMax) {
@@ -103,13 +110,13 @@ class ResultRaund {
       } else if (timesGuessed < timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: difficulty,
-          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: "0" },
+          optional: { timesGuessed: timesGuessed, timesMax: 3, dateEncountered: date, dateLearned: '0' },
         })
       }
     } else if (trueAnswer.difficulty === 'difficult') {
       const timesMax = trueAnswer.optional.timesMax
       let timesGuessed = trueAnswer.optional.timesGuessed
-      const date = trueAnswer.optional.dateEncountered === "0" ? this.dateStr : trueAnswer.optional.dateEncountered
+      const date = trueAnswer.optional.dateEncountered === '0' ? this.dateStr : trueAnswer.optional.dateEncountered
       const difficulty = trueAnswer.optional.difficulty
       timesGuessed++
       if (timesGuessed >= timesMax) {
@@ -120,7 +127,7 @@ class ResultRaund {
       } else if (timesGuessed < timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: difficulty,
-          optional: { timesGuessed: timesGuessed, timesMax: 5, dateEncountered: date, dateLearned: "0" },
+          optional: { timesGuessed: timesGuessed, timesMax: 5, dateEncountered: date, dateLearned: '0' },
         })
       }
     } else if (trueAnswer.difficulty === 'learned') {
@@ -130,7 +137,12 @@ class ResultRaund {
       if (timesGuessed < timesMax) {
         this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
           difficulty: 'learned',
-          optional: { timesGuessed: timesGuessed, timesMax: timesMax, dateEncountered: date, dateLearned: this.dateStr },
+          optional: {
+            timesGuessed: timesGuessed,
+            timesMax: timesMax,
+            dateEncountered: date,
+            dateLearned: this.dateStr,
+          },
         })
       }
     }
@@ -140,14 +152,15 @@ class ResultRaund {
 
     if (falseAnswer.difficulty === 'normal') {
       const difficulty = falseAnswer.difficulty
-      const date = falseAnswer.optional.dateEncountered === "0" ? this.dateStr : falseAnswer.optional.dateEncountered
+      const date = falseAnswer.optional.dateEncountered === '0' ? this.dateStr : falseAnswer.optional.dateEncountered
       this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
         difficulty: difficulty,
         optional: { timesGuessed: 0, timesMax: 3, dateEncountered: date, dateLearned: '0' },
       })
-    } if (falseAnswer.difficulty === 'difficult') {
+    }
+    if (falseAnswer.difficulty === 'difficult') {
       const difficulty = falseAnswer.difficulty
-      const date = falseAnswer.optional.dateEncountered === "0" ? this.dateStr : falseAnswer.optional.dateEncountered
+      const date = falseAnswer.optional.dateEncountered === '0' ? this.dateStr : falseAnswer.optional.dateEncountered
       this.apiServiceUser.requestUpdateUserWord(this.apiServiceUser.user.userId, words[i]._id, {
         difficulty: difficulty,
         optional: { timesGuessed: 0, timesMax: 5, dateEncountered: date, dateLearned: '0' },
