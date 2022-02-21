@@ -40,29 +40,29 @@ class App {
     }
   }
   requestResetStat() {
-    try{
-    this.apiService.requestUpdStatistics(this.apiService.user.userId, {
-      learnedWords: 0,
-      optional: {
-        sprintStat: {
-          streak: 0,
-          percent: 0,
-          newWords: 0,
-          played: false,
+    try {
+      this.apiService.requestUpdStatistics(this.apiService.user.userId, {
+        learnedWords: 0,
+        optional: {
+          sprintStat: {
+            streak: 0,
+            percent: 0,
+            newWords: 0,
+            played: false,
+          },
+          audioStat: {
+            countNewWord: 0,
+            percentTrueAnswer: 0,
+            inRow: 0,
+            played: false,
+          },
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
         },
-        audioStat: {
-          countNewWord: 0,
-          percentTrueAnswer: 0,
-          inRow: 0,
-          played: false,
-        },
-        dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
-      },
-    })
-  } catch(err){
-  this.apiService.updateToken()
+      })
+    } catch (err) {
+      this.apiService.updateToken()
+    }
   }
-}
   async run(): Promise<void> {
     document.querySelector('.body').innerHTML = `
       <div class="auth-overlay hidden">
@@ -103,10 +103,10 @@ class App {
           await this.apiService.updateToken()
         } else if (error.message.includes('404')) {
           console.log('sorry such user no longer exists')
-          this.user = null;
+          this.user = null
           localStorage.removeItem('user')
           window.location.reload()
-        } else{
+        } else {
           await this.apiService.updateToken()
         }
       }

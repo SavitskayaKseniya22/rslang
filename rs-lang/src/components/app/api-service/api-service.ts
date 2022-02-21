@@ -207,13 +207,13 @@ class ApiService {
     try {
       const tokens = await this.requestUpdateToken(this.user.userId)
       this.user.token = tokens.token
-      this.user.refreshToken = tokens.refreshToken 
+      this.user.refreshToken = tokens.refreshToken
       localStorage.setItem('user', JSON.stringify(this.user))
       window.location.reload()
     } catch (err) {
-        this.user = null;
-        localStorage.removeItem('user')
-        window.location.reload()
+      this.user = null
+      localStorage.removeItem('user')
+      window.location.reload()
     }
   }
   async getUser() {
@@ -246,9 +246,12 @@ class ApiService {
     const rawResponse = await fetch(`${this.apiUrl}/users/${id}/aggregatedWords?group=${lvl}&page=${pageNum}`, {
       method: 'GET',
     })
-    const content = await rawResponse.json()
-
-    return content
+    if (!rawResponse.ok) {
+      throw new Error(`${rawResponse.status}`)
+    } else {
+      const content = await rawResponse.json()
+      return content
+    }
   }
 
   async getAudioWords(group: number, page: number) {
@@ -266,9 +269,9 @@ class ApiService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(statistics),
-    }) 
-    if (!res.ok){
-      throw new Error('Can not update statistics')
+    })
+    if (!res.ok) {
+      throw new Error(`${res.status} Can not update statistics`)
     }
   }
   async getUserStatistics(userId: string) {
@@ -280,8 +283,12 @@ class ApiService {
         'Content-Type': 'application/json',
       },
     })
-    const content = await rawResponse.json()
-    return content
+    if (!rawResponse.ok) {
+      throw new Error(`${rawResponse.status}`)
+    } else {
+      const content = await rawResponse.json()
+      return content
+    }
   }
 }
 
