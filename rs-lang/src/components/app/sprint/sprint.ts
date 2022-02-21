@@ -14,7 +14,8 @@ export class Sprint {
   isPaused: boolean
   id: number
   timerCurrentValue: number
-  handleSprint: (e: KeyboardEvent | Event) => void
+  handleClick: (e: MouseEvent) => void
+  handlePress: (e: KeyboardEvent) => void
 
   constructor(lvl: number, service: ApiService, wordCollection?: Word[]) {
     this.settings = {
@@ -32,7 +33,9 @@ export class Sprint {
       id: service.user?.userId,
     }
     this.words = wordCollection ?? null
-    this.handleSprint = this.addListener.bind(this)
+    this.handleClick = this.clickListener.bind(this)
+    this.handlePress = this.buttonListener.bind(this)
+
     this.round = new SprintRound()
     this.initListener()
     this.round.initListener()
@@ -181,40 +184,44 @@ export class Sprint {
     const buttons = document.querySelectorAll('.sprint__verdict button')
     if (isPaused) {
       buttons.forEach((element) => {
-        element.setAttribute('disabled', 'disabled')
+        element.classList.add('block-button')
       })
     } else {
       buttons.forEach((element) => {
-        element.removeAttribute('disabled')
+        element.classList.remove('block-button')
       })
     }
   }
 
-  private addListener(e: KeyboardEvent | Event) {
-    const target = e.target as HTMLElement
+  private buttonListener(e: KeyboardEvent) {
     if ((e as KeyboardEvent).code == 'Space' && !this.settings.isRoundOver) {
       e.preventDefault()
       this.settings.isPaused = !this.settings.isPaused
       this.blockButtons(this.settings.isPaused)
-    } else if (e.type === 'click' && target.closest('.sprint__fullscreen_toggle')) {
+    }
+  }
+
+  private clickListener(e: MouseEvent) {
+    const target = e.target as HTMLElement
+    if (target.closest('.sprint__fullscreen_toggle')) {
       this.toggleFullScreen()
-    } else if (e.type === 'click' && target.closest('.sprint__background_toggle')) {
+    } else if (target.closest('.sprint__background_toggle')) {
       this.toggleMusic()
-    } else if (e.type === 'click' && target.closest('.new-round')) {
+    } else if (target.closest('.new-round')) {
       this.render()
-    } else if (e.type === 'click' && target.closest('.back-study')) {
+    } else if (target.closest('.back-study')) {
       window.location.hash = '#text-book'
     }
   }
 
   private initListener() {
-    document.addEventListener('click', this.handleSprint)
-    document.addEventListener('keydown', this.handleSprint)
+    document.addEventListener('click', this.handleClick)
+    document.addEventListener('keydown', this.handlePress)
 
     window.addEventListener('hashchange', () => {
       if (window.location.hash !== '#sprint') {
-        document.removeEventListener('keydown', this.handleSprint)
-        document.removeEventListener('click', this.handleSprint)
+        document.removeEventListener('keydown', this.handlePress)
+        document.removeEventListener('click', this.handleClick)
         this.round.removeListener()
       }
     })

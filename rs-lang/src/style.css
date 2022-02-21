@@ -62,6 +62,7 @@ button,
   background: rgb(212, 75, 56);
   padding: 0.5rem 0.75rem;
   outline: none;
+  transition: 0.3;
 }
 
 button:hover,

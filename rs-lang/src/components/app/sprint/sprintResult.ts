@@ -1,5 +1,5 @@
 import { Sound } from './sound'
-import { Word, SprintResultType, SprintSettings, statObj, statAudio } from '../interfaces/interfaces'
+import { Word, SprintResultType, SprintSettings } from '../interfaces/interfaces'
 
 export class SprintResult {
   correct: Word[]
