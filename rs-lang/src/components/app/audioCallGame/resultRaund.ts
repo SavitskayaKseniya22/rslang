@@ -50,6 +50,9 @@ class ResultRaund {
       inRow = userStatistics.optional.audioStat.inRow < inRow ? inRow : userStatistics.optional.audioStat.inRow
       this.requestStatistics(sprintStat, countNewWord, percentTrueAnswer, inRow)
     } catch (error) {
+      if ((<Error>error).message.includes('401') || (<Error>error).message.includes('403')) {
+        await this.apiServiceUser.updateToken()
+      }
       this.requestStatistics(
         { streak: 0, percent: 0, newWords: 0, played: false },
         countNewWord,
