@@ -103,7 +103,7 @@ export class Sprint {
     const fullScreenIcon = document.fullscreenElement ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand">'
     return `
     <div class="sprint">
-    <audio class="sprint__background" src="./sounds/sprint-background.mp3"></audio>
+    <audio class="sprint__background" src="./sounds/sprint-background.mp3" loop></audio>
     <audio class="sprint__answer_correct" src="./sounds/correctAnswer.mp3"></audio>
     <audio class="sprint__answer_wrong" src="./sounds/wrongAnswer.mp3"></audio>
     <ul class="sprint__settings">
@@ -182,21 +182,17 @@ export class Sprint {
 
   private addListener(e: KeyboardEvent | Event) {
     const target = e.target as HTMLElement
-    if (
-      (e as KeyboardEvent).code == 'Space' &&
-      !this.settings.isRoundOver &&
-      document.querySelector('.sprint__timer')
-    ) {
+    if ((e as KeyboardEvent).code == 'Space' && !this.settings.isRoundOver) {
       e.preventDefault()
       this.settings.isPaused = !this.settings.isPaused
       this.blockButtons(this.settings.isPaused)
-    } else if (target.closest('.sprint__fullscreen_toggle')) {
+    } else if (e.type === 'click' && target.closest('.sprint__fullscreen_toggle')) {
       this.toggleFullScreen()
-    } else if (target.closest('.sprint__background_toggle')) {
+    } else if (e.type === 'click' && target.closest('.sprint__background_toggle')) {
       this.toggleMusic()
-    } else if (target.closest('.new-round')) {
+    } else if (e.type === 'click' && target.closest('.new-round')) {
       this.render()
-    } else if (target.closest('.back-study')) {
+    } else if (e.type === 'click' && target.closest('.back-study')) {
       window.location.hash = '#text-book'
     }
   }
