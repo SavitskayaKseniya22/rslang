@@ -46,9 +46,9 @@ export class SprintResult {
   async updateStats() {
     if (this.settings.id) {
       this.stats = { streak: this.streak, percent: this.percent, newWords: this.newWords, played: true }
-      let audioStat: statAudio
+      let audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0, played: false }
       try {
-        const tempStats = (await this.settings.service.getUserStatistics(this.settings.id)) as statObj
+        const tempStats = await this.settings.service.getUserStatistics(this.settings.id)
 
         this.stats.streak =
           tempStats.optional.sprintStat.streak < this.streak ? this.streak : tempStats.optional.sprintStat.streak
@@ -60,17 +60,25 @@ export class SprintResult {
         this.stats.newWords = tempStats.optional.sprintStat.newWords + this.newWords
         audioStat = tempStats.optional.audioStat
       } catch (error) {
-        audioStat = { countNewWord: 0, percentTrueAnswer: 0, inRow: 0, played: false }
+        if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+          await this.settings.service.updateToken()
+        }
       }
 
-      await this.settings.service.requestUpdStatistics(this.settings.id, {
-        learnedWords: 0,
-        optional: {
-          sprintStat: this.stats,
-          audioStat: audioStat,
-          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
-        },
-      })
+      try {
+        await this.settings.service.requestUpdStatistics(this.settings.id, {
+          learnedWords: 0,
+          optional: {
+            sprintStat: this.stats,
+            audioStat: audioStat,
+            dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
+          },
+        })
+      } catch (error) {
+        if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+          await this.settings.service.updateToken()
+        }
+      }
     }
   }
 

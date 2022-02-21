@@ -72,12 +72,7 @@ export class Sprint {
     }
     if (this.settings.isFreeGame) {
       this.words = this.settings.id
-        ? await this.settings.service.requestGetUserAgregatedPageGrp(
-            this.settings.id,
-            `${this.settings.lvl}`,
-            `${this.settings.pageNumber}`,
-            `20`
-          )
+        ? await this.getUserWords()
         : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
     }
 
@@ -88,6 +83,21 @@ export class Sprint {
       : (document.querySelector('.main').innerHTML = this.makeGameContainer())
 
     this.addTimer()
+  }
+
+  private async getUserWords() {
+    try {
+      return await this.settings.service.requestGetUserAgregatedPageGrp(
+        this.settings.id,
+        `${this.settings.lvl}`,
+        `${this.settings.pageNumber}`,
+        `20`
+      )
+    } catch (error) {
+      if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+        await this.settings.service.updateToken()
+      }
+    }
   }
 
   private updateSettings() {

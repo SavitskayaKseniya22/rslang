@@ -28,10 +28,17 @@ export class SprintRound {
     if (this.settings.id) {
       if (!word.userWord) {
         this.results.newWords++
-        await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
-          difficulty: 'normal',
-          optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: dateStr, dateLearned: '0' },
-        })
+
+        try {
+          await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
+            difficulty: 'normal',
+            optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: dateStr, dateLearned: '0' },
+          })
+        } catch (error) {
+          if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+            await this.settings.service.updateToken()
+          }
+        }
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
@@ -55,7 +62,28 @@ export class SprintRound {
           word.userWord.optional.dateLearned = '0'
         }
 
-        await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
+        try {
+          await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
+        } catch (error) {
+          if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+            await this.settings.service.updateToken()
+          }
+        }
+      }
+    }
+  }
+
+  private async getUserWords() {
+    try {
+      return await this.settings.service.requestGetUserAgregatedPageGrp(
+        this.settings.id,
+        `${this.settings.lvl}`,
+        `${this.settings.pageNumber}`,
+        `20`
+      )
+    } catch (error) {
+      if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+        await this.settings.service.updateToken()
       }
     }
   }
@@ -84,16 +112,11 @@ export class SprintRound {
         }
         this.settings.pageNumber = randomNum
         this.settings.pageStorage.push(this.settings.pageNumber)
-        if (this.settings.id) {
-          this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
-            this.settings.id,
-            `${this.settings.lvl}`,
-            `${this.settings.pageNumber}`,
-            `20`
-          )
-        } else {
-          this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
-        }
+
+        this.words = this.settings.id
+          ? await this.getUserWords()
+          : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
         this.settings.resultScreen.renderResult(this.results, this.settings)
