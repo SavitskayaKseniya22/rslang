@@ -10,37 +10,39 @@ class TextBookPage {
   curGrp: number
   showDifficult: boolean
   pageWordsArr: Word[]
+  colors: string[]
   constructor(apiService: ApiService) {
     this.apiService = apiService
     this.curPage = 0
     this.curGrp = 0
     this.showDifficult = false
     this.pageWordsArr = []
+    this.colors = ['rgba(244, 162, 97)', 'rgb(212, 75, 56)', 'rgba(42, 157, 143)', 'rgba(38, 70, 83)', 'blueviolet', 'black']
   }
   async render() {
     document.querySelector('.main').innerHTML = `<div class="textbook-container">
         <audio src='' class="tb-tts"></audio>
         <div class="tb-mini-game-select">
-            <button class="tb-minigame" data-game-name="sprint"><i class="fa-solid fa-stopwatch"></i> sprint</button>
-            <button class="tb-minigame" data-game-name="audio-challenge"><i class="fa-solid fa-music"></i> audio-challenge</button>
+            <button class="tb-minigame colorSwap" data-game-name="sprint"><i class="fa-solid fa-stopwatch"></i> sprint</button>
+            <button class="tb-minigame colorSwap" data-game-name="audio-challenge"><i class="fa-solid fa-music"></i> audio-challenge</button>
         </div>
         <div class="tb-pagination">
         <h3>Pages</h3>
         <div>
-        <button data-direction="left" class="pagination-button"><i data-direction="left" class="fas fa-caret-left"></i></button>
-            <input type="number" min="1" max="30" value="${this.curPage + 1}" class="page-num">
-            <button data-direction="right" class="pagination-button"><i data-direction="right" class="fas fa-caret-right"></i></button>
+        <button data-direction="left" class="pagination-button colorSwap"><i data-direction="left" class="fas fa-caret-left"></i></button>
+            <input type="number" min="1" max="30" value="${this.curPage + 1}" class="page-num colorSwap">
+            <button data-direction="right" class="pagination-button colorSwap"><i data-direction="right" class="fas fa-caret-right"></i></button>
         </div>
             
         </div>
         <div class="tb-group-select">
         <h3>Levels</h3>
-            <button class="group-select" data-grp="0">1</button>
-            <button class="group-select" data-grp="1">2</button>
-            <button class="group-select" data-grp="2">3</button>
-            <button class="group-select" data-grp="3">4</button>
-            <button class="group-select" data-grp="4">5</button>
-            <button class="group-select" data-grp="5">6</button>
+            <button class="group-select colorSwap" data-grp="0">1</button>
+            <button class="group-select colorSwap" data-grp="1">2</button>
+            <button class="group-select colorSwap" data-grp="2">3</button>
+            <button class="group-select colorSwap" data-grp="3">4</button>
+            <button class="group-select colorSwap" data-grp="4">5</button>
+            <button class="group-select colorSwap" data-grp="5">6</button>
         </div>
         <div class="tb-words">
         </div>
@@ -48,15 +50,16 @@ class TextBookPage {
     if (!this.showDifficult) {
       document.querySelector(`[data-grp="${this.curGrp}"]`).classList.add('tb-group-selected')
     }
-    await this.getWords()
+   
     if (this.apiService.user !== null && this.apiService.user !== undefined) {
-      document.querySelector('.tb-group-select').innerHTML += '<button class="group-select difficult-select">D</button>'
+      document.querySelector('.tb-group-select').innerHTML += '<button class="group-select difficult-select colorSwap">D</button>'
 
       if (this.showDifficult) {
         document.querySelector('.difficult-select').classList.add('tb-group-selected')
       }
       await this.checkWords()
     }
+    await this.getWords()
     this.addListeners()
     this.addControls()
     if (this.showDifficult) {
@@ -99,6 +102,7 @@ class TextBookPage {
       const error = err as Error
       await this.handleUserError(error)
     }
+    this.changeColor()
   }
   drawWord(word: Word) {
     try {
@@ -113,8 +117,7 @@ class TextBookPage {
       <h3 class="tb-word-title">${word.word} ${word.transcription}</h3>
       <h3 class="tb-word-translation">${word.wordTranslate}</h3>
     </div>
-        
-        <button class="pronounce" data-tb-audio-btn-id=${id} data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${id} class="fas fa-volume-up"></i></button>
+        <button  style="background-color :${this.colors[this.curGrp]? this.colors[this.curGrp] :'rgb(212, 75, 56)' };" class="pronounce" data-tb-audio-btn-id=${id} data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}"><i data-audio-paths="${this.apiService.apiUrl}/${word.audio},${this.apiService.apiUrl}/${word.audioMeaning},${this.apiService.apiUrl}/${word.audioExample}" data-tb-audio-btn-id=${id} class="fas fa-volume-up"></i></button>
     </div>
     <div class="tb-word-definition">
         <p class="tb-definition-english">${word.textMeaning}</p>
@@ -410,6 +413,13 @@ class TextBookPage {
       }
     })
   }
+  changeColor(){
+  document.querySelectorAll('.colorSwap').forEach((elem) =>{
+    const el = elem as HTMLElement
+    el.style.backgroundColor = `${this.colors[this.curGrp] ? this.colors[this.curGrp] :'rgb(212, 75, 56)'}`
+  })
+  }
+
 }
 
 export default TextBookPage
