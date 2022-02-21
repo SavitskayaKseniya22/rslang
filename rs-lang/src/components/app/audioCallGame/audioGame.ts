@@ -15,6 +15,7 @@ class AudioGame {
   countSpace: number
   countInRow: number
   countKey: number
+  countChange: number
   arrayCountInRow: number[] = []
   apiUrl: string
   player = document.createElement('audio')
@@ -30,29 +31,16 @@ class AudioGame {
     this.countKey = 0
     this.countInRow = 0
     this.arrayQuestions = data
+    this.countChange = 0
     this.startGame(this.arrayQuestions[0], this.apiUrl)
     document.addEventListener('keydown', (event) => {
-      if (event.key === '1' && this.count < this.arrayQuestions.length) {
-        this.addAnswerFromKeyboard(0)
-      } else if (event.key === '2' && this.count < this.arrayQuestions.length) {
-        this.addAnswerFromKeyboard(1)
-      } else if (event.key === '3' && this.count < this.arrayQuestions.length) {
-        this.addAnswerFromKeyboard(2)
-      } else if (event.key === '4' && this.count < this.arrayQuestions.length) {
-        this.addAnswerFromKeyboard(3)
-      } else if (event.key === '5' && this.count < this.arrayQuestions.length) {
-        this.addAnswerFromKeyboard(4)
-      } else if (event.key === ' ' && this.count < this.arrayQuestions.length) {
-        event.preventDefault()
-        this.countSpace++
-        if (this.countSpace === 1) {
-          this.countInRow = 0
-          this.showAnswer()
-        } else if (this.countSpace === 2) {
-          this.changeQuestion()
-        }
+      if (this.countChange === 0) {
+        this.gameFromKeyboard(event)
       }
     })
+    window.addEventListener("hashchange", () => {
+      this.countChange++
+    });
   }
   startGame(data: Question, apiUrl: string) {
     new BasicQuestion().renderQuestion(data, apiUrl)
@@ -62,6 +50,29 @@ class AudioGame {
     this.addSoundAnswer(`${apiUrl}/${data.truthyAnswer.audio}`)
     this.addEventListenerForBigIconSound(`${apiUrl}/${data.truthyAnswer.audio}`)
     this.addEventListenerForSmallIconSound(`${apiUrl}/${data.truthyAnswer.audio}`)
+  }
+  gameFromKeyboard(event: KeyboardEvent) {
+    console.log(this.count);
+    if (event.key === '1' && this.count < this.arrayQuestions.length) {
+      this.addAnswerFromKeyboard(0)
+    } else if (event.key === '2' && this.count < this.arrayQuestions.length) {
+      this.addAnswerFromKeyboard(1)
+    } else if (event.key === '3' && this.count < this.arrayQuestions.length) {
+      this.addAnswerFromKeyboard(2)
+    } else if (event.key === '4' && this.count < this.arrayQuestions.length) {
+      this.addAnswerFromKeyboard(3)
+    } else if (event.key === '5' && this.count < this.arrayQuestions.length) {
+      this.addAnswerFromKeyboard(4)
+    } else if (event.key === ' ' && this.count < this.arrayQuestions.length) {
+      event.preventDefault()
+      this.countSpace++
+      if (this.countSpace === 1) {
+        this.countInRow = 0
+        this.showAnswer()
+      } else if (this.countSpace === 2) {
+        this.changeQuestion()
+      }
+    }
   }
   addAnswerFromKeyboard(count: number) {
     const answers = document.querySelectorAll('.answer')
@@ -163,13 +174,18 @@ class AudioGame {
       }
     })
   }
+
   changeQuestion() {
     this.countSpace = 0
     this.countKey = 0
-    this.count++
+    if (this.countChange === 0) {
+      this.count++
+    } else this.count = -1
     if (this.count < this.arrayQuestions.length) {
       this.startGame(this.arrayQuestions[this.count], this.apiUrl)
     } else {
+      this.countChange++
+      this.removeKeyboardListeners();
       new ResultRaund(
         this.arrayTrueWords,
         this.arrayNumberTrueAnswers,
@@ -179,6 +195,11 @@ class AudioGame {
       this.addEventListenerForResultWrapper()
       this.addEventListenerForButtonPlayAgain()
     }
+  }
+  removeKeyboardListeners() {
+    document.removeEventListener('keydown', (event) => {
+      this.gameFromKeyboard(event)
+    })
   }
   addEventListenerForButtonAction() {
     const buttonActive = document.querySelector('.button-active')
