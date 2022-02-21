@@ -5,7 +5,7 @@ class ApiService {
   apiUrl: string
   constructor(public user: UserTemplate | null) {
     this.user = user
-    this.apiUrl = `http://localhost:3000`
+    this.apiUrl = `https://nikita1814-react-learnwords.herokuapp.com`
   }
 
   async requestWords(grp: number, page: number) {
