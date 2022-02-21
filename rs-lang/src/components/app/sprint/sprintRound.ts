@@ -28,10 +28,17 @@ export class SprintRound {
     if (this.settings.id) {
       if (!word.userWord) {
         this.results.newWords++
-        await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
-          difficulty: 'normal',
-          optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: dateStr, dateLearned: '0' },
-        })
+
+        try {
+          await this.settings.service.requestAddUserWord(this.settings.id, word._id, {
+            difficulty: 'normal',
+            optional: { timesGuessed: +isTrue, timesMax: 3, dateEncountered: dateStr, dateLearned: '0' },
+          })
+        } catch (error) {
+          if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+            await this.settings.service.updateToken()
+          }
+        }
       } else {
         if ((isTrue && word.userWord.difficulty === 'normal') || (isTrue && word.userWord.difficulty === 'difficult')) {
           word.userWord.optional.timesGuessed++
@@ -55,7 +62,28 @@ export class SprintRound {
           word.userWord.optional.dateLearned = '0'
         }
 
-        await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
+        try {
+          await this.settings.service.requestUpdateUserWord(this.settings.id, word._id, word.userWord)
+        } catch (error) {
+          if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+            await this.settings.service.updateToken()
+          }
+        }
+      }
+    }
+  }
+
+  private async getUserWords() {
+    try {
+      return await this.settings.service.requestGetUserAgregatedPageGrp(
+        this.settings.id,
+        `${this.settings.lvl}`,
+        `${this.settings.pageNumber}`,
+        `20`
+      )
+    } catch (error) {
+      if ((error as Error).message.includes('401') || (error as Error).message.includes('403')) {
+        await this.settings.service.updateToken()
       }
     }
   }
@@ -84,16 +112,11 @@ export class SprintRound {
         }
         this.settings.pageNumber = randomNum
         this.settings.pageStorage.push(this.settings.pageNumber)
-        if (this.settings.id) {
-          this.words = await this.settings.service.requestGetUserAgregatedPageGrp(
-            this.settings.id,
-            `${this.settings.lvl}`,
-            `${this.settings.pageNumber}`,
-            `20`
-          )
-        } else {
-          this.words = await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
-        }
+
+        this.words = this.settings.id
+          ? await this.getUserWords()
+          : await this.settings.service.getWords(this.settings.lvl, this.settings.pageNumber)
+
         document.querySelector('.sprint__words').innerHTML = this.makeRound()
       } else {
         this.settings.resultScreen.renderResult(this.results, this.settings)
@@ -131,7 +154,7 @@ export class SprintRound {
       const soundEffect = isTrue
         ? (document.querySelector('.sprint__answer_correct') as HTMLAudioElement)
         : (document.querySelector('.sprint__answer_wrong') as HTMLAudioElement)
-
+      soundEffect.load()
       soundEffect.play()
     }
   }
@@ -163,10 +186,10 @@ export class SprintRound {
     const target = e.target as HTMLElement
     let isTrue: boolean
     if (
-      target.closest('.sprint__verdict_wrong') ||
-      target.closest('.sprint__verdict_true') ||
-      (e as KeyboardEvent).code == 'ArrowRight' ||
-      (e as KeyboardEvent).code == 'ArrowLeft'
+      (e.type === 'click' && target.closest('.sprint__verdict_wrong')) ||
+      (e.type === 'click' && target.closest('.sprint__verdict_true')) ||
+      (e.type === 'keydown' && (e as KeyboardEvent).code == 'ArrowRight') ||
+      (e.type === 'keydown' && (e as KeyboardEvent).code == 'ArrowLeft')
     ) {
       if (!this.settings.isRoundOver && !this.settings.isPaused) {
         if (target.closest('.sprint__verdict_wrong') && !isEven(this.sugestedWord.word, this.sugestedAnswer.word)) {
