@@ -23,9 +23,9 @@ class App {
     this.mainPage = new MainPage()
     this.textBook = new TextBookPage(this.apiService)
     this.navMenu = new NavMenu(this.apiService, this.mainPage, this.textBook)
-    if (this.user !== null) {
+    /*if (this.user !== null) {
       this.resetStat()
-    }
+    }*/
   }
   async resetStat() {
     try {
@@ -40,29 +40,29 @@ class App {
     }
   }
   requestResetStat() {
-    try{
-    this.apiService.requestUpdStatistics(this.apiService.user.userId, {
-      learnedWords: 0,
-      optional: {
-        sprintStat: {
-          streak: 0,
-          percent: 0,
-          newWords: 0,
-          played: false,
+    try {
+      this.apiService.requestUpdStatistics(this.apiService.user.userId, {
+        learnedWords: 0,
+        optional: {
+          sprintStat: {
+            streak: 0,
+            percent: 0,
+            newWords: 0,
+            played: false,
+          },
+          audioStat: {
+            countNewWord: 0,
+            percentTrueAnswer: 0,
+            inRow: 0,
+            played: false,
+          },
+          dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
         },
-        audioStat: {
-          countNewWord: 0,
-          percentTrueAnswer: 0,
-          inRow: 0,
-          played: false,
-        },
-        dateStr: `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`,
-      },
-    })
-  } catch(err){
-  this.apiService.updateToken()
+      })
+    } catch (err) {
+      this.apiService.updateToken()
+    }
   }
-}
   async run(): Promise<void> {
     document.querySelector('.body').innerHTML = `
       <div class="auth-overlay hidden">
@@ -97,19 +97,20 @@ class App {
       try {
         await this.apiService.getUser()
         this.authorization.renderLoggedIn(this.user.name)
+        await this.apiService.pageLoadTokenUpdate()
+        this.user = this.apiService.user
       } catch (err) {
         const error = err as Error
-        if (error.message.includes('401')) {
-          await this.apiService.updateToken()
-        } else if (error.message.includes('404')) {
+        if (error.message.includes('404')) {
           console.log('sorry such user no longer exists')
-          this.user = null;
+          this.user = null
           localStorage.removeItem('user')
           window.location.reload()
-        } else{
+        } else {
           await this.apiService.updateToken()
         }
       }
+      await this.resetStat()
     } else {
       this.authorization.addListener()
     }
