@@ -52,6 +52,7 @@ class AudioGame {
     this.addEventListenerForSmallIconSound(`${apiUrl}/${data.truthyAnswer.audio}`)
   }
   gameFromKeyboard(event: KeyboardEvent) {
+    console.log(this.count);
     if (event.key === '1' && this.count < this.arrayQuestions.length) {
       this.addAnswerFromKeyboard(0)
     } else if (event.key === '2' && this.count < this.arrayQuestions.length) {
@@ -177,10 +178,13 @@ class AudioGame {
   changeQuestion() {
     this.countSpace = 0
     this.countKey = 0
-    this.count++
+    if (this.countChange === 0) {
+      this.count++
+    } else this.count = -1
     if (this.count < this.arrayQuestions.length) {
       this.startGame(this.arrayQuestions[this.count], this.apiUrl)
     } else {
+      this.countChange++
       this.removeKeyboardListeners();
       new ResultRaund(
         this.arrayTrueWords,
